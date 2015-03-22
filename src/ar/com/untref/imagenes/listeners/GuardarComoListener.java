@@ -9,6 +9,7 @@ import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
 import javax.swing.JPanel;
 
+import ar.com.untref.imagenes.enums.FormatoDeImagen;
 import ar.com.untref.imagenes.enums.NivelMensaje;
 import ar.com.untref.imagenes.helpers.DialogsHelper;
 import ar.com.untref.imagenes.modelo.Imagen;
@@ -32,8 +33,15 @@ public class GuardarComoListener implements ActionListener {
 		
 		if (saveValue == JFileChooser.APPROVE_OPTION) {
 			try {
-				
-				ImageIO.write(imagenAGuardar.getBufferedImage(), imagenAGuardar.getFormato().getNombre(), new File(fileChooser.getSelectedFile().getAbsolutePath() + imagenAGuardar.getFormato().getExtension()));
+
+				//Si la imagen era un .raw la guardo como JPG mandatoriamente, sino se guarda con el mismo formato que tenia previamente
+				if (imagenAGuardar.getFormato().equals(FormatoDeImagen.RAW)){
+
+					ImageIO.write(imagenAGuardar.getBufferedImage(), "jpg", new File(fileChooser.getSelectedFile().getAbsolutePath() + ".jpg"));
+				} else {
+					
+					ImageIO.write(imagenAGuardar.getBufferedImage(), imagenAGuardar.getFormato().getNombre(), new File(fileChooser.getSelectedFile().getAbsolutePath() + imagenAGuardar.getFormato().getExtension()));
+				}
 				DialogsHelper.mostarMensaje(panel, "Imagen guardada.");
 			
 			} catch (IOException exception) {

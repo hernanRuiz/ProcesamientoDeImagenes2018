@@ -2,6 +2,8 @@ package ar.com.untref.imagenes.procesamiento;
 
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
+import java.io.IOException;
+import java.nio.file.Files;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
@@ -51,11 +53,18 @@ public class ProcesadorDeImagenes {
 			try {
 
 				archivoActual = new Archivo(selector.getSelectedFile());
-				BufferedImage bufferedImage = ImageIO.read(archivoActual
-						.getFile());
-
 				FormatoDeImagen formatoDeLaImagen = FormatoDeImagen
 						.getFormato(archivoActual.getExtension());
+
+				BufferedImage bufferedImage;
+				
+				if (archivoActual.getExtension().equalsIgnoreCase("raw")){
+					
+					bufferedImage = leerUnaImagenRAW(archivoActual,256,256);
+				} else {
+					
+					bufferedImage = leerUnaImagen();
+				}
 
 				if (formatoDeLaImagen != FormatoDeImagen.DESCONOCIDO) {
 
@@ -73,6 +82,35 @@ public class ProcesadorDeImagenes {
 		}
 
 		return imagenADevolver;
+	}
+
+	private BufferedImage leerUnaImagenRAW(Archivo archivoActual, int width, int height) {
+
+		BufferedImage imagen = null;
+		byte[] bytes;
+		try {
+			bytes = Files.readAllBytes(archivoActual.getFile().toPath());
+			imagen = new BufferedImage(width, height, BufferedImage.TYPE_3BYTE_BGR);
+			double[][] matrizDeImagen = new double[width][height];
+			int contador = 0;
+			for (int i = 0; i < height; i++) {
+				for (int j = 0; j < width; j++) {
+					matrizDeImagen[j][i] = bytes[contador];
+					imagen.setRGB(j, i, bytes[contador]);
+					contador++;
+				}
+			}
+		} catch (IOException e) {
+			
+			e.printStackTrace();
+		}
+        return imagen;
+	}
+
+	private BufferedImage leerUnaImagen() throws IOException {
+		BufferedImage bufferedImage = ImageIO.read(archivoActual
+				.getFile());
+		return bufferedImage;
 	}
 
 	public Imagen getImagenActual() {
