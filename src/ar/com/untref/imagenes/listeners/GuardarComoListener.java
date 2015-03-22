@@ -7,9 +7,10 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+import ar.com.untref.imagenes.enums.NivelMensaje;
+import ar.com.untref.imagenes.helpers.DialogsHelper;
 import ar.com.untref.imagenes.modelo.Imagen;
 
 public class GuardarComoListener implements ActionListener {
@@ -31,17 +32,14 @@ public class GuardarComoListener implements ActionListener {
 		
 		if (saveValue == JFileChooser.APPROVE_OPTION) {
 			try {
+				
 				ImageIO.write(imagenAGuardar.getBufferedImage(), imagenAGuardar.getFormato().getNombre(), new File(fileChooser.getSelectedFile().getAbsolutePath() + imagenAGuardar.getFormato().getExtension()));
-				JOptionPane.showMessageDialog(panel,
-				    "Imagen guardada.");
-
+				DialogsHelper.mostarMensaje(panel, "Imagen guardada.");
+			
 			} catch (IOException exception) {
 				
 				exception.printStackTrace();
-				JOptionPane.showMessageDialog(panel,
-					    "No se pudo guardar la imagen.",
-					    "Ups!",
-					    JOptionPane.ERROR_MESSAGE);
+				DialogsHelper.mostarMensaje(panel, "No se pudo guardar la imagen.", NivelMensaje.ERROR);
 			}
 		}
 	}
