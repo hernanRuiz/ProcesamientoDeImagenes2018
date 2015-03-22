@@ -19,7 +19,7 @@ import javax.swing.border.EmptyBorder;
 
 import ar.com.untref.imagenes.listeners.GuardarComoListener;
 import ar.com.untref.imagenes.modelo.Imagen;
-import ar.com.untref.imagenes.principal.ProcesadorDeImagenes;
+import ar.com.untref.imagenes.procesamiento.ProcesadorDeImagenes;
 
 @SuppressWarnings("serial")
 public class VentanaPrincipal extends JFrame {

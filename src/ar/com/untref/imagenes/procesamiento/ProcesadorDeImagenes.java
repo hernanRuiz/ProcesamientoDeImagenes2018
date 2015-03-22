@@ -1,4 +1,4 @@
-package ar.com.untref.imagenes.principal;
+package ar.com.untref.imagenes.procesamiento;
 
 import java.awt.image.BufferedImage;
 
