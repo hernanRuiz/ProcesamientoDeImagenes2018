@@ -24,6 +24,7 @@ import javax.swing.border.EmptyBorder;
 import ar.com.untref.imagenes.enums.NivelMensaje;
 import ar.com.untref.imagenes.helpers.DialogsHelper;
 import ar.com.untref.imagenes.listeners.GuardarComoListener;
+import ar.com.untref.imagenes.listeners.MostrarTablaDeColoresListener;
 import ar.com.untref.imagenes.modelo.Imagen;
 import ar.com.untref.imagenes.procesamiento.ColorManager;
 import ar.com.untref.imagenes.procesamiento.ProcesadorDeImagenes;
@@ -32,9 +33,9 @@ import ar.com.untref.imagenes.procesamiento.ProcesadorDeImagenes;
 public class VentanaPrincipal extends JFrame {
 
 	private JPanel contentPane;
-	private ProcesadorDeImagenes procesadorDeImagenes = new ProcesadorDeImagenes();
 	private JMenu menuItemEditar;
 	private JMenuItem menuItemEditarDimensionesRaw;
+	private JLabel labelPrincipal;
 	private JTextField posicionXTextField;
 	private JTextField posicionYTextField;
 
@@ -58,7 +59,7 @@ public class VentanaPrincipal extends JFrame {
 		contentPane.add(scrollPane, BorderLayout.CENTER);
 		
 		ImageIcon iconoSubirArchivo = new ImageIcon("resources/upload.png");
-		final JLabel labelPrincipal = new JLabel(iconoSubirArchivo, JLabel.CENTER);
+		labelPrincipal = new JLabel(iconoSubirArchivo, JLabel.CENTER);
 		scrollPane.setViewportView(labelPrincipal);
 		
 		JPanel panel = new JPanel();
@@ -92,18 +93,19 @@ public class VentanaPrincipal extends JFrame {
 		btnBuscar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
-				if (procesadorDeImagenes.getImagenActual()!=null){
+				if (ProcesadorDeImagenes.obtenerInstancia().getImagenActual()!=null){
 					
 					if (!posicionXTextField.getText().trim().isEmpty() && !posicionYTextField.getText().trim().isEmpty()){
 						
-						int[][] matriz = procesadorDeImagenes.getMatrizDeLaImagen(procesadorDeImagenes.getImagenActual().getBufferedImage());
 						
 						try{
 							
 							Integer x = Integer.valueOf(posicionXTextField.getText().trim());
 							Integer y = Integer.valueOf(posicionYTextField.getText().trim());
 							
-							String colorHexa = ColorManager.getHexaDeColorRGB(matriz[x][y]);
+							int color = ProcesadorDeImagenes.obtenerInstancia().getImagenActual().getBufferedImage().getRGB(x, y);
+							
+							String colorHexa = ColorManager.getHexaDeColorRGB(color);
 							labelColorResultante.setText(colorHexa);
 							labelColorResultante.setBackground(Color.decode(colorHexa));
 							labelColorResultante.setOpaque(true);
@@ -123,6 +125,8 @@ public class VentanaPrincipal extends JFrame {
 				}
 			}
 		});
+		
+		labelColorResultante.addMouseListener(new MostrarTablaDeColoresListener(this));
 		
 		JMenuItem menuItem = new JMenuItem("Cerrar");
 		menuItem.addActionListener(new ActionListener() {
@@ -152,7 +156,7 @@ public class VentanaPrincipal extends JFrame {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 			
-				if (procesadorDeImagenes.getImagenActual()==null){
+				if (ProcesadorDeImagenes.obtenerInstancia().getImagenActual()==null){
 					
 					cargarImagen(labelPrincipal, menuItemGuardarComo);
 				} else {
@@ -191,7 +195,7 @@ public class VentanaPrincipal extends JFrame {
 	
 	private void cargarImagen(JLabel labelPrincipal,
 			JMenuItem menuItemGuardarComo) {
-		Imagen imagenElegida = procesadorDeImagenes.cargarUnaImagenDesdeArchivo();
+		Imagen imagenElegida = ProcesadorDeImagenes.obtenerInstancia().cargarUnaImagenDesdeArchivo();
 		
 		if (imagenElegida!=null){
 			
@@ -209,7 +213,7 @@ public class VentanaPrincipal extends JFrame {
 	}
 
 	private void chequearGuardarComo(JMenuItem menuItemGuardarComo) {
-		Imagen imagenActual = procesadorDeImagenes.getImagenActual();
+		Imagen imagenActual = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
 		
 		if (imagenActual!=null){
 			
@@ -220,6 +224,16 @@ public class VentanaPrincipal extends JFrame {
 			menuItemGuardarComo.addActionListener(null);
 			menuItemGuardarComo.setEnabled(false);
 		}
+	}
+
+	public void cambiarColorDePixel(int rgb) {
+
+		int posicionX = Integer.valueOf(posicionXTextField.getText());
+		int posicionY = Integer.valueOf(posicionYTextField.getText());
+		
+		Imagen imagenActual = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
+		imagenActual.getBufferedImage().setRGB(posicionX, posicionY, rgb);
+		labelPrincipal.setIcon(new ImageIcon(imagenActual.getBufferedImage()));
 	}
 
 }

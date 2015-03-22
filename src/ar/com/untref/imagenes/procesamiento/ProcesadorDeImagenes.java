@@ -13,9 +13,22 @@ import ar.com.untref.imagenes.modelo.Imagen;
 
 public class ProcesadorDeImagenes {
 
+	private static ProcesadorDeImagenes instancia;
 	private Archivo archivoActual;
 	private Imagen imagenActual;
 
+	private ProcesadorDeImagenes(){}
+	
+	public static ProcesadorDeImagenes obtenerInstancia(){
+		
+		if ( instancia==null ){
+			
+			instancia = new ProcesadorDeImagenes();
+		}
+
+		return instancia;
+	}
+	
 	/**
 	 * Abre una imagen de archivo y la convierte en buffered image.
 	 * 
@@ -65,15 +78,15 @@ public class ProcesadorDeImagenes {
 	public Imagen getImagenActual() {
 		return imagenActual;
 	}
-
-	public int[][] getMatrizDeLaImagen(BufferedImage image) {
+	
+	public int[][] calcularMatrizDeLaImagen(BufferedImage image) {
 
 		final byte[] pixels = ((DataBufferByte) image.getRaster().getDataBuffer()).getData();
 		final int width = image.getWidth();
 		final int height = image.getHeight();
 		final boolean hasAlphaChannel = image.getAlphaRaster() != null;
 
-		int[][] result = new int[height][width];
+		int[][] matriz = new int[height][width];
 		if (hasAlphaChannel) {
 			final int pixelLength = 4;
 			for (int pixel = 0, row = 0, col = 0; pixel < pixels.length; pixel += pixelLength) {
@@ -82,7 +95,7 @@ public class ProcesadorDeImagenes {
 				argb += ((int) pixels[pixel + 1] & 0xff); // blue
 				argb += (((int) pixels[pixel + 2] & 0xff) << 8); // green
 				argb += (((int) pixels[pixel + 3] & 0xff) << 16); // red
-				result[row][col] = argb;
+				matriz[row][col] = argb;
 				col++;
 				if (col == width) {
 					col = 0;
@@ -97,7 +110,7 @@ public class ProcesadorDeImagenes {
 				argb += ((int) pixels[pixel] & 0xff); // blue
 				argb += (((int) pixels[pixel + 1] & 0xff) << 8); // green
 				argb += (((int) pixels[pixel + 2] & 0xff) << 16); // red
-				result[row][col] = argb;
+				matriz[row][col] = argb;
 				col++;
 				if (col == width) {
 					col = 0;
@@ -106,7 +119,20 @@ public class ProcesadorDeImagenes {
 			}
 		}
 
-		return result;
+		return matriz;
+	}
+	
+	public BufferedImage getBufferedImageDeMatriz(int[][] matriz, int ancho, int alto){
+		
+		BufferedImage bufferedImage = new BufferedImage(ancho, alto, BufferedImage.TYPE_INT_RGB);
+	    for (int i = 0; i < matriz.length; i++) {
+	        for (int j = 0; j < matriz[0].length; j++) {
+	            int pixel=matriz[i][j];
+	            bufferedImage.setRGB(i, j, pixel);
+	        }
+	    }
+	    
+	    return bufferedImage;
 	}
 	
 }
