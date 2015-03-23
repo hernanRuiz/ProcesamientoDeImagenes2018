@@ -28,6 +28,7 @@ import ar.com.untref.imagenes.listeners.MostrarTablaDeColoresListener;
 import ar.com.untref.imagenes.modelo.Imagen;
 import ar.com.untref.imagenes.procesamiento.ColorManager;
 import ar.com.untref.imagenes.procesamiento.ProcesadorDeImagenes;
+import java.awt.Dimension;
 
 @SuppressWarnings("serial")
 public class VentanaPrincipal extends JFrame {
@@ -36,8 +37,11 @@ public class VentanaPrincipal extends JFrame {
 	private JMenu menuItemEditar;
 	private JMenuItem menuItemEditarDimensionesRaw;
 	private JLabel labelPrincipal;
+	private JPanel panelPixel;
 	private JTextField posicionXTextField;
 	private JTextField posicionYTextField;
+	private JTextField textFieldAnchoRAW;
+	private JTextField textFieldAltoRAW;
 
 	public VentanaPrincipal() {
 		
@@ -65,30 +69,60 @@ public class VentanaPrincipal extends JFrame {
 		JPanel panel = new JPanel();
 		contentPane.add(panel, BorderLayout.NORTH);
 		
+		JPanel panelRaw = new JPanel();
+		panel.add(panelRaw);
+		
+		JLabel labelTamañoRAW = new JLabel("Dimensiones RAW");
+		panelRaw.add(labelTamañoRAW);
+		
+		JLabel labelAltoRAW = new JLabel("Alto:");
+		panelRaw.add(labelAltoRAW);
+		
+		textFieldAltoRAW = new JTextField();
+		panelRaw.add(textFieldAltoRAW);
+		textFieldAltoRAW.setMinimumSize(new Dimension(3, 20));
+		textFieldAltoRAW.setPreferredSize(new Dimension(1, 20));
+		textFieldAltoRAW.setText("256");
+		textFieldAltoRAW.setColumns(3);
+		
+		JLabel labelAnchoRAW = new JLabel("Ancho:");
+		panelRaw.add(labelAnchoRAW);
+		
+		textFieldAnchoRAW = new JTextField();
+		panelRaw.add(textFieldAnchoRAW);
+		textFieldAnchoRAW.setText("256");
+		textFieldAnchoRAW.setColumns(3);
+		
+		panelPixel = new JPanel();
+		panelPixel.setVisible(false);
+		panel.add(panelPixel);
+		
 		JLabel labelPosicionX = new JLabel("Posicion X:");
-		panel.add(labelPosicionX);
+		panelPixel.add(labelPosicionX);
 		
 		posicionXTextField = new JTextField();
-		panel.add(posicionXTextField);
-		posicionXTextField.setColumns(10);
+		panelPixel.add(posicionXTextField);
+		posicionXTextField.setColumns(4);
 		
 		JLabel labelPosicionY = new JLabel("Posicion Y:");
+		panelPixel.add(labelPosicionY);
 		labelPosicionY.setHorizontalAlignment(SwingConstants.TRAILING);
-		panel.add(labelPosicionY);
 		
 		posicionYTextField = new JTextField();
-		posicionYTextField.setColumns(10);
-		panel.add(posicionYTextField);
+		panelPixel.add(posicionYTextField);
+		posicionYTextField.setColumns(4);
 		
 		JButton btnBuscar = new JButton("Buscar");
-		panel.add(btnBuscar);
+		panelPixel.add(btnBuscar);
 		
 		JLabel labelColorEnPosicion = new JLabel("Color:");
+		panelPixel.add(labelColorEnPosicion);
 		labelColorEnPosicion.setHorizontalAlignment(SwingConstants.TRAILING);
-		panel.add(labelColorEnPosicion);
 		
 		final JLabel labelColorResultante = new JLabel("");
-		panel.add(labelColorResultante);
+		panelPixel.add(labelColorResultante);
+		
+		labelColorResultante.addMouseListener(new MostrarTablaDeColoresListener(this));
 		
 		btnBuscar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -125,8 +159,6 @@ public class VentanaPrincipal extends JFrame {
 				}
 			}
 		});
-		
-		labelColorResultante.addMouseListener(new MostrarTablaDeColoresListener(this));
 		
 		JMenuItem menuItem = new JMenuItem("Cerrar");
 		menuItem.addActionListener(new ActionListener() {
@@ -176,6 +208,29 @@ public class VentanaPrincipal extends JFrame {
 		
 		menu.add(menuItemAbrirImagen);
 		
+		JMenuItem menuItemAbrirRaw = new JMenuItem("Abrir RAW");
+		menuItemAbrirRaw.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				try {
+					
+					Integer alto = Integer.valueOf(textFieldAltoRAW.getText().trim());
+					Integer ancho = Integer.valueOf(textFieldAnchoRAW.getText().trim());
+					Imagen imagenElegida = ProcesadorDeImagenes.obtenerInstancia().cargarUnaImagenRawDesdeArchivo(alto, ancho);
+					
+					actualizarPanelDeImagen(menuItemGuardarComo, imagenElegida);
+				} catch (Exception e){
+					
+					e.printStackTrace();
+					DialogsHelper.mostarMensaje(contentPane, "Por favor completa correctamente las dimensiones de la imagen RAW y vuelve a intentar"
+							, NivelMensaje.ERROR);
+				}
+				
+			}
+
+		});
+		menu.add(menuItemAbrirRaw);
+		
 		inhabilitarItem(menuItemGuardarComo);
 		
 		menu.add(menuItemGuardarComo);
@@ -197,13 +252,7 @@ public class VentanaPrincipal extends JFrame {
 			JMenuItem menuItemGuardarComo) {
 		Imagen imagenElegida = ProcesadorDeImagenes.obtenerInstancia().cargarUnaImagenDesdeArchivo();
 		
-		if (imagenElegida!=null){
-			
-			labelPrincipal.setIcon(new ImageIcon(imagenElegida.getBufferedImage()));
-			menuItemEditar.setVisible(true);
-		}
-		
-		chequearGuardarComo(menuItemGuardarComo);
+		actualizarPanelDeImagen(menuItemGuardarComo, imagenElegida);
 	}
 	
 	private void inhabilitarItem(JMenuItem item){
@@ -234,6 +283,18 @@ public class VentanaPrincipal extends JFrame {
 		Imagen imagenActual = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
 		imagenActual.getBufferedImage().setRGB(posicionX, posicionY, rgb);
 		labelPrincipal.setIcon(new ImageIcon(imagenActual.getBufferedImage()));
+	}
+	
+	private void actualizarPanelDeImagen(
+			final JMenuItem menuItemGuardarComo, Imagen imagenElegida) {
+		if (imagenElegida!=null){
+			
+			labelPrincipal.setIcon(new ImageIcon(imagenElegida.getBufferedImage()));
+			menuItemEditar.setEnabled(true);
+			panelPixel.setVisible(true);
+		}
+		
+		chequearGuardarComo(menuItemGuardarComo);
 	}
 
 }

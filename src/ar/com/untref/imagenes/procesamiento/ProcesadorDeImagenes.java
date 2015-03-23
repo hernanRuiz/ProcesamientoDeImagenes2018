@@ -44,7 +44,52 @@ public class ProcesadorDeImagenes {
 		selector.setDialogTitle("Seleccione una imagen");
 
 		FileNameExtensionFilter filtroImagen = new FileNameExtensionFilter(
-				"JPG & GIF & BMP & RAW", "raw", "jpg", "gif", "bmp");
+				"JPG & GIF & BMP", "jpg", "gif", "bmp");
+		selector.setFileFilter(filtroImagen);
+
+		int flag = selector.showOpenDialog(null);
+
+		if (flag == JFileChooser.APPROVE_OPTION) {
+			try {
+
+				archivoActual = new Archivo(selector.getSelectedFile());
+				FormatoDeImagen formatoDeLaImagen = FormatoDeImagen
+						.getFormato(archivoActual.getExtension());
+
+				BufferedImage bufferedImage = leerUnaImagen();
+
+				if (formatoDeLaImagen != FormatoDeImagen.DESCONOCIDO) {
+
+					Imagen imagen = new Imagen(bufferedImage,
+							formatoDeLaImagen, archivoActual.getNombre());
+
+					imagenActual = imagen;
+					imagenADevolver = imagen;
+				}
+
+			} catch (Exception e) {
+
+				e.printStackTrace();
+			}
+		}
+
+		return imagenADevolver;
+	}
+	
+	/**
+	 * Abre una imagen en formato RAW de archivo, con las medidas definidas y la convierte en buffered image.
+	 * 
+	 * @return Imagen
+	 */
+	public Imagen cargarUnaImagenRawDesdeArchivo(Integer alto, Integer ancho) {
+
+		Imagen imagenADevolver = null;
+
+		JFileChooser selector = new JFileChooser();
+		selector.setDialogTitle("Seleccione una imagen RAW");
+
+		FileNameExtensionFilter filtroImagen = new FileNameExtensionFilter(
+				"RAW", "raw");
 		selector.setFileFilter(filtroImagen);
 
 		int flag = selector.showOpenDialog(null);
@@ -57,24 +102,12 @@ public class ProcesadorDeImagenes {
 						.getFormato(archivoActual.getExtension());
 
 				BufferedImage bufferedImage;
-				
-				if (archivoActual.getExtension().equalsIgnoreCase("raw")){
-					
-					bufferedImage = leerUnaImagenRAW(archivoActual,256,256);
-				} else {
-					
-					bufferedImage = leerUnaImagen();
-				}
+				bufferedImage = leerUnaImagenRAW(archivoActual, alto, ancho);
 
-				if (formatoDeLaImagen != FormatoDeImagen.DESCONOCIDO) {
-
-					Imagen imagen = new Imagen(bufferedImage,
-							formatoDeLaImagen, archivoActual.getNombre());
-
-					imagenActual = imagen;
-					imagenADevolver = imagen;
-				}
-
+				Imagen imagen = new Imagen(bufferedImage, formatoDeLaImagen,
+						archivoActual.getNombre());
+				imagenActual = imagen;
+				imagenADevolver = imagen;
 			} catch (Exception e) {
 
 				e.printStackTrace();
