@@ -25,9 +25,11 @@ import ar.com.untref.imagenes.enums.NivelMensaje;
 import ar.com.untref.imagenes.helpers.DialogsHelper;
 import ar.com.untref.imagenes.listeners.GuardarComoListener;
 import ar.com.untref.imagenes.listeners.MostrarTablaDeColoresListener;
+import ar.com.untref.imagenes.listeners.RecortarImagenListener;
 import ar.com.untref.imagenes.modelo.Imagen;
 import ar.com.untref.imagenes.procesamiento.ColorManager;
 import ar.com.untref.imagenes.procesamiento.ProcesadorDeImagenes;
+
 import java.awt.Dimension;
 
 @SuppressWarnings("serial")
@@ -35,13 +37,14 @@ public class VentanaPrincipal extends JFrame {
 
 	private JPanel contentPane;
 	private JMenu menuItemEditar;
-	private JMenuItem menuItemEditarDimensionesRaw;
+	private JMenuItem menuItemRecortarImagen;
 	private JLabel labelPrincipal;
 	private JPanel panelPixel;
 	private JTextField posicionXTextField;
 	private JTextField posicionYTextField;
 	private JTextField textFieldAnchoRAW;
 	private JTextField textFieldAltoRAW;
+	private JMenuItem menuItemGuardarComo;
 
 	public VentanaPrincipal() {
 		
@@ -169,7 +172,7 @@ public class VentanaPrincipal extends JFrame {
 		});
 		
 		JMenuItem menuItemAbrirImagen = new JMenuItem("Abrir Imagen");
-		final JMenuItem menuItemGuardarComo = new JMenuItem("Guardar Como...");
+		menuItemGuardarComo = new JMenuItem("Guardar Como...");
 		
 		labelPrincipal.addMouseListener(new MouseListener() {
 			
@@ -242,10 +245,16 @@ public class VentanaPrincipal extends JFrame {
 		
 		menuBar.add(menuItemEditar);
 		
-		menuItemEditarDimensionesRaw = new JMenuItem("RAW-Configurar Tama\u00F1o ");
-		menuItemEditar.add(menuItemEditarDimensionesRaw);
+		menuItemRecortarImagen = new JMenuItem("Recortar Imagen");
+		menuItemRecortarImagen.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				DialogsHelper.mostarMensaje(contentPane, "Cliquea en la esquina superior izquierda y la inferior derecha que formarán el cuadrado para recortar la imagen");
+				labelPrincipal.addMouseListener(new RecortarImagenListener(VentanaPrincipal.this));
+			}
+		});
+		menuItemEditar.add(menuItemRecortarImagen);
 		
-		inhabilitarItem(menuItemEditarDimensionesRaw);
 	}
 	
 	private void cargarImagen(JLabel labelPrincipal,
@@ -295,6 +304,13 @@ public class VentanaPrincipal extends JFrame {
 		}
 		
 		chequearGuardarComo(menuItemGuardarComo);
+	}
+
+	public void refrescarImagen() {
+
+		Imagen imagen = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
+		labelPrincipal.setIcon(new ImageIcon(imagen.getBufferedImage()));
+		menuItemGuardarComo.addActionListener(new GuardarComoListener(imagen, contentPane));
 	}
 
 }

@@ -12,6 +12,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import ar.com.untref.imagenes.enums.FormatoDeImagen;
 import ar.com.untref.imagenes.modelo.Archivo;
 import ar.com.untref.imagenes.modelo.Imagen;
+import ar.com.untref.imagenes.ventanas.VentanaPrincipal;
 
 public class ProcesadorDeImagenes {
 
@@ -205,5 +206,29 @@ public class ProcesadorDeImagenes {
 	    
 	    return bufferedImage;
 	}
-	
+
+	public void recortarImagenActual(Integer x1, Integer y1, Integer x2,
+			Integer y2, VentanaPrincipal ventana) {
+		
+		if (imagenActual!=null){
+			
+			int ancho = x2-x1;
+			int alto = y2-y1;
+		    int[][] matrizRecortada = new int[ancho+1][alto+1];
+			
+			for (int i = 0; i <= ancho; i++) {
+		        for (int j = 0; j <= alto; j++) {
+		            int valorDelPixel= imagenActual.getBufferedImage().getRGB(i+x1, j+y1);
+		            
+		            	matrizRecortada[i][j] = valorDelPixel;
+		        }
+		    }
+			
+			BufferedImage imagenRecortada = getBufferedImageDeMatriz(matrizRecortada, ancho+1, alto+1);
+			Imagen nuevaImagenRecortada = new Imagen(imagenRecortada, imagenActual.getFormato(), imagenActual.getNombre());
+			this.imagenActual = nuevaImagenRecortada;
+			ventana.refrescarImagen();
+		}
+	}
+
 }
