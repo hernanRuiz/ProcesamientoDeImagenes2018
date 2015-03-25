@@ -7,6 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.image.BufferedImage;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -21,6 +22,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
+import ar.com.untref.imagenes.enums.FormatoDeImagen;
 import ar.com.untref.imagenes.enums.NivelMensaje;
 import ar.com.untref.imagenes.helpers.DialogsHelper;
 import ar.com.untref.imagenes.listeners.GuardarComoListener;
@@ -28,6 +30,7 @@ import ar.com.untref.imagenes.listeners.MostrarTablaDeColoresListener;
 import ar.com.untref.imagenes.listeners.RecortarImagenListener;
 import ar.com.untref.imagenes.modelo.Imagen;
 import ar.com.untref.imagenes.procesamiento.ColorManager;
+import ar.com.untref.imagenes.procesamiento.Graficador;
 import ar.com.untref.imagenes.procesamiento.ProcesadorDeImagenes;
 
 import java.awt.Dimension;
@@ -255,6 +258,45 @@ public class VentanaPrincipal extends JFrame {
 		});
 		menuItemEditar.add(menuItemRecortarImagen);
 		
+		JMenu menuItemTemplates = new JMenu("Templates");
+		menuBar.add(menuItemTemplates);
+		
+		JMenuItem menuItemImagenConCuadrado = new JMenuItem("Imagen con Cuadrado (200x200)");
+		menuItemImagenConCuadrado.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				
+				BufferedImage buf = Graficador.crearImagenConCuadradoEnElCentro(200, 200, 40);
+				Imagen imagenConCuadrado = new Imagen(buf, FormatoDeImagen.JPG, "Imagen Con Cuadrado");
+				ProcesadorDeImagenes.obtenerInstancia().setImagenActual(imagenConCuadrado);
+				VentanaPrincipal.this.refrescarImagen();
+			}
+		});
+		menuItemTemplates.add(menuItemImagenConCuadrado);
+		
+		JMenuItem menuItemImagenConCirculo = new JMenuItem("Imagen con C\u00EDrculo (200x200)");
+		menuItemImagenConCirculo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				BufferedImage buf = Graficador.crearImagenConCirculoEnElMedio(200,200,40);
+				Imagen imagenConCirculo = new Imagen(buf, FormatoDeImagen.JPG, "Imagen Con Circulo");
+				ProcesadorDeImagenes.obtenerInstancia().setImagenActual(imagenConCirculo);
+				VentanaPrincipal.this.refrescarImagen();
+			}
+		});
+		menuItemTemplates.add(menuItemImagenConCirculo);
+		
+		JMenuItem menuItemDegradeDeGrises = new JMenuItem("Degrad\u00E9 de grises (200x250)");
+		menuItemDegradeDeGrises.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				BufferedImage buf = Graficador.crearImagenConDegradeDeGrises(200, 250);
+				Imagen degrade = new Imagen(buf, FormatoDeImagen.JPG, "Degradé de grises");
+				ProcesadorDeImagenes.obtenerInstancia().setImagenActual(degrade);
+				VentanaPrincipal.this.refrescarImagen();
+			}
+		});
+		menuItemTemplates.add(menuItemDegradeDeGrises);
 	}
 	
 	private void cargarImagen(JLabel labelPrincipal,
@@ -275,11 +317,17 @@ public class VentanaPrincipal extends JFrame {
 		
 		if (imagenActual!=null){
 			
+			GuardarComoListener listener = new GuardarComoListener(imagenActual, contentPane);
 			menuItemGuardarComo.setEnabled(true);
-			menuItemGuardarComo.addActionListener(new GuardarComoListener(imagenActual, contentPane));
+			
+			if (menuItemGuardarComo.getActionListeners().length >0){
+				
+				menuItemGuardarComo.removeActionListener(menuItemGuardarComo.getActionListeners()[0]);
+			}
+			menuItemGuardarComo.addActionListener(listener);
 		} else {
 			
-			menuItemGuardarComo.addActionListener(null);
+			menuItemGuardarComo.removeActionListener(menuItemGuardarComo.getActionListeners()[0]);
 			menuItemGuardarComo.setEnabled(false);
 		}
 	}
@@ -310,7 +358,7 @@ public class VentanaPrincipal extends JFrame {
 
 		Imagen imagen = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
 		labelPrincipal.setIcon(new ImageIcon(imagen.getBufferedImage()));
-		menuItemGuardarComo.addActionListener(new GuardarComoListener(imagen, contentPane));
+		chequearGuardarComo(menuItemGuardarComo);
 	}
 
 }

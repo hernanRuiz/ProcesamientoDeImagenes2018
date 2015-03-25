@@ -230,5 +230,10 @@ public class ProcesadorDeImagenes {
 			ventana.refrescarImagen();
 		}
 	}
+	
+	public void setImagenActual(Imagen imagen){
+		
+		this.imagenActual = imagen;
+	}
 
 }

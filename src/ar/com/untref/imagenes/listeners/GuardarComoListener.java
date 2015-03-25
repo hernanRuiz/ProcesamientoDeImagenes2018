@@ -30,26 +30,51 @@ public class GuardarComoListener implements ActionListener {
 
 		JFileChooser fileChooser = new JFileChooser();
 		int saveValue = fileChooser.showSaveDialog(null);
-		
+
 		if (saveValue == JFileChooser.APPROVE_OPTION) {
 			try {
 
-				//Si la imagen era un .raw la guardo como JPG mandatoriamente, sino se guarda con el mismo formato que tenia previamente
-				if (imagenAGuardar.getFormato().equals(FormatoDeImagen.RAW)){
+				// Si la imagen era un .raw la guardo como JPG mandatoriamente,
+				// sino se guarda con el mismo formato que tenia previamente
+				if (imagenAGuardar.getFormato().equals(FormatoDeImagen.RAW)) {
 
-					ImageIO.write(imagenAGuardar.getBufferedImage(), "jpg", new File(fileChooser.getSelectedFile().getAbsolutePath() + ".jpg"));
+					ImageIO.write(imagenAGuardar.getBufferedImage(), "jpg",
+							new File(fileChooser.getSelectedFile()
+									.getAbsolutePath() + ".jpg"));
 				} else {
-					
-					ImageIO.write(imagenAGuardar.getBufferedImage(), imagenAGuardar.getFormato().getNombre(), new File(fileChooser.getSelectedFile().getAbsolutePath() + imagenAGuardar.getFormato().getExtension()));
+
+					ImageIO.write(imagenAGuardar.getBufferedImage(),
+							imagenAGuardar.getFormato().getNombre(), new File(
+									fileChooser.getSelectedFile()
+											.getAbsolutePath()
+											+ imagenAGuardar.getFormato()
+													.getExtension()));
 				}
 				DialogsHelper.mostarMensaje(panel, "Imagen guardada.");
-			
+
 			} catch (IOException exception) {
-				
+
 				exception.printStackTrace();
-				DialogsHelper.mostarMensaje(panel, "No se pudo guardar la imagen.", NivelMensaje.ERROR);
+				DialogsHelper.mostarMensaje(panel,
+						"No se pudo guardar la imagen.", NivelMensaje.ERROR);
 			}
 		}
 	}
-	
+
+	public Imagen getImagenAGuardar() {
+		return imagenAGuardar;
+	}
+
+	public void setImagenAGuardar(Imagen imagenAGuardar) {
+		this.imagenAGuardar = imagenAGuardar;
+	}
+
+	public JPanel getPanel() {
+		return panel;
+	}
+
+	public void setPanel(JPanel panel) {
+		this.panel = panel;
+	}
+
 }
