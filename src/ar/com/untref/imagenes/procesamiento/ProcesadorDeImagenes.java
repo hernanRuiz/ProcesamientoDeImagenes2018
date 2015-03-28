@@ -1,5 +1,6 @@
 package ar.com.untref.imagenes.procesamiento;
 
+import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.io.IOException;
@@ -20,18 +21,19 @@ public class ProcesadorDeImagenes {
 	private Archivo archivoActual;
 	private Imagen imagenActual;
 
-	private ProcesadorDeImagenes(){}
-	
-	public static ProcesadorDeImagenes obtenerInstancia(){
-		
-		if ( instancia==null ){
-			
+	private ProcesadorDeImagenes() {
+	}
+
+	public static ProcesadorDeImagenes obtenerInstancia() {
+
+		if (instancia == null) {
+
 			instancia = new ProcesadorDeImagenes();
 		}
 
 		return instancia;
 	}
-	
+
 	/**
 	 * Abre una imagen de archivo y la convierte en buffered image.
 	 * 
@@ -76,9 +78,10 @@ public class ProcesadorDeImagenes {
 
 		return imagenADevolver;
 	}
-	
+
 	/**
-	 * Abre una imagen en formato RAW de archivo, con las medidas definidas y la convierte en buffered image.
+	 * Abre una imagen en formato RAW de archivo, con las medidas definidas y la
+	 * convierte en buffered image.
 	 * 
 	 * @return Imagen
 	 */
@@ -118,13 +121,15 @@ public class ProcesadorDeImagenes {
 		return imagenADevolver;
 	}
 
-	private BufferedImage leerUnaImagenRAW(Archivo archivoActual, int width, int height) {
+	private BufferedImage leerUnaImagenRAW(Archivo archivoActual, int width,
+			int height) {
 
 		BufferedImage imagen = null;
 		byte[] bytes;
 		try {
 			bytes = Files.readAllBytes(archivoActual.getFile().toPath());
-			imagen = new BufferedImage(width, height, BufferedImage.TYPE_3BYTE_BGR);
+			imagen = new BufferedImage(width, height,
+					BufferedImage.TYPE_3BYTE_BGR);
 			double[][] matrizDeImagen = new double[width][height];
 			int contador = 0;
 			for (int i = 0; i < height; i++) {
@@ -135,25 +140,25 @@ public class ProcesadorDeImagenes {
 				}
 			}
 		} catch (IOException e) {
-			
+
 			e.printStackTrace();
 		}
-        return imagen;
+		return imagen;
 	}
 
 	private BufferedImage leerUnaImagen() throws IOException {
-		BufferedImage bufferedImage = ImageIO.read(archivoActual
-				.getFile());
+		BufferedImage bufferedImage = ImageIO.read(archivoActual.getFile());
 		return bufferedImage;
 	}
 
 	public Imagen getImagenActual() {
 		return imagenActual;
 	}
-	
+
 	public int[][] calcularMatrizDeLaImagen(BufferedImage image) {
 
-		final byte[] pixels = ((DataBufferByte) image.getRaster().getDataBuffer()).getData();
+		final byte[] pixels = ((DataBufferByte) image.getRaster()
+				.getDataBuffer()).getData();
 		final int width = image.getWidth();
 		final int height = image.getHeight();
 		final boolean hasAlphaChannel = image.getAlphaRaster() != null;
@@ -193,46 +198,77 @@ public class ProcesadorDeImagenes {
 
 		return matriz;
 	}
-	
-	public BufferedImage getBufferedImageDeMatriz(int[][] matriz, int ancho, int alto){
-		
-		BufferedImage bufferedImage = new BufferedImage(ancho, alto, BufferedImage.TYPE_INT_RGB);
-	    for (int i = 0; i < matriz.length; i++) {
-	        for (int j = 0; j < matriz[0].length; j++) {
-	            int pixel=matriz[i][j];
-	            bufferedImage.setRGB(i, j, pixel);
-	        }
-	    }
-	    
-	    return bufferedImage;
+
+	public BufferedImage getBufferedImageDeMatriz(int[][] matriz, int ancho,
+			int alto) {
+
+		BufferedImage bufferedImage = new BufferedImage(ancho, alto,
+				BufferedImage.TYPE_INT_RGB);
+		for (int i = 0; i < matriz.length; i++) {
+			for (int j = 0; j < matriz[0].length; j++) {
+				int pixel = matriz[i][j];
+				bufferedImage.setRGB(i, j, pixel);
+			}
+		}
+
+		return bufferedImage;
 	}
 
 	public void recortarImagenActual(Integer x1, Integer y1, Integer x2,
 			Integer y2, VentanaPrincipal ventana) {
-		
-		if (imagenActual!=null){
-			
-			int ancho = x2-x1;
-			int alto = y2-y1;
-		    int[][] matrizRecortada = new int[ancho+1][alto+1];
-			
+
+		if (imagenActual != null) {
+
+			int ancho = x2 - x1;
+			int alto = y2 - y1;
+			int[][] matrizRecortada = new int[ancho + 1][alto + 1];
+
 			for (int i = 0; i <= ancho; i++) {
-		        for (int j = 0; j <= alto; j++) {
-		            int valorDelPixel= imagenActual.getBufferedImage().getRGB(i+x1, j+y1);
-		            
-		            	matrizRecortada[i][j] = valorDelPixel;
-		        }
-		    }
-			
-			BufferedImage imagenRecortada = getBufferedImageDeMatriz(matrizRecortada, ancho+1, alto+1);
-			Imagen nuevaImagenRecortada = new Imagen(imagenRecortada, imagenActual.getFormato(), imagenActual.getNombre());
+				for (int j = 0; j <= alto; j++) {
+					int valorDelPixel = imagenActual.getBufferedImage().getRGB(
+							i + x1, j + y1);
+
+					matrizRecortada[i][j] = valorDelPixel;
+				}
+			}
+
+			BufferedImage imagenRecortada = getBufferedImageDeMatriz(
+					matrizRecortada, ancho + 1, alto + 1);
+			Imagen nuevaImagenRecortada = new Imagen(imagenRecortada,
+					imagenActual.getFormato(), imagenActual.getNombre());
 			this.imagenActual = nuevaImagenRecortada;
 			ventana.refrescarImagen();
 		}
 	}
-	
-	public void setImagenActual(Imagen imagen){
+
+	public Imagen aplicarNegativo(Imagen imagen) {
+
+		Imagen imagenEnNegativo = null;
 		
+		if (imagen != null) {
+
+			BufferedImage resultado = imagen.getBufferedImage();
+
+			for (int x = 0; x < resultado.getWidth(); x++) {
+				for (int y = 0; y < resultado.getHeight(); y++) {
+
+					int rgba = resultado.getRGB(x, y);
+					Color col = new Color(rgba, true);
+					col = new Color(255 - col.getRed(), 255 - col.getGreen(),
+							255 - col.getBlue());
+					resultado.setRGB(x, y, col.getRGB());
+				}
+			}
+
+			imagenEnNegativo = new Imagen(resultado, imagen.getFormato(), imagen.getNombre());
+			this.imagenActual = imagenEnNegativo;
+		}
+		
+		return imagenEnNegativo;
+	}
+
+	public void setImagenActual(Imagen imagen) {
+
 		this.imagenActual = imagen;
 	}
 

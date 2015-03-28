@@ -3,6 +3,7 @@ package ar.com.untref.imagenes.ventanas;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -32,8 +33,6 @@ import ar.com.untref.imagenes.modelo.Imagen;
 import ar.com.untref.imagenes.procesamiento.ColorManager;
 import ar.com.untref.imagenes.procesamiento.Graficador;
 import ar.com.untref.imagenes.procesamiento.ProcesadorDeImagenes;
-
-import java.awt.Dimension;
 
 @SuppressWarnings("serial")
 public class VentanaPrincipal extends JFrame {
@@ -258,7 +257,31 @@ public class VentanaPrincipal extends JFrame {
 		});
 		menuItemEditar.add(menuItemRecortarImagen);
 		
-		JMenu menuItemTemplates = new JMenu("Templates");
+		JMenu menuFiltros = new JMenu("Filtros");
+		menuItemEditar.add(menuFiltros);
+		
+		JMenuItem menuItemNegativo = new JMenuItem("Negativo");
+		menuItemNegativo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				Imagen imagenActual = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
+				
+				if (imagenActual!=null){
+					
+					Imagen negativo = ProcesadorDeImagenes.obtenerInstancia().aplicarNegativo(imagenActual);
+					if (negativo!=null){
+						
+						VentanaPrincipal.this.refrescarImagen();
+					} else {
+						
+						DialogsHelper.mostarMensaje(contentPane, "Error al aplicar el filtro", NivelMensaje.ERROR);
+					}
+				}
+			}
+		});
+		menuFiltros.add(menuItemNegativo);
+		
+		JMenu menuItemTemplates = new JMenu("Plantillas");
 		menuBar.add(menuItemTemplates);
 		
 		JMenuItem menuItemImagenConCuadrado = new JMenuItem("Imagen con Cuadrado (200x200)");
