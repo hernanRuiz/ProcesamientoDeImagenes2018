@@ -47,7 +47,7 @@ public class ProcesadorDeImagenes {
 		selector.setDialogTitle("Seleccione una imagen");
 
 		FileNameExtensionFilter filtroImagen = new FileNameExtensionFilter(
-				"JPG & GIF & BMP", "jpg", "gif", "bmp");
+				"JPG & GIF & BMP & PNG", "jpg", "gif", "bmp", "png");
 		selector.setFileFilter(filtroImagen);
 
 		int flag = selector.showOpenDialog(null);
@@ -270,6 +270,11 @@ public class ProcesadorDeImagenes {
 	public void setImagenActual(Imagen imagen) {
 
 		this.imagenActual = imagen;
+	}
+	
+	public Archivo getArchivoActual(){
+		
+		return this.archivoActual;
 	}
 
 }

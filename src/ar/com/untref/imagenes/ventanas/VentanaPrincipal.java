@@ -257,6 +257,20 @@ public class VentanaPrincipal extends JFrame {
 		});
 		menuItemEditar.add(menuItemRecortarImagen);
 		
+		JMenuItem menuItemHistogramas = new JMenuItem("Histogramas");
+		menuItemHistogramas.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				Imagen imagenActual = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
+				if ( imagenActual!=null ){
+					
+					VentanaHistogramas ventanaHistogramas = new VentanaHistogramas(imagenActual);
+					ventanaHistogramas.setVisible(true);
+				}
+			}
+		});
+		menuItemEditar.add(menuItemHistogramas);
+		
 		JMenu menuFiltros = new JMenu("Filtros");
 		menuItemEditar.add(menuFiltros);
 		

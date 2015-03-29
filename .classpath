@@ -19,5 +19,11 @@
 	<classpathentry kind="lib" path="C:/Program Files (x86)/Luna - eclipse/plugins/org.eclipse.core.databinding.observable_1.4.1.v20140210-1835.jar" sourcepath="C:/Program Files (x86)/Luna - eclipse/plugins/org.eclipse.core.databinding.observable_1.4.1.v20140210-1835.jar"/>
 	<classpathentry kind="lib" path="C:/Program Files (x86)/Luna - eclipse/plugins/org.eclipse.core.databinding.property_1.4.200.v20140214-0004.jar" sourcepath="C:/Program Files (x86)/Luna - eclipse/plugins/org.eclipse.core.databinding.property_1.4.200.v20140214-0004.jar"/>
 	<classpathentry kind="lib" path="C:/Program Files (x86)/Luna - eclipse/plugins/org.eclipse.jface.databinding_1.6.200.v20140528-1422.jar" sourcepath="C:/Program Files (x86)/Luna - eclipse/plugins/org.eclipse.jface.databinding_1.6.200.v20140528-1422.jar"/>
+	<classpathentry kind="lib" path="libs/commons-codec-1.8.jar"/>
+	<classpathentry kind="lib" path="libs/jai_codec.jar"/>
+	<classpathentry kind="lib" path="libs/jai_core.jar"/>
+	<classpathentry kind="lib" path="libs/jcommon-1.0.23.jar"/>
+	<classpathentry kind="lib" path="libs/jfreechart-1.0.19.jar"/>
+	<classpathentry kind="lib" path="forms-1.3.0.jar" sourcepath="forms-1.3.0-src.zip"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
