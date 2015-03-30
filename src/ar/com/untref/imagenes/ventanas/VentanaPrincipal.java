@@ -295,6 +295,30 @@ public class VentanaPrincipal extends JFrame {
 		});
 		menuFiltros.add(menuItemNegativo);
 		
+		JMenuItem menuItemDuplicarContraste = new JMenuItem("Aumento del Contraste (Fx Cuadrado)");
+		menuItemDuplicarContraste.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				Imagen imagenActual = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
+				
+				ProcesadorDeImagenes.obtenerInstancia().aumentarContrastePorElCuadrado(imagenActual);
+				VentanaPrincipal.this.refrescarImagen();
+			}
+		});
+		menuFiltros.add(menuItemDuplicarContraste);
+		
+		JMenuItem menuItemAumentoContrasteAutomatico = new JMenuItem("Aumento del Contraste Autom\u00E1tico");
+		menuItemAumentoContrasteAutomatico.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				Imagen imagenActual = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
+				
+				ProcesadorDeImagenes.obtenerInstancia().aumentoContrasteAutomatico(imagenActual);
+				VentanaPrincipal.this.refrescarImagen();
+			}
+		});
+		menuFiltros.add(menuItemAumentoContrasteAutomatico);
+		
 		JMenu menuItemTemplates = new JMenu("Plantillas");
 		menuBar.add(menuItemTemplates);
 		
