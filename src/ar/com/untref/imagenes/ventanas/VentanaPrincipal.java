@@ -19,6 +19,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSlider;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
@@ -29,6 +30,7 @@ import ar.com.untref.imagenes.helpers.DialogsHelper;
 import ar.com.untref.imagenes.listeners.GuardarComoListener;
 import ar.com.untref.imagenes.listeners.MostrarTablaDeColoresListener;
 import ar.com.untref.imagenes.listeners.RecortarImagenListener;
+import ar.com.untref.imagenes.listeners.UmbralListener;
 import ar.com.untref.imagenes.modelo.Imagen;
 import ar.com.untref.imagenes.procesamiento.ColorManager;
 import ar.com.untref.imagenes.procesamiento.Graficador;
@@ -41,12 +43,16 @@ public class VentanaPrincipal extends JFrame {
 	private JMenu menuItemEditar;
 	private JMenuItem menuItemRecortarImagen;
 	private JLabel labelPrincipal;
+	private JMenu menu;
+	private JMenu menuItemTemplates;
 	private JPanel panelPixel;
+	private JPanel panelUmbral;
 	private JTextField posicionXTextField;
 	private JTextField posicionYTextField;
 	private JTextField textFieldAnchoRAW;
 	private JTextField textFieldAltoRAW;
 	private JMenuItem menuItemGuardarComo;
+	private JSlider umbralSlider;
 
 	public VentanaPrincipal() {
 		
@@ -56,7 +62,7 @@ public class VentanaPrincipal extends JFrame {
 		JMenuBar menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
 		
-		JMenu menu = new JMenu("Archivo");
+		menu = new JMenu("Archivo");
 		menuBar.add(menu);
 		
 		contentPane = new JPanel();
@@ -126,6 +132,13 @@ public class VentanaPrincipal extends JFrame {
 		
 		final JLabel labelColorResultante = new JLabel("");
 		panelPixel.add(labelColorResultante);
+		
+		panelUmbral = new JPanel();
+		panelUmbral.setVisible(false);
+		panel.add(panelUmbral);
+		
+		JLabel labelUmbral = new JLabel("Umbral:");
+		panelUmbral.add(labelUmbral);
 		
 		labelColorResultante.addMouseListener(new MostrarTablaDeColoresListener(this));
 		
@@ -293,6 +306,49 @@ public class VentanaPrincipal extends JFrame {
 				}
 			}
 		});
+		
+		JMenuItem menuItemUmbralizar = new JMenuItem("Umbralizar");
+		
+		umbralSlider = new JSlider(JSlider.HORIZONTAL, 0, 255, 147);
+		//Turn on labels at major tick marks.
+		umbralSlider.setMajorTickSpacing(51);
+		umbralSlider.setMinorTickSpacing(51);
+		umbralSlider.setPaintTicks(true);
+		umbralSlider.setPaintLabels(true);
+		
+		panelUmbral.add(umbralSlider);
+		
+		JButton botonFinalizarEditado = new JButton("Finalizar");
+		botonFinalizarEditado.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+				panelUmbral.setVisible(false);
+				menu.setEnabled(true);
+				menuItemEditar.setEnabled(true);
+				menuItemTemplates.setEnabled(true);
+			}
+		});
+		panelUmbral.add(botonFinalizarEditado);
+
+		menuItemUmbralizar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			
+				panelUmbral.setVisible(true);
+				menu.setEnabled(false);
+				menuItemEditar.setEnabled(false);
+				menuItemTemplates.setEnabled(false);
+				
+				UmbralListener listener = new UmbralListener(ProcesadorDeImagenes.obtenerInstancia().getImagenActual(), VentanaPrincipal.this);
+
+				if (umbralSlider.getChangeListeners().length >0){
+					
+					menuItemGuardarComo.removeChangeListener(umbralSlider.getChangeListeners()[0]);
+				}
+				umbralSlider.addChangeListener(listener);
+			}
+		});
+		menuFiltros.add(menuItemUmbralizar);
 		menuFiltros.add(menuItemNegativo);
 		
 		JMenuItem menuItemDuplicarContraste = new JMenuItem("Aumento del Contraste (Fx Cuadrado)");
@@ -319,7 +375,7 @@ public class VentanaPrincipal extends JFrame {
 		});
 		menuFiltros.add(menuItemAumentoContrasteAutomatico);
 		
-		JMenu menuItemTemplates = new JMenu("Plantillas");
+		menuItemTemplates = new JMenu("Plantillas");
 		menuBar.add(menuItemTemplates);
 		
 		JMenuItem menuItemImagenConCuadrado = new JMenuItem("Imagen con Cuadrado (200x200)");

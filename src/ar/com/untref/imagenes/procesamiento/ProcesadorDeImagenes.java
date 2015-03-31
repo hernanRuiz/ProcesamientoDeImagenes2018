@@ -363,4 +363,32 @@ public class ProcesadorDeImagenes {
 		this.imagenActual.setBufferedImage(buffered);
 	}
 	
+	/**
+	 * @param imagen - imagen a umbralizar
+	 * @param umbral - valor que hará de separador entre valores 0 y 255
+	 */
+	public void umbralizarImagen(Imagen imagen, int umbral){
+		
+		BufferedImage buffered = imagen.getBufferedImage();
+		
+		for (int x = 0; x < buffered.getWidth(); x++) {
+			for (int y = 0; y < buffered.getHeight(); y++) {
+
+				int rgba = buffered.getRGB(x, y);
+				Color col = new Color(rgba, true);
+				
+				if ( col.getRed()<= umbral){
+					
+					col = new Color(0,0,0);
+				} else {
+					
+					col = new Color(255,255,255);
+				}
+				buffered.setRGB(x, y, col.getRGB());
+			}
+		}
+		
+		this.imagenActual.setBufferedImage(buffered);
+	}
+
 }
