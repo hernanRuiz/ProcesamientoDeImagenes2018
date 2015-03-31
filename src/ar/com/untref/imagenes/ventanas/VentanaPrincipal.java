@@ -53,6 +53,7 @@ public class VentanaPrincipal extends JFrame {
 	private JTextField textFieldAltoRAW;
 	private JMenuItem menuItemGuardarComo;
 	private JSlider umbralSlider;
+	private JLabel resultadoCantidadPixeles;
 
 	public VentanaPrincipal() {
 		
@@ -82,6 +83,61 @@ public class VentanaPrincipal extends JFrame {
 		
 		JPanel panelRaw = new JPanel();
 		panel.add(panelRaw);
+		
+		JPanel panelPromedios = new JPanel();
+		JLabel cantidadPixeles = new JLabel("Cantidad de Pixeles:");
+		resultadoCantidadPixeles = new JLabel("");
+		panelPromedios.add(cantidadPixeles);
+		panelPromedios.add(resultadoCantidadPixeles);
+		
+		JButton promedioGrises = new JButton("Valores Promedio:");
+		final JLabel labelPromedioGrises = new JLabel("Niveles de Gris:");
+		labelPromedioGrises.setVisible(false);
+		
+		final JLabel labelPromedioRojo = new JLabel("Rojo:");
+		labelPromedioRojo.setVisible(false);
+		final JLabel labelResultadoPromedioRojo = new JLabel("");
+		labelResultadoPromedioRojo.setVisible(false);
+		
+		final JLabel labelPromedioVerde = new JLabel("Verde:");
+		labelPromedioVerde.setVisible(false);
+		final JLabel labelResultadoPromedioVerde = new JLabel("");
+		labelResultadoPromedioVerde.setVisible(false);
+		
+		final JLabel labelPromedioAzul = new JLabel("Azul:");
+		labelPromedioAzul.setVisible(false);
+		final JLabel labelResultadoPromedioAzul = new JLabel("");
+		labelResultadoPromedioAzul.setVisible(false);
+		
+		panelPromedios.add(promedioGrises, BorderLayout.PAGE_END);
+		panelPromedios.add(labelPromedioGrises, BorderLayout.PAGE_END);
+		
+		panelPromedios.add(labelPromedioRojo, BorderLayout.PAGE_END);
+		panelPromedios.add(labelPromedioVerde, BorderLayout.PAGE_END);
+		panelPromedios.add(labelPromedioAzul, BorderLayout.PAGE_END);
+		panelPromedios.add(labelResultadoPromedioRojo, BorderLayout.PAGE_END);
+		panelPromedios.add(labelResultadoPromedioVerde, BorderLayout.PAGE_END);
+		panelPromedios.add(labelResultadoPromedioAzul, BorderLayout.PAGE_END);
+		
+		contentPane.add(panelPromedios, BorderLayout.PAGE_END);
+		panelPromedios.add(labelPromedioGrises);
+		panelPromedios.setVisible(true);
+		
+		promedioGrises.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Imagen imagen = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
+				BufferedImage imagenActual = imagen.getBufferedImage(); 
+				int[] promedios = ProcesadorDeImagenes.calcularValoresPromedio(imagenActual, imagenActual.getWidth(), imagenActual.getHeight());
+				
+					labelResultadoPromedioRojo.setVisible(true);
+					labelResultadoPromedioRojo.setText("Rojo: " + String.valueOf(promedios[0]));
+					labelResultadoPromedioVerde.setVisible(true);
+					labelResultadoPromedioVerde.setText("Verde: " + String.valueOf(promedios[1]));
+					labelResultadoPromedioAzul.setVisible(true);
+					labelResultadoPromedioAzul.setText("Azul: " + String.valueOf(promedios[2]));
+				}
+			
+		});
 		
 		JLabel labelTamañoRAW = new JLabel("Dimensiones RAW");
 		panelRaw.add(labelTamañoRAW);
@@ -235,6 +291,8 @@ public class VentanaPrincipal extends JFrame {
 					Integer alto = Integer.valueOf(textFieldAltoRAW.getText().trim());
 					Integer ancho = Integer.valueOf(textFieldAnchoRAW.getText().trim());
 					Imagen imagenElegida = ProcesadorDeImagenes.obtenerInstancia().cargarUnaImagenRawDesdeArchivo(alto, ancho);
+					int cantidadPixeles = alto*ancho;
+					refrescarCantidadPixeles(cantidadPixeles);
 					
 					actualizarPanelDeImagen(menuItemGuardarComo, imagenElegida);
 				} catch (Exception e){
@@ -414,12 +472,42 @@ public class VentanaPrincipal extends JFrame {
 			}
 		});
 		menuItemTemplates.add(menuItemDegradeDeGrises);
+		
+		JMenuItem menuItemDegradeColor = new JMenuItem("Degrad\u00E9 de color (200x250)");
+		menuItemDegradeColor.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				BufferedImage buf = Graficador.crearImagenConDegradeColor(200, 250);
+				Imagen degrade = new Imagen(buf, FormatoDeImagen.JPG, "Degradé de color");
+				ProcesadorDeImagenes.obtenerInstancia().setImagenActual(degrade);
+				VentanaPrincipal.this.refrescarImagen();
+			}
+		});
+		menuItemTemplates.add(menuItemDegradeColor);
+		
+		JMenuItem menuItemPromedioGrises = new JMenuItem("Valores Promedio");
+		menuItemPromedioGrises.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Imagen imagen = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
+				BufferedImage imagenActual = imagen.getBufferedImage(); 
+				int[] promedios = ProcesadorDeImagenes.calcularValoresPromedio(imagenActual, imagenActual.getWidth(), imagenActual.getHeight());
+					labelResultadoPromedioRojo.setVisible(true);
+					labelResultadoPromedioRojo.setText("Rojo: " + String.valueOf(promedios[0]));
+					labelResultadoPromedioVerde.setVisible(true);
+					labelResultadoPromedioVerde.setText("Verde: " + String.valueOf(promedios[1]));
+					labelResultadoPromedioAzul.setVisible(true);
+					labelResultadoPromedioAzul.setText("Azul: " + String.valueOf(promedios[3]));
+				}
+			
+		});
+		menuItemTemplates.add(menuItemPromedioGrises);
 	}
 	
 	private void cargarImagen(JLabel labelPrincipal,
 			JMenuItem menuItemGuardarComo) {
 		Imagen imagenElegida = ProcesadorDeImagenes.obtenerInstancia().cargarUnaImagenDesdeArchivo();
-		
+		int cantidadPixeles = imagenElegida.getBufferedImage().getWidth()* imagenElegida.getBufferedImage().getHeight();
+		refrescarCantidadPixeles(cantidadPixeles);
 		actualizarPanelDeImagen(menuItemGuardarComo, imagenElegida);
 	}
 	
@@ -478,4 +566,8 @@ public class VentanaPrincipal extends JFrame {
 		chequearGuardarComo(menuItemGuardarComo);
 	}
 
+	public void refrescarCantidadPixeles(int cantidadPixeles){
+		resultadoCantidadPixeles.setText(String.valueOf(cantidadPixeles));
+	}
+	
 }

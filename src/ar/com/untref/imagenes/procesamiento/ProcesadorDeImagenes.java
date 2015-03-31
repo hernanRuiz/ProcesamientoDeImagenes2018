@@ -218,6 +218,7 @@ public class ProcesadorDeImagenes {
 	public void recortarImagenActual(Integer x1, Integer y1, Integer x2,
 			Integer y2, VentanaPrincipal ventana) {
 
+		int cantidadPixeles = 0;
 		if (imagenActual != null) {
 
 			int ancho = x2 - x1;
@@ -233,13 +234,42 @@ public class ProcesadorDeImagenes {
 				}
 			}
 
-			BufferedImage imagenRecortada = getBufferedImageDeMatriz(
-					matrizRecortada, ancho + 1, alto + 1);
-			Imagen nuevaImagenRecortada = new Imagen(imagenRecortada,
-					imagenActual.getFormato(), imagenActual.getNombre());
+			BufferedImage imagenRecortada = getBufferedImageDeMatriz(matrizRecortada, ancho+1, alto+1);
+			cantidadPixeles = imagenRecortada.getWidth()* imagenRecortada.getHeight();
+			Imagen nuevaImagenRecortada = new Imagen(imagenRecortada, imagenActual.getFormato(), imagenActual.getNombre());
 			this.imagenActual = nuevaImagenRecortada;
 			ventana.refrescarImagen();
+			ventana.refrescarCantidadPixeles(cantidadPixeles);
 		}
+	}
+	
+	public static int[] calcularValoresPromedio(BufferedImage bufferedImage, int ancho, int alto){
+		int acumuladorRojo = 0;
+		int acumuladorVerde = 0;
+		int acumuladorAzul = 0;
+		int promedioRojo = 0;
+		int promedioVerde = 0;
+		int promedioAzul = 0;
+		int cantidadPixeles = ancho * alto;
+		int[] valoresPromedio = new int[3];
+		Color color;
+
+		for (int i = 0; i < ancho; i++) {
+	        for (int j = 0; j < alto; j++) {
+	        	color = new Color(bufferedImage.getRGB(i, j));
+	        	acumuladorRojo+=color.getRed();
+	        	acumuladorVerde+=color.getGreen();
+	        	acumuladorAzul+=color.getBlue();
+	        }
+		}
+		
+		promedioRojo = (acumuladorRojo / cantidadPixeles);
+		promedioVerde = (acumuladorVerde / cantidadPixeles);
+		promedioAzul = (acumuladorAzul / cantidadPixeles);
+		valoresPromedio[0] = promedioRojo;
+		valoresPromedio[1] = promedioVerde;
+		valoresPromedio[2] = promedioAzul;
+		return valoresPromedio;
 	}
 
 	public Imagen aplicarNegativo(Imagen imagen) {

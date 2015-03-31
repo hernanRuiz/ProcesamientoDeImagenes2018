@@ -1,5 +1,7 @@
 package ar.com.untref.imagenes.procesamiento;
 
+import java.awt.Color;
+
 public class ColorManager {
 
 	
@@ -18,5 +20,22 @@ public class ColorManager {
 		int gray = (int)(redConverter + greenConverter + blueConverter);
 		
 		return 0xff000000 + (gray<<16) + (gray<<8) + gray;
+	}
+	
+	public static int contarNivelesDeGris(int alto, int ancho){
+		int contador =0;
+		for (int i = 0; i < ancho; i++) {
+			for (int j = 0; j < alto; j++) {
+				contador++;
+			}
+		}
+		return contador;
+	}
+	
+	public static Color setColorRGB(int red, int green, int blue) {
+		
+		Color color = new Color((int)((red<<16) | (green<<8) | blue));
+	
+		return color;
 	}
 }
