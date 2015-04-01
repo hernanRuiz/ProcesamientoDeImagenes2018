@@ -136,7 +136,12 @@ public class ProcesadorDeImagenes {
 			for (int i = 0; i < height; i++) {
 				for (int j = 0; j < width; j++) {
 					matrizDeImagen[j][i] = bytes[contador];
-					imagen.setRGB(j, i, bytes[contador]);
+					int alpha = 0 << 24;
+		            int red = bytes[contador] << 16;
+		            int green = bytes[contador] << 8;
+		            int blue = bytes[contador];
+		            int color = alpha + red + green + blue;
+					imagen.setRGB(j, i, color);
 					contador++;
 				}
 			}
