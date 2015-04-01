@@ -6,6 +6,10 @@ import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+
+import ar.com.untref.imagenes.modelo.HistogramEQ;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -25,25 +29,19 @@ import org.jfree.chart.renderer.category.BarRenderer;
 import org.jfree.data.category.DefaultCategoryDataset;
 
 import ar.com.untref.imagenes.enums.Canal;
-import ar.com.untref.imagenes.listeners.GuardarHistogramasListener;
-import ar.com.untref.imagenes.modelo.Histograma;
-import ar.com.untref.imagenes.ventanas.VentanaHistogramaEcualizado;
+import ar.com.untref.imagenes.listeners.GuardarImagenEcualizadaListener;
 import ar.com.untref.imagenes.modelo.Imagen;
-import ar.com.untref.imagenes.procesamiento.ProcesadorDeImagenes;
 
 @SuppressWarnings("serial")
-public class VentanaHistogramas extends JFrame{
+public class VentanaHistogramaEcualizado extends JFrame{
 
 	private JPanel contentPane;
 	private JMenuItem menuItemGuardarComo;
-	private JMenuItem menuItemEcualizar;
-	private JFreeChart histogramaRojo;
-	private JFreeChart histogramaVerde;
-	private JFreeChart histogramaAzul;
+	private BufferedImage bufferedImage;
 	
-	public VentanaHistogramas(Imagen imagen) {
+	public VentanaHistogramaEcualizado(Imagen imagen) {
 		
-		this.setTitle("Histogramas");
+		this.setTitle("Ecualización de Histogramas");
 		
 		setPreferredSize(new Dimension(80, 600));
 		setSize(new Dimension(800, 600));
@@ -68,8 +66,12 @@ public class VentanaHistogramas extends JFrame{
 		labelImagen.setPreferredSize(new Dimension(380, 250));
 		labelImagen.setSize(new Dimension(380, 250));
 		panelImagen.add(labelImagen);
-		Image dimg = imagen.getBufferedImage().getScaledInstance(labelImagen.getWidth(), labelImagen.getHeight(), Image.SCALE_SMOOTH);
-		labelImagen.setIcon(new ImageIcon(dimg));
+		
+		BufferedImage miImagen = imagen.getBufferedImage();
+		ArrayList<int[]> histogramaEQ = HistogramEQ.histogramEqualization(miImagen);
+		bufferedImage = HistogramEQ.getImagenEcualizada();
+		Image imagenEcualizada = bufferedImage.getScaledInstance(labelImagen.getWidth(), labelImagen.getHeight(), Image.SCALE_SMOOTH);
+		labelImagen.setIcon(new ImageIcon(imagenEcualizada));
 		
 		JPanel panelHistoRojo = new JPanel();
 		contentPane.add(panelHistoRojo);
@@ -93,25 +95,11 @@ public class VentanaHistogramas extends JFrame{
 		menuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
-				VentanaHistogramas.this.setVisible(false);
+				VentanaHistogramaEcualizado.this.setVisible(false);
 			}
 		});
 		menuItemGuardarComo = new JMenuItem("Guardar Como...");
 		menu.add(menuItemGuardarComo);
-		
-		menuItemEcualizar = new JMenuItem("Equalizar");
-		menuItemEcualizar.addActionListener(new ActionListener() {
-		public void actionPerformed(ActionEvent arg0) {
-				
-				Imagen imagenActual = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
-				if ( imagenActual!=null ){
-					
-					VentanaHistogramaEcualizado ventanaHistogramaEcualizado = new VentanaHistogramaEcualizado(imagenActual);
-					ventanaHistogramaEcualizado.setVisible(true);
-				}
-			}
-		});
-		menu.add(menuItemEcualizar);
 		
 		menu.add(menuItem);
 		
@@ -120,24 +108,25 @@ public class VentanaHistogramas extends JFrame{
 			switch (i) {
 			case 0:
 				
-				histogramaRojo = dibujarHistograma(Histograma.calcularHistogramaRojo(imagen.getBufferedImage()), panelHistoRojo, Canal.ROJO);
+				dibujarHistograma(histogramaEQ.get(0), panelHistoRojo, Canal.ROJO);
 				break;
 			case 1:
 
-				histogramaVerde = dibujarHistograma(Histograma.calcularHistogramaVerde(imagen.getBufferedImage()), panelHistoVerde, Canal.VERDE);
+				dibujarHistograma(histogramaEQ.get(1), panelHistoVerde, Canal.VERDE);
 				break;
 			case 2:
 				
-				histogramaAzul = dibujarHistograma(Histograma.calcularHistogramaAzul(imagen.getBufferedImage()), panelHistoAzul, Canal.AZUL);
+				dibujarHistograma(histogramaEQ.get(2), panelHistoAzul, Canal.AZUL);
 				break;
 			}
 		}
 		
-		GuardarHistogramasListener listener = new GuardarHistogramasListener(contentPane, histogramaRojo, histogramaVerde, histogramaAzul);
+		GuardarImagenEcualizadaListener listener = new GuardarImagenEcualizadaListener(bufferedImage);
 		menuItemGuardarComo.addActionListener(listener);
+	
 	}
 	
-	private JFreeChart dibujarHistograma(float[] histograma, JPanel jPanel, Canal colorBarras) {
+	private JFreeChart dibujarHistograma(int[] histograma, JPanel jPanel, Canal colorBarras) {
 
 		DefaultCategoryDataset dataset = new DefaultCategoryDataset();
 

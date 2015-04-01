@@ -56,7 +56,9 @@ public class VentanaPrincipal extends JFrame {
 	private JLabel resultadoCantidadPixeles;
 
 	public VentanaPrincipal() {
-		
+
+		this.setTitle("Procesamiento de Imágenes");
+				
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 800, 600);
 		

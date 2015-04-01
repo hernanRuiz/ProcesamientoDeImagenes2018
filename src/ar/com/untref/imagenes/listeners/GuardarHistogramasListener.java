@@ -43,11 +43,11 @@ public class GuardarHistogramasListener implements ActionListener{
 				File nuevoArchivoHistRojo = new File(ubicacion.getAbsolutePath()+"_rojo.jpg");
 				File nuevoArchivoHistVerde = new File(ubicacion.getAbsolutePath()+"_verde.jpg");
 				File nuevoArchivoHistAzul = new File(ubicacion.getAbsolutePath()+"_azul.jpg");
-
+				
 				ChartUtilities.saveChartAsJPEG(nuevoArchivoHistRojo, histogramaRojo, 400, 300);
 				ChartUtilities.saveChartAsJPEG(nuevoArchivoHistVerde, histogramaVerde, 400, 300);
 				ChartUtilities.saveChartAsJPEG(nuevoArchivoHistAzul, histogramaAzul, 400, 300);
-
+				
 				DialogsHelper.mostarMensaje(panel, "Histogramas guardados.");
 
 			} catch (IOException exception) {
