@@ -84,46 +84,36 @@ public class VentanaPrincipal extends JFrame {
 		JPanel panelRaw = new JPanel();
 		panel.add(panelRaw);
 		
-		JPanel panelPromedios = new JPanel();
+		final JPanel panelPromedios = new JPanel();
 		JLabel cantidadPixeles = new JLabel("Cantidad de Pixeles:");
 		resultadoCantidadPixeles = new JLabel("");
 		panelPromedios.add(cantidadPixeles);
 		panelPromedios.add(resultadoCantidadPixeles);
 		
-		JButton promedioGrises = new JButton("Valores Promedio:");
+		JButton botonPromedio = new JButton("Valores Promedio:");
 		final JLabel labelPromedioGrises = new JLabel("Niveles de Gris:");
 		labelPromedioGrises.setVisible(false);
 		
-		final JLabel labelPromedioRojo = new JLabel("Rojo:");
-		labelPromedioRojo.setVisible(false);
 		final JLabel labelResultadoPromedioRojo = new JLabel("");
 		labelResultadoPromedioRojo.setVisible(false);
 		
-		final JLabel labelPromedioVerde = new JLabel("Verde:");
-		labelPromedioVerde.setVisible(false);
 		final JLabel labelResultadoPromedioVerde = new JLabel("");
 		labelResultadoPromedioVerde.setVisible(false);
 		
-		final JLabel labelPromedioAzul = new JLabel("Azul:");
-		labelPromedioAzul.setVisible(false);
 		final JLabel labelResultadoPromedioAzul = new JLabel("");
 		labelResultadoPromedioAzul.setVisible(false);
 		
-		panelPromedios.add(promedioGrises, BorderLayout.PAGE_END);
+		panelPromedios.add(botonPromedio, BorderLayout.PAGE_END);
 		panelPromedios.add(labelPromedioGrises, BorderLayout.PAGE_END);
-		
-		panelPromedios.add(labelPromedioRojo, BorderLayout.PAGE_END);
-		panelPromedios.add(labelPromedioVerde, BorderLayout.PAGE_END);
-		panelPromedios.add(labelPromedioAzul, BorderLayout.PAGE_END);
 		panelPromedios.add(labelResultadoPromedioRojo, BorderLayout.PAGE_END);
 		panelPromedios.add(labelResultadoPromedioVerde, BorderLayout.PAGE_END);
 		panelPromedios.add(labelResultadoPromedioAzul, BorderLayout.PAGE_END);
 		
 		contentPane.add(panelPromedios, BorderLayout.PAGE_END);
 		panelPromedios.add(labelPromedioGrises);
-		panelPromedios.setVisible(true);
+		panelPromedios.setVisible(false);
 		
-		promedioGrises.addActionListener(new ActionListener() {
+		botonPromedio.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				Imagen imagen = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
 				BufferedImage imagenActual = imagen.getBufferedImage(); 
@@ -392,6 +382,7 @@ public class VentanaPrincipal extends JFrame {
 		menuItemUmbralizar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 			
+				VentanaPrincipal.this.setExtendedState(VentanaPrincipal.this.getExtendedState() | JFrame.MAXIMIZED_BOTH);
 				panelUmbral.setVisible(true);
 				menu.setEnabled(false);
 				menuItemEditar.setEnabled(false);
@@ -440,7 +431,7 @@ public class VentanaPrincipal extends JFrame {
 		menuItemImagenConCuadrado.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
-				
+				panelPromedios.setVisible(false);
 				BufferedImage buf = Graficador.crearImagenConCuadradoEnElCentro(200, 200, 40);
 				Imagen imagenConCuadrado = new Imagen(buf, FormatoDeImagen.JPG, "Imagen Con Cuadrado");
 				ProcesadorDeImagenes.obtenerInstancia().setImagenActual(imagenConCuadrado);
@@ -453,6 +444,7 @@ public class VentanaPrincipal extends JFrame {
 		menuItemImagenConCirculo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
+				panelPromedios.setVisible(false);
 				BufferedImage buf = Graficador.crearImagenConCirculoEnElMedio(200,200,40);
 				Imagen imagenConCirculo = new Imagen(buf, FormatoDeImagen.JPG, "Imagen Con Circulo");
 				ProcesadorDeImagenes.obtenerInstancia().setImagenActual(imagenConCirculo);
@@ -465,6 +457,7 @@ public class VentanaPrincipal extends JFrame {
 		menuItemDegradeDeGrises.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
+				panelPromedios.setVisible(false);
 				BufferedImage buf = Graficador.crearImagenConDegradeDeGrises(200, 250);
 				Imagen degrade = new Imagen(buf, FormatoDeImagen.JPG, "Degradé de grises");
 				ProcesadorDeImagenes.obtenerInstancia().setImagenActual(degrade);
@@ -477,6 +470,7 @@ public class VentanaPrincipal extends JFrame {
 		menuItemDegradeColor.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
+				panelPromedios.setVisible(false);
 				BufferedImage buf = Graficador.crearImagenConDegradeColor(200, 250);
 				Imagen degrade = new Imagen(buf, FormatoDeImagen.JPG, "Degradé de color");
 				ProcesadorDeImagenes.obtenerInstancia().setImagenActual(degrade);
@@ -488,19 +482,11 @@ public class VentanaPrincipal extends JFrame {
 		JMenuItem menuItemPromedioGrises = new JMenuItem("Valores Promedio");
 		menuItemPromedioGrises.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				Imagen imagen = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
-				BufferedImage imagenActual = imagen.getBufferedImage(); 
-				int[] promedios = ProcesadorDeImagenes.calcularValoresPromedio(imagenActual, imagenActual.getWidth(), imagenActual.getHeight());
-					labelResultadoPromedioRojo.setVisible(true);
-					labelResultadoPromedioRojo.setText("Rojo: " + String.valueOf(promedios[0]));
-					labelResultadoPromedioVerde.setVisible(true);
-					labelResultadoPromedioVerde.setText("Verde: " + String.valueOf(promedios[1]));
-					labelResultadoPromedioAzul.setVisible(true);
-					labelResultadoPromedioAzul.setText("Azul: " + String.valueOf(promedios[3]));
+				panelPromedios.setVisible(true);
 				}
 			
 		});
-		menuItemTemplates.add(menuItemPromedioGrises);
+		menuItemEditar.add(menuItemPromedioGrises);
 	}
 	
 	private void cargarImagen(JLabel labelPrincipal,
