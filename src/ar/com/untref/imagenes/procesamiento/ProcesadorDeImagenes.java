@@ -130,7 +130,7 @@ public class ProcesadorDeImagenes {
 		try {
 			bytes = Files.readAllBytes(archivoActual.getFile().toPath());
 			imagen = new BufferedImage(width, height,
-					BufferedImage.TYPE_3BYTE_BGR);
+					BufferedImage.TYPE_INT_RGB);
 			double[][] matrizDeImagen = new double[width][height];
 			int contador = 0;
 			for (int i = 0; i < height; i++) {
