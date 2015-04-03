@@ -23,7 +23,7 @@ import ar.com.untref.imagenes.helpers.DialogsHelper;
 import ar.com.untref.imagenes.listeners.GuardarComoListener;
 import ar.com.untref.imagenes.modelo.Imagen;
 import ar.com.untref.imagenes.procesamiento.ProcesadorDeImagenes;
-import ar.com.untref.imagenes.ruido.generarRuido;
+import ar.com.untref.imagenes.ruido.GeneradorDeRuido;
 
 @SuppressWarnings("serial")
 public class VentanaRuido extends JFrame {
@@ -136,7 +136,7 @@ public class VentanaRuido extends JFrame {
 						
 					Integer sigma = Integer.valueOf(campoSigma);
 					Integer mu = Integer.valueOf(campoMu);
-					BufferedImage bufferedImage = generarRuido.generarRuidoGauss(ProcesadorDeImagenes.obtenerInstancia().getImagenActual().getBufferedImage(), sigma, mu);
+					BufferedImage bufferedImage = GeneradorDeRuido.generarRuidoGauss(ProcesadorDeImagenes.obtenerInstancia().getImagenActual().getBufferedImage(), sigma, mu);
 					Imagen imagenAnterior = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
 					Imagen nuevaImagenActual = new Imagen(bufferedImage, imagenAnterior.getFormato(), imagenAnterior.getNombre());
 					ProcesadorDeImagenes.obtenerInstancia().setImagenActual(nuevaImagenActual);

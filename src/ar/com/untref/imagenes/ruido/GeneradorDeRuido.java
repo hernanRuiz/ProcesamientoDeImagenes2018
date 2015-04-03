@@ -6,11 +6,11 @@ import java.util.Random;
 
 import ar.com.untref.imagenes.procesamiento.ColorManager;
 
-public class generarRuido {
+public class GeneradorDeRuido {
 	
 	//8 - A. Esto es tal cual a la carpeta, pero en el enunciado del tp nos pasa una distribución de 
 	//y su función de densidad y nos pide hacer un generador de aleatorios en base a eso, ni idea.
-	private static double[] generadorAleatoriosGauss(){
+	private static double[] generadorFuncionesAleatoriasDeGauss(){
 		double x1, x2, y1, y2;
 		
 		x1 = 0;
@@ -33,13 +33,13 @@ public class generarRuido {
 	}
 
 	//10 - A (pero dice ruido blanco, y este es Gauss a secas, el que vimos en clase).
-	public static BufferedImage generarRuidoGauss(BufferedImage bufferedImage, int ro, int mu) {
+	public static BufferedImage generarRuidoGauss(BufferedImage bufferedImage, int sigma, int mu) {
 		
 		int nrows, ncols;
 		BufferedImage imagenConRuido;
 		Random random = new Random();
 
-		double[] aleatorios = new double [2];
+		double[] funcionesAleatorias = new double [2];
 		
 		nrows = bufferedImage.getWidth();
 		ncols = bufferedImage.getHeight();
@@ -48,13 +48,15 @@ public class generarRuido {
 		for (int i = 0; i < nrows; i++) {
 			for (int j = 0; j < ncols; j++) {
 
-				aleatorios = generadorAleatoriosGauss();
+				funcionesAleatorias = generadorFuncionesAleatoriasDeGauss();
 				Color color = new Color(bufferedImage.getRGB(i, j));
 				
-				int rojo = (color.getRed() + (int) (((random.nextBoolean() ? aleatorios[0]: aleatorios[1]) * ro) + mu));
-				int verde = (color.getGreen() + (int) (((random.nextBoolean() ? aleatorios[0]: aleatorios[1]) * ro) + mu));
-				int azul = (color.getBlue() + (int) (((random.nextBoolean() ? aleatorios[0]: aleatorios[1]) * ro) + mu));
+				boolean elegirFormula1= random.nextBoolean();
+				int rojo = (color.getRed() + (int) (((elegirFormula1 ? funcionesAleatorias[0]: funcionesAleatorias[1]) * sigma) + mu));
+				int verde = (color.getGreen() + (int) (((elegirFormula1 ? funcionesAleatorias[0]: funcionesAleatorias[1]) * sigma) + mu));
+				int azul = (color.getBlue() + (int) (((elegirFormula1 ? funcionesAleatorias[0]: funcionesAleatorias[1]) * sigma) + mu));
 
+				//TODO: Truncar o transformar?
 				if (rojo < 0) rojo = 0;
 				else if (rojo > 255) rojo = 255;
 
@@ -65,7 +67,7 @@ public class generarRuido {
 				else if (azul > 255) azul = 255;
 
 				Color colorModificado = ColorManager.setColorRGB(rojo, verde, azul);
-				imagenConRuido.setRGB(i, j, colorModificado.getRGB()); // Add noise to pixel						
+				imagenConRuido.setRGB(i, j, colorModificado.getRGB());				
 			}
 		}
 		return imagenConRuido;
