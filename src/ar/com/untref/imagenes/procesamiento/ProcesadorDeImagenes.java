@@ -21,6 +21,7 @@ public class ProcesadorDeImagenes {
 	private static ProcesadorDeImagenes instancia;
 	private Archivo archivoActual;
 	private Imagen imagenActual;
+	private Imagen imagenOriginal;
 
 	private ProcesadorDeImagenes() {
 	}
@@ -68,6 +69,7 @@ public class ProcesadorDeImagenes {
 							formatoDeLaImagen, archivoActual.getNombre());
 
 					imagenActual = imagen;
+					imagenOriginal = imagen;
 					imagenADevolver = imagen;
 				}
 
@@ -112,6 +114,7 @@ public class ProcesadorDeImagenes {
 				Imagen imagen = new Imagen(bufferedImage, formatoDeLaImagen,
 						archivoActual.getNombre());
 				imagenActual = imagen;
+				imagenOriginal = imagen;
 				imagenADevolver = imagen;
 			} catch (Exception e) {
 
@@ -311,6 +314,11 @@ public class ProcesadorDeImagenes {
 	public Archivo getArchivoActual(){
 		
 		return this.archivoActual;
+	}
+	
+public Imagen getImagenOriginal(){
+		
+		return this.imagenOriginal;
 	}
 	
 	public void aumentarContrastePorElCuadrado(Imagen imagen){

@@ -35,7 +35,6 @@ import ar.com.untref.imagenes.modelo.Imagen;
 import ar.com.untref.imagenes.procesamiento.ColorManager;
 import ar.com.untref.imagenes.procesamiento.Graficador;
 import ar.com.untref.imagenes.procesamiento.ProcesadorDeImagenes;
-import ar.com.untref.imagenes.ruido.generarRuido;
 
 @SuppressWarnings("serial")
 public class VentanaPrincipal extends JFrame {
@@ -46,7 +45,6 @@ public class VentanaPrincipal extends JFrame {
 	private JLabel labelPrincipal;
 	private JMenu menu;
 	private JMenu menuItemTemplates;
-	private JMenu menuRuido;
 	private JPanel panelPixel;
 	private JPanel panelUmbral;
 	private JTextField posicionXTextField;
@@ -307,27 +305,23 @@ public class VentanaPrincipal extends JFrame {
 		menu.add(menuItem);
 		
 		menuItemEditar = new JMenu("Editar");
-		
 		inhabilitarItem(menuItemEditar);
 		
 		menuBar.add(menuItemEditar);
-		
-		menuRuido = new JMenu("Ruido");
-		menuBar.add(menuRuido);
-		
-		JMenuItem menuItemAplicarRuidoGaussiano = new JMenuItem("Aplicar ruido de Gauss");
-		menuItemAplicarRuidoGaussiano.addActionListener(new ActionListener() {
+				
+		JMenuItem menuItemAplicarRuido = new JMenuItem("Aplicar ruido");
+		menuItemAplicarRuido.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				//BufferedImage bufferedImage = generarRuido.generarRuidoGaussConRoYMu(ProcesadorDeImagenes.obtenerInstancia().getImagenActual().getBufferedImage(), 50, 0);
-				//BufferedImage bufferedImage = generarRuido.generarRuidoGauss(ProcesadorDeImagenes.obtenerInstancia().getImagenActual().getBufferedImage(), 20, 20);
-				BufferedImage bufferedImage = generarRuido.generarRuidoExponencialMultiplicativo(ProcesadorDeImagenes.obtenerInstancia().getImagenActual().getBufferedImage(), 2);
-				Imagen nuevaImagenActual = new Imagen();
-				nuevaImagenActual.setBufferedImage(bufferedImage);
-				ProcesadorDeImagenes.obtenerInstancia().setImagenActual(nuevaImagenActual);
-				VentanaPrincipal.this.refrescarImagen();
+				
+				Imagen imagenActual = ProcesadorDeImagenes.obtenerInstancia().getImagenOriginal();
+				if ( imagenActual!=null ){	
+					VentanaRuido ventanaRuido = new VentanaRuido(imagenActual);
+					ventanaRuido.setVisible(true);
+				}
 			}
+		
 		});
-		menuRuido.add(menuItemAplicarRuidoGaussiano);
+		menuItemEditar.add(menuItemAplicarRuido);
 		
 		
 		menuItemRecortarImagen = new JMenuItem("Recortar Imagen");
