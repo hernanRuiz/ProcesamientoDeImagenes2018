@@ -119,7 +119,7 @@ public class VentanaPrincipal extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				Imagen imagen = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
 				BufferedImage imagenActual = imagen.getBufferedImage(); 
-				int[] promedios = ProcesadorDeImagenes.calcularValoresPromedio(imagenActual, imagenActual.getWidth(), imagenActual.getHeight());
+				int[] promedios = ProcesadorDeImagenes.obtenerInstancia().calcularValoresPromedio(imagenActual, imagenActual.getWidth(), imagenActual.getHeight());
 				
 					labelResultadoPromedioRojo.setVisible(true);
 					labelResultadoPromedioRojo.setText("Rojo: " + String.valueOf(promedios[0]));
@@ -197,7 +197,6 @@ public class VentanaPrincipal extends JFrame {
 					
 					if (!posicionXTextField.getText().trim().isEmpty() && !posicionYTextField.getText().trim().isEmpty()){
 						
-						
 						try{
 							
 							Integer x = Integer.valueOf(posicionXTextField.getText().trim());
@@ -211,7 +210,6 @@ public class VentanaPrincipal extends JFrame {
 							labelColorResultante.setOpaque(true);
 						} catch (Exception e) {
 							
-							e.printStackTrace();
 							DialogsHelper.mostarMensaje(contentPane, "Por favor ingresa una posición válida", NivelMensaje.ERROR);
 						}
 					} else {

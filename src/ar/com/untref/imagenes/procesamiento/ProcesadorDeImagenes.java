@@ -251,7 +251,7 @@ public class ProcesadorDeImagenes {
 		}
 	}
 	
-	public static int[] calcularValoresPromedio(BufferedImage bufferedImage, int ancho, int alto){
+	public int[] calcularValoresPromedio(BufferedImage bufferedImage, int ancho, int alto){
 		int acumuladorRojo = 0;
 		int acumuladorVerde = 0;
 		int acumuladorAzul = 0;

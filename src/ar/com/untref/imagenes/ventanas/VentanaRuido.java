@@ -18,6 +18,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
+import ar.com.untref.imagenes.enums.NivelMensaje;
+import ar.com.untref.imagenes.helpers.DialogsHelper;
 import ar.com.untref.imagenes.listeners.GuardarComoListener;
 import ar.com.untref.imagenes.modelo.Imagen;
 import ar.com.untref.imagenes.procesamiento.ProcesadorDeImagenes;
@@ -30,7 +32,6 @@ public class VentanaRuido extends JFrame {
 	private JMenu menuItemEditar;
 	private JLabel labelPrincipal;
 	private JMenu menu;
-	private JMenu menuRuido;
 	private JTextField posicionXTextField;
 	private JTextField posicionYTextField;
 	private JTextField textFieldMu;
@@ -40,7 +41,7 @@ public class VentanaRuido extends JFrame {
 	private JMenuItem menuItemGuardarComo;
 	private JLabel resultadoCantidadPixeles;
 
-	public VentanaRuido(final Imagen imagen) {
+	public VentanaRuido(final Imagen imagenSinCambios) {
 		
 		this.setTitle("Generador de Ruido y Filtros");
 		VentanaRuido.this.setExtendedState(VentanaRuido.this.getExtendedState() | JFrame.MAXIMIZED_BOTH);
@@ -63,7 +64,7 @@ public class VentanaRuido extends JFrame {
 		contentPane.add(scrollPane, BorderLayout.CENTER);
 		
 		labelPrincipal = new JLabel();
-		labelPrincipal.setIcon(new ImageIcon(imagen.getBufferedImage()));
+		labelPrincipal.setIcon(new ImageIcon(imagenSinCambios.getBufferedImage()));
 		
 		scrollPane.setViewportView(labelPrincipal);
 		
@@ -125,13 +126,31 @@ public class VentanaRuido extends JFrame {
 		panelRuido.add(aplicarRuidoGauss);
 		aplicarRuidoGauss.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				Integer sigma = Integer.valueOf(textFieldSigma.getText().trim());
-				Integer mu = Integer.valueOf(textFieldMu.getText().trim());
-				BufferedImage bufferedImage = generarRuido.generarRuidoGauss(ProcesadorDeImagenes.obtenerInstancia().getImagenActual().getBufferedImage(), sigma, mu);
-				Imagen nuevaImagenActual = new Imagen();
-				nuevaImagenActual.setBufferedImage(bufferedImage);
-				ProcesadorDeImagenes.obtenerInstancia().setImagenActual(nuevaImagenActual);
-				VentanaRuido.this.refrescarImagen();
+				
+				String campoSigma = textFieldSigma.getText().trim();
+				String campoMu = textFieldMu.getText().trim();
+
+				if (!campoSigma.isEmpty() && !campoMu.isEmpty()){
+					
+					try {
+						
+					Integer sigma = Integer.valueOf(campoSigma);
+					Integer mu = Integer.valueOf(campoMu);
+					BufferedImage bufferedImage = generarRuido.generarRuidoGauss(ProcesadorDeImagenes.obtenerInstancia().getImagenActual().getBufferedImage(), sigma, mu);
+					Imagen imagenAnterior = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
+					Imagen nuevaImagenActual = new Imagen(bufferedImage, imagenAnterior.getFormato(), imagenAnterior.getNombre());
+					ProcesadorDeImagenes.obtenerInstancia().setImagenActual(nuevaImagenActual);
+					
+					VentanaRuido.this.refrescarImagen();
+					
+					} catch (Exception e) {
+						
+						DialogsHelper.mostarMensaje(contentPane, "Por favor ingrese parámetros numéricos", NivelMensaje.ERROR);
+					}
+				} else {
+					
+					DialogsHelper.mostarMensaje(contentPane, "Por favor completa los campos Mu y Sigma", NivelMensaje.ERROR);
+				}
 			}
 		
 		});
@@ -170,7 +189,7 @@ public class VentanaRuido extends JFrame {
 		JButton volverALaImagenOriginal = new JButton("Imagen Original");
 		volverALaImagenOriginal.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				ProcesadorDeImagenes.obtenerInstancia().setImagenActual(imagen);
+				ProcesadorDeImagenes.obtenerInstancia().setImagenActual(imagenSinCambios);
 				VentanaRuido.this.refrescarImagen();
 			}
 		});
@@ -182,7 +201,7 @@ public class VentanaRuido extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				
 				VentanaRuido.this.setVisible(false);
-				ProcesadorDeImagenes.obtenerInstancia().setImagenActual(imagen);
+				ProcesadorDeImagenes.obtenerInstancia().setImagenActual(imagenSinCambios);
 				VentanaRuido.this.refrescarImagen();
 			}
 		});
@@ -208,23 +227,6 @@ public class VentanaRuido extends JFrame {
 		menuItemEditar = new JMenu("Editar");
 				
 		menuBar.add(menuItemEditar);
-		
-		menuRuido = new JMenu("Ruido");
-		menuBar.add(menuRuido);
-		
-		JMenuItem menuItemAplicarRuidoGaussiano = new JMenuItem("Aplicar ruido de Gauss");
-		menuItemAplicarRuidoGaussiano.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				//BufferedImage bufferedImage = generarRuido.generarRuidoGaussConRoYMu(ProcesadorDeImagenes.obtenerInstancia().getImagenActual().getBufferedImage(), 50, 0);
-				//BufferedImage bufferedImage = generarRuido.generarRuidoGauss(ProcesadorDeImagenes.obtenerInstancia().getImagenActual().getBufferedImage(), 20, 20);
-				BufferedImage bufferedImage = generarRuido.generarRuidoExponencialMultiplicativo(ProcesadorDeImagenes.obtenerInstancia().getImagenActual().getBufferedImage(), 2);
-				Imagen nuevaImagenActual = new Imagen();
-				nuevaImagenActual.setBufferedImage(bufferedImage);
-				ProcesadorDeImagenes.obtenerInstancia().setImagenActual(nuevaImagenActual);
-				VentanaRuido.this.refrescarImagen();
-			}
-		});
-		menuRuido.add(menuItemAplicarRuidoGaussiano);
 		
 		JMenuItem menuItemHistogramas = new JMenuItem("Histogramas");
 		menuItemHistogramas.addActionListener(new ActionListener() {
@@ -259,6 +261,7 @@ public class VentanaRuido extends JFrame {
 	}
 
 	private void chequearGuardarComo(JMenuItem menuItemGuardarComo) {
+		
 		Imagen imagenActual = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
 		
 		if (imagenActual!=null){
@@ -309,7 +312,4 @@ public class VentanaRuido extends JFrame {
 		resultadoCantidadPixeles.setText(String.valueOf(cantidadPixeles));
 	}
 	
-
-	
-
 }
