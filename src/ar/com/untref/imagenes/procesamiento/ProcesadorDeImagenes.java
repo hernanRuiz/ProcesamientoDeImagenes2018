@@ -246,6 +246,7 @@ public class ProcesadorDeImagenes {
 			cantidadPixeles = imagenRecortada.getWidth()* imagenRecortada.getHeight();
 			Imagen nuevaImagenRecortada = new Imagen(imagenRecortada, imagenActual.getFormato(), imagenActual.getNombre());
 			this.imagenActual = nuevaImagenRecortada;
+			this.imagenOriginal = nuevaImagenRecortada;
 			ventana.refrescarImagen();
 			ventana.refrescarCantidadPixeles(cantidadPixeles);
 		}
@@ -301,6 +302,7 @@ public class ProcesadorDeImagenes {
 
 			imagenEnNegativo = new Imagen(resultado, imagen.getFormato(), imagen.getNombre());
 			this.imagenActual = imagenEnNegativo;
+			this.imagenOriginal = imagenEnNegativo;
 		}
 		
 		return imagenEnNegativo;
@@ -340,6 +342,8 @@ public Imagen getImagenOriginal(){
 			}
 		}
 		this.imagenActual.setBufferedImage(buffered);
+		this.imagenOriginal.setBufferedImage(buffered);
+		
 	}
 	
 	public void aumentoContrasteAutomatico(Imagen imagen) {
@@ -404,6 +408,8 @@ public Imagen getImagenOriginal(){
 			}
 		}
 		this.imagenActual.setBufferedImage(buffered);
+		this.imagenOriginal.setBufferedImage(buffered);
+		
 	}
 	
 	/**
@@ -432,6 +438,8 @@ public Imagen getImagenOriginal(){
 		}
 		
 		this.imagenActual.setBufferedImage(buffered);
+		this.imagenOriginal.setBufferedImage(buffered);
+		
 	}
 
 }
