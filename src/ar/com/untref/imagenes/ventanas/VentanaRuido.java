@@ -8,6 +8,7 @@ import java.awt.image.BufferedImage;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -33,6 +34,8 @@ public class VentanaRuido extends JFrame {
 	private JPanel contentPane;
 	private JMenu menuItemEditar;
 	private JLabel labelPrincipal;
+	private JLabel labelSigma;
+	private JLabel labelMu;
 	private JMenu menu;
 	private JTextField posicionXTextField;
 	private JTextField posicionYTextField;
@@ -40,9 +43,12 @@ public class VentanaRuido extends JFrame {
 	private JTextField textFieldSigma;
 	private JTextField textFieldLambda;
 	private JTextField textFieldPhi;
+	private JTextField textFieldPorcentaje;
 	private JMenuItem menuItemGuardarComo;
 	private JLabel resultadoCantidadPixeles;
-
+	private JComboBox<String> comboGauss;
+	
+	
 	public VentanaRuido(final Imagen imagenSinCambios) {
 		
 		this.setTitle("Generador de Ruido y Filtros");
@@ -104,10 +110,41 @@ public class VentanaRuido extends JFrame {
 		contentPane.add(panelPromedios, BorderLayout.PAGE_END);
 		panelPromedios.setVisible(false);
 
-		JLabel labelRuidoGauss = new JLabel("Ruido Gaussiano:");
-		panelRuido.add(labelRuidoGauss);
 		
-		JLabel labelSigma = new JLabel("Sigma:");
+		String[] opcionesGauss = {"Ruido de Gauss", "Ruido Blanco de Gauss"};
+		comboGauss = new JComboBox<String>(opcionesGauss);
+		comboGauss.setSelectedIndex(0);
+		panelRuido.add(comboGauss);
+		comboGauss.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                int opcionSeleccionada = comboGauss.getSelectedIndex();
+                
+                switch (opcionSeleccionada) {//check for a match
+                	
+                case 1:
+                    	
+        				Integer sigma = 1;
+                    	//textFieldSigma.setText(String.valueOf(sigma));
+    					Integer mu = 0;
+    					//textFieldMu.setText(String.valueOf(mu));
+    					
+    					BufferedImage bufferedImage = GeneradorDeRuido.generarRuidoGauss(ProcesadorDeImagenes.obtenerInstancia().getImagenActual().getBufferedImage(), sigma, mu);
+    					Imagen imagenAnterior = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
+    					Imagen nuevaImagenActual = new Imagen(bufferedImage, imagenAnterior.getFormato(), imagenAnterior.getNombre());
+    					ProcesadorDeImagenes.obtenerInstancia().setImagenActual(nuevaImagenActual);
+    					
+    					VentanaRuido.this.refrescarImagen();
+                }
+            }
+            
+		});
+	 
+		//JLabel labelRuidoGauss = new JLabel("Ruido Gaussiano:");
+		//panelRuido.add(labelRuidoGauss);
+		
+		labelSigma = new JLabel("Sigma:");
 		panelRuido.add(labelSigma);
 		
 		textFieldSigma = new JTextField();
@@ -116,7 +153,7 @@ public class VentanaRuido extends JFrame {
 		textFieldSigma.setPreferredSize(new Dimension(1, 20));
 		textFieldSigma.setColumns(3);
 		
-		JLabel labelMu = new JLabel("Mu:");
+		labelMu = new JLabel("Mu:");
 		panelRuido.add(labelMu);
 		
 		textFieldMu = new JTextField();
@@ -171,6 +208,35 @@ public class VentanaRuido extends JFrame {
 		
 		JButton aplicarRuidoExponencial = new JButton("Aplicar");
 		panelRuido.add(aplicarRuidoExponencial);
+		aplicarRuidoExponencial.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				String campoLambda = textFieldLambda.getText().trim();
+
+				if (!campoLambda.isEmpty()){
+					
+					try {
+						
+					Integer lambda = Integer.valueOf(campoLambda);
+					BufferedImage bufferedImage = GeneradorDeRuido.generarRuidoExponencialMultiplicativo(ProcesadorDeImagenes.obtenerInstancia().getImagenActual().getBufferedImage(), lambda);
+					Imagen imagenAnterior = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
+					Imagen nuevaImagenActual = new Imagen(bufferedImage, imagenAnterior.getFormato(), imagenAnterior.getNombre());
+					ProcesadorDeImagenes.obtenerInstancia().setImagenActual(nuevaImagenActual);
+					
+					VentanaRuido.this.refrescarImagen();
+					
+					} catch (Exception e) {
+						
+						DialogsHelper.mostarMensaje(contentPane, "Por favor ingrese parámetro numérico", NivelMensaje.ERROR);
+					}
+				} else {
+					
+					DialogsHelper.mostarMensaje(contentPane, "Por favor completa el campo Lambda", NivelMensaje.ERROR);
+				}
+			}
+		
+		});
+
 		
 		JLabel labelRuidoRayleigh = new JLabel("Ruido Rayleigh:");
 		panelRuido.add(labelRuidoRayleigh);
@@ -186,7 +252,76 @@ public class VentanaRuido extends JFrame {
 		
 		JButton aplicarRuidoRayleigh = new JButton("Aplicar");
 		panelRuido.add(aplicarRuidoRayleigh);
+		aplicarRuidoRayleigh.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				String campoPhi = textFieldPhi.getText().trim();
+
+				if (!campoPhi.isEmpty()){
+					
+					try {
+						
+					Integer phi = Integer.valueOf(campoPhi);
+					BufferedImage bufferedImage = GeneradorDeRuido.generarRuidoRayleighMultiplicativo(ProcesadorDeImagenes.obtenerInstancia().getImagenActual().getBufferedImage(), phi);
+					Imagen imagenAnterior = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
+					Imagen nuevaImagenActual = new Imagen(bufferedImage, imagenAnterior.getFormato(), imagenAnterior.getNombre());
+					ProcesadorDeImagenes.obtenerInstancia().setImagenActual(nuevaImagenActual);
+					
+					VentanaRuido.this.refrescarImagen();
+					
+					} catch (Exception e) {
+						
+						DialogsHelper.mostarMensaje(contentPane, "Por favor ingrese parámetro numérico", NivelMensaje.ERROR);
+					}
+				} else {
+					
+					DialogsHelper.mostarMensaje(contentPane, "Por favor completa el campo Lambda", NivelMensaje.ERROR);
+				}
+			}
 		
+		});
+		
+		JLabel labelRuidoSaltAndPepper = new JLabel("Ruido SyP");
+		panelRuido.add(labelRuidoSaltAndPepper);
+		
+		JLabel labelPorcentaje = new JLabel("Porcentaje:");
+		panelRuido.add(labelPorcentaje);
+		
+		textFieldPorcentaje = new JTextField();
+		panelRuido.add(textFieldPorcentaje);
+		textFieldPorcentaje.setMinimumSize(new Dimension(3, 20));
+		textFieldPorcentaje.setPreferredSize(new Dimension(1, 20));
+		textFieldPorcentaje.setColumns(3);
+		
+		
+		JButton aplicarRuidoSaltAndPepper = new JButton("Aplicar");
+		panelRuido.add(aplicarRuidoSaltAndPepper);
+		aplicarRuidoSaltAndPepper.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				String campoPorcentaje = textFieldPorcentaje.getText().trim();
+
+				if (!campoPorcentaje.isEmpty()){
+					
+					try {
+						
+					Integer porcentaje = Integer.valueOf(campoPorcentaje);
+					Imagen imagen = GeneradorDeRuido.generarRuidoSaltAndPepper(ProcesadorDeImagenes.obtenerInstancia().getImagenActual(), porcentaje);
+					ProcesadorDeImagenes.obtenerInstancia().setImagenActual(imagen);
+					
+					VentanaRuido.this.refrescarImagen();
+					
+					} catch (Exception e) {
+						
+						DialogsHelper.mostarMensaje(contentPane, "Por favor ingrese parámetro numérico", NivelMensaje.ERROR);
+					}
+				} else {
+					
+					DialogsHelper.mostarMensaje(contentPane, "Por favor completa el campo Porcentaje", NivelMensaje.ERROR);
+				}
+			}
+		
+		});
 		
 		JButton volverALaImagenOriginal = new JButton("Imagen Original");
 		volverALaImagenOriginal.addActionListener(new ActionListener() {
@@ -243,6 +378,22 @@ public class VentanaRuido extends JFrame {
 			}
 		});
 		menuItemEditar.add(menuItemHistogramas);
+		
+		
+		JMenuItem menuItemRuidoSyP = new JMenuItem("AplicarRuidoSaltAndPepper");
+		menuItemRuidoSyP.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				Imagen imagenConRuido = GeneradorDeRuido.generarRuidoSaltAndPepper(ProcesadorDeImagenes.obtenerInstancia().getImagenActual(), 5);
+				ProcesadorDeImagenes.obtenerInstancia().setImagenActual(imagenConRuido);
+				
+				VentanaRuido.this.refrescarImagen();
+				
+				}
+			
+		});
+		menuItemEditar.add(menuItemRuidoSyP);
+		
 		
 		JMenu menuFiltros = new JMenu("Filtros");
 		menuItemEditar.add(menuFiltros);
