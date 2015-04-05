@@ -161,23 +161,10 @@ public class GeneradorDeRuido {
 			for (int j = 0; j < ncols; j++) {
 	
 				Color color = new Color(bufferedImage.getRGB(i, j));
-				int rojoActual = color.getRed();
-				int verdeActual = color.getGreen();
-				int azulActual = color.getBlue();
 				
 				int rojoTransformado = (int) ((((255f)/(rojoMax-rojoMin))*matrizRojos[i][j])-((rojoMin*255f)/(rojoMax-rojoMin))); 
 				int verdeTransformado = (int)(((255f/(verdeMax-verdeMin))*matrizVerdes[i][j])-((verdeMin*255f)/(verdeMax-verdeMin)));
 				int azulTransformado = (int)(((255f/(azulMax-azulMin))*matrizAzules[i][j])-((azulMin*255f)/(azulMax-azulMin)));				
-				
-				//TODO: Truncar o transformar?
-				/*if (rojoTransformado < 0) rojoTransformado = 0;
-				else if (rojoTransformado > 255) rojoTransformado = 255;
-
-				if (verdeTransformado < 0) verdeTransformado = 0;
-				else if (verdeTransformado > 255) verdeTransformado = 255;
-
-				if (azulTransformado < 0) azulTransformado = 0;
-				else if (azulTransformado > 255) azulTransformado = 255;*/
 
 				Color colorModificado = new Color (rojoTransformado, verdeTransformado, azulTransformado);
 				imagenConRuido.setRGB(i, j, colorModificado.getRGB());				
