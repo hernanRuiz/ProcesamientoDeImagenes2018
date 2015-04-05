@@ -69,8 +69,8 @@ public class VentanaRuido extends JFrame {
 		JScrollPane scrollPane = new JScrollPane();
 		contentPane.add(scrollPane, BorderLayout.CENTER);
 		
-		labelPrincipal = new JLabel();
-		labelPrincipal.setIcon(new ImageIcon(imagenSinCambios.getBufferedImage()));
+		ImageIcon imagen = new ImageIcon(imagenSinCambios.getBufferedImage());
+		labelPrincipal = new JLabel(imagen, JLabel.CENTER);
 		
 		scrollPane.setViewportView(labelPrincipal);
 		
@@ -304,8 +304,10 @@ public class VentanaRuido extends JFrame {
 					try {
 						
 					Integer porcentaje = Integer.valueOf(campoPorcentaje);
-					Imagen imagen = GeneradorDeRuido.generarRuidoSaltAndPepper(ProcesadorDeImagenes.obtenerInstancia().getImagenActual(), porcentaje);
-					ProcesadorDeImagenes.obtenerInstancia().setImagenActual(imagen);
+					BufferedImage bufferedImage = GeneradorDeRuido.generarRuidoSaltAndPepper(ProcesadorDeImagenes.obtenerInstancia().getImagenActual().getBufferedImage(), porcentaje);
+					Imagen imagenAnterior = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
+					Imagen nuevaImagenActual = new Imagen(bufferedImage, imagenAnterior.getFormato(), imagenAnterior.getNombre());
+					ProcesadorDeImagenes.obtenerInstancia().setImagenActual(nuevaImagenActual);
 					
 					VentanaRuido.this.refrescarImagen();
 					
@@ -353,7 +355,9 @@ public class VentanaRuido extends JFrame {
 		});
 		
 		menu.add(menuItemAbrirImagen);
-				
+			
+		
+		
 		inhabilitarItem(menuItemGuardarComo);
 		
 		menu.add(menuItemGuardarComo);
@@ -378,19 +382,7 @@ public class VentanaRuido extends JFrame {
 		menuItemEditar.add(menuItemHistogramas);
 		
 		
-		JMenuItem menuItemRuidoSyP = new JMenuItem("AplicarRuidoSaltAndPepper");
-		menuItemRuidoSyP.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				
-				Imagen imagenConRuido = GeneradorDeRuido.generarRuidoSaltAndPepper(ProcesadorDeImagenes.obtenerInstancia().getImagenActual(), 5);
-				ProcesadorDeImagenes.obtenerInstancia().setImagenActual(imagenConRuido);
-				
-				VentanaRuido.this.refrescarImagen();
-				
-				}
-			
-		});
-		menuItemEditar.add(menuItemRuidoSyP);
+		
 		
 		
 		JMenu menuFiltros = new JMenu("Filtros");

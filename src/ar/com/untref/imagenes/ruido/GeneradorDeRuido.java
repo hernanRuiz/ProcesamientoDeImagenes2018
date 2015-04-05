@@ -6,55 +6,89 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
 
-import ar.com.untref.imagenes.modelo.Imagen;
-import ar.com.untref.imagenes.procesamiento.ColorManager;
-
 public class GeneradorDeRuido {
 	
+	public static BufferedImage imagenATrasnsformar;
+	static float[][]matrizRojos;
+	static float[][]matrizVerdes;
+	static float[][]matrizAzules;
+	
 	//Para la transformada lineal, no estoy seguro si se usan en la logarítmica
-	private static int[] obtenerMaximosYMinimos(BufferedImage bufferedImage){
+	private static float[] obtenerMaximosYMinimos(BufferedImage bufferedImage, int sigma, int mu){
 		
+		
+		float rojoMin;
+		float rojoMax;
+		float verdeMin;
+		float verdeMax;
+		float azulMin;
+		float azulMax;
+		
+		int rojo = 0;
+		int verde = 0;
+		int azul = 0;
+		
+		Random random = new Random();
 		int nrows = bufferedImage.getWidth();
 		int ncols = bufferedImage.getHeight();
-		int rojoMin = 255;
-		int rojoMax = 0;
-		int verdeMin = 255;
-		int verdeMax = 0;
-		int azulMin = 255;
-		int azulMax = 0;
+		matrizRojos = new float[nrows][ncols];
+		matrizVerdes = new float[nrows][ncols];
+		matrizAzules = new float[nrows][ncols];
 		
-		for (int i = 0; i < nrows; i++) {
-			for (int j = 0; j < ncols; j++) {
-				Color color = new Color(bufferedImage.getRGB(i, j));
+		Color color = new Color(bufferedImage.getRGB(0, 0));
+		rojoMin = color.getRed(); 
+		rojoMax = color.getRed();
+		verdeMin = color.getRed(); 
+		verdeMax = color.getGreen();
+		azulMin = color.getRed(); 
+		azulMax = color.getBlue();
+
+		
+		for (int f = 0; f < nrows; f++) {
+			for (int g = 0; g < ncols; g++) {
+	
+				double[] funcionesAleatorias = generadorFuncionesAleatoriasDeGauss();
+				Color colorActual = new Color(bufferedImage.getRGB(f, g));
 				
-				if(rojoMin > color.getRed()){
-					rojoMin = color.getRed();
+				
+				boolean elegirFormula1= random.nextBoolean();
+				rojo = (colorActual.getRed() + (int) (((elegirFormula1 ? funcionesAleatorias[0]: funcionesAleatorias[1]) * sigma) + mu));
+				verde =(colorActual.getGreen() + (int) (((elegirFormula1 ? funcionesAleatorias[0]: funcionesAleatorias[1]) * sigma) + mu));
+				azul = (colorActual.getBlue() + (int) (((elegirFormula1 ? funcionesAleatorias[0]: funcionesAleatorias[1]) * sigma) + mu));
+				
+				matrizRojos[f][g] = rojo;
+				matrizVerdes[f][g] = verde;
+				matrizAzules[f][g] = azul;
+				
+				if(rojoMin > rojo){
+					rojoMin = rojo;
 				}
 				
-				if(rojoMax<color.getRed()){
-					rojoMax = color.getRed();						
+				if(rojoMax<rojo){
+					rojoMax = rojo;						
 				}
 				
-				if(verdeMin > color.getGreen()){
-					verdeMin = color.getGreen();
+				if(verdeMin > verde){
+					verdeMin = verde;
 				}
 				
-				if(verdeMax<color.getGreen()){
-					verdeMax = color.getGreen();						
+				if(verdeMax<verde){
+					verdeMax = verde;						
 				}
 				
-				if(azulMin > color.getBlue()){
-					azulMin = color.getBlue();
+				if(azulMin > azul){
+					azulMin = azul;
 				}
 				
-				if(azulMax<color.getBlue()){
-					azulMax = color.getBlue();						
+				if(azulMax<azul){
+					azulMax = azul;						
 				}
-				
+
 			}
+		
 		}
 		
-		int[] maximosYMinimos = new int[6];
+	    float[] maximosYMinimos = new float[6];
 		maximosYMinimos[0]= rojoMin;
 		maximosYMinimos[1]= rojoMax;
 		maximosYMinimos[2]= verdeMin;
@@ -69,15 +103,22 @@ public class GeneradorDeRuido {
 	//8 - A
 	private static double[] generadorFuncionesAleatoriasDeGauss(){
 		double x1, x2, y1, y2;
+		Random numero1 = new Random();
+		Random numero2 = new Random();
 		
 		x1 = 0;
 		x2 = 0;
 		
 		do
-			x1 = Math.random();
-		while (x1 == 0); // x1 no puede ser cero
+			x1 = numero1.nextGaussian();
+		while (x1 <= 0 | x1>1); // x1 no puede ser cero
 		
-		x2 = Math.random();
+		//x2 = numero2.nextGaussian();
+
+		do
+			x2 = numero2.nextGaussian();
+		while (x2 <= 0 | x2>1); // x1 no puede ser cero
+		
 		
 		y1 = Math.sqrt(-2 * Math.log(x1)) * Math.cos(2 * Math.PI * x2);
 		y2 = Math.sqrt(-2 * Math.log(x1)) * Math.sin(2 * Math.PI * x2);
@@ -93,43 +134,52 @@ public class GeneradorDeRuido {
 	public static BufferedImage generarRuidoGauss(BufferedImage bufferedImage, int sigma, int mu) {
 		
 		int nrows, ncols;
-		BufferedImage imagenConRuido;
 		
-		Random random = new Random();
+		float rojoMin;
+		float rojoMax;
+		float verdeMin;
+		float verdeMax;
+		float azulMin;
+		float azulMax;
 
-		double[] funcionesAleatorias = new double [2];
-		
+		BufferedImage imagenConRuido;
+		//int[][] matriz = ProcesadorDeImagenes.obtenerInstancia().calcularMatrizDeLaImagen(bufferedImage);
+				
 		nrows = bufferedImage.getWidth();
 		ncols = bufferedImage.getHeight();
 		imagenConRuido = new BufferedImage(nrows, ncols, BufferedImage.TYPE_INT_RGB);
-		int[] maximosYMinimos = obtenerMaximosYMinimos(bufferedImage);
+		
+		float[] maximosYMinimos = obtenerMaximosYMinimos(bufferedImage, sigma, mu);
+		rojoMin = maximosYMinimos[0];
+		rojoMax = maximosYMinimos[1];
+		verdeMin = maximosYMinimos[2];
+		verdeMax = maximosYMinimos[3];
+		azulMin = maximosYMinimos[4];
+		azulMax = maximosYMinimos[5];
 		
 		for (int i = 0; i < nrows; i++) {
 			for (int j = 0; j < ncols; j++) {
-
-				funcionesAleatorias = generadorFuncionesAleatoriasDeGauss();
+	
 				Color color = new Color(bufferedImage.getRGB(i, j));
+				int rojoActual = color.getRed();
+				int verdeActual = color.getGreen();
+				int azulActual = color.getBlue();
 				
-				boolean elegirFormula1= random.nextBoolean();
-				int rojo = (color.getRed() + (int) (((elegirFormula1 ? funcionesAleatorias[0]: funcionesAleatorias[1]) * sigma) + mu));
-				int verde =(color.getGreen() + (int) (((elegirFormula1 ? funcionesAleatorias[0]: funcionesAleatorias[1]) * sigma) + mu));
-				int azul = (color.getBlue() + (int) (((elegirFormula1 ? funcionesAleatorias[0]: funcionesAleatorias[1]) * sigma) + mu));
-				
-				int rojoTransformado = (((255)/(maximosYMinimos[1]-maximosYMinimos[0]))*rojo)-((maximosYMinimos[0]*255)/(maximosYMinimos[1]-maximosYMinimos[0])); 
-				int verdeTransformado = (((255)/(maximosYMinimos[3]-maximosYMinimos[2]))*verde)-((maximosYMinimos[2]*255)/(maximosYMinimos[3]-maximosYMinimos[2]));
-				int azulTransformado = (((255)/(maximosYMinimos[5]-maximosYMinimos[4]))*azul)-((maximosYMinimos[4]*255)/(maximosYMinimos[5]-maximosYMinimos[4]));				
+				int rojoTransformado = (int) ((((255f)/(rojoMax-rojoMin))*matrizRojos[i][j])-((rojoMin*255f)/(rojoMax-rojoMin))); 
+				int verdeTransformado = (int)(((255f/(verdeMax-verdeMin))*matrizVerdes[i][j])-((verdeMin*255f)/(verdeMax-verdeMin)));
+				int azulTransformado = (int)(((255f/(azulMax-azulMin))*matrizAzules[i][j])-((azulMin*255f)/(azulMax-azulMin)));				
 				
 				//TODO: Truncar o transformar?
-				/*if (rojo < 0) rojo = 0;
-				else if (rojo > 255) rojo = 255;
+				/*if (rojoTransformado < 0) rojoTransformado = 0;
+				else if (rojoTransformado > 255) rojoTransformado = 255;
 
-				if (verde < 0) verde = 0;
-				else if (verde > 255) verde = 255;
+				if (verdeTransformado < 0) verdeTransformado = 0;
+				else if (verdeTransformado > 255) verdeTransformado = 255;
 
-				if (azul < 0) azul = 0;
-				else if (azul > 255) azul = 255;*/
+				if (azulTransformado < 0) azulTransformado = 0;
+				else if (azulTransformado > 255) azulTransformado = 255;*/
 
-				Color colorModificado = ColorManager.setColorRGB(rojoTransformado, verdeTransformado, azulTransformado);
+				Color colorModificado = new Color (rojoTransformado, verdeTransformado, azulTransformado);
 				imagenConRuido.setRGB(i, j, colorModificado.getRGB());				
 			}
 		}
@@ -141,13 +191,14 @@ public class GeneradorDeRuido {
 	private static double generadorAleatoriosExponencial(int lambda){
 		
 		double x, y;
-
+		Random numero = new Random();
 		x = 0;
 		do
-			x = Math.random();
+			x = numero.nextGaussian();
 		while (x == 0); // x no puede ser cero
 	
-		y = (-1/lambda)*(Math.log(x+1));
+		//TODO: revisar division, floats
+		y = (Math.log(x-1))/((-1)*lambda);
 		
 		return y;
 	}
@@ -192,15 +243,68 @@ public class GeneradorDeRuido {
 		private static double generadorAleatoriosRayleigh(int phi){
 			
 			double x, y;
-
+			Random numero = new Random();
 			x = 0;
 			do
-				x = Math.random();
+				x = numero.nextGaussian();
 			while (x == 0); // x no puede ser cero
 		
-			y = phi*(Math.sqrt((-2)*Math.log(1-x)));
+			y = (-1)*phi*(Math.sqrt((2)*Math.log(x-1)));
 			return y;
 		}
+		
+		
+		private static int[] obtenerMaximosRayleigh(BufferedImage bufferedImage, int phi){
+			
+			int rojoMax;
+			int verdeMax;
+			int azulMax;
+			
+			int rojo = 0;
+			int verde = 0;
+			int azul = 0;
+			
+			int nrows = bufferedImage.getWidth();
+			int ncols = bufferedImage.getHeight();
+			
+			Color color = new Color(bufferedImage.getRGB(0, 0));
+			rojoMax = color.getRed();
+			verdeMax = color.getGreen();
+			azulMax = color.getBlue();
+
+			for (int f = 0; f < nrows; f++) {
+				for (int g = 0; g < ncols; g++) {
+		
+					double y = generadorAleatoriosRayleigh(phi);
+					
+					rojo = (int)(Math.round(color.getRed() * y));
+					verde = (int)(Math.round(color.getGreen() * y));
+					azul = (int)(Math.round(color.getBlue() * y));
+					
+					if(rojoMax<rojo){
+						rojoMax = rojo;						
+					}
+					
+					if(verdeMax<verde){
+						verdeMax = verde;						
+					}
+					
+					if(azulMax<azul){
+						azulMax = azul;						
+					}
+
+				}
+			
+			}
+			
+		    int[] maximosYMinimos = new int[6];
+			maximosYMinimos[0]= rojoMax;
+			maximosYMinimos[1]= verdeMax;
+			maximosYMinimos[2]= azulMax;
+			
+			return maximosYMinimos;
+		}
+
 		
 		
 		//10 - B
@@ -214,6 +318,11 @@ public class GeneradorDeRuido {
 			ncols = bufferedImage.getHeight();
 			imagenConRuido = new BufferedImage(nrows, ncols, BufferedImage.TYPE_INT_RGB);
 			
+			int[] maximos = obtenerMaximosRayleigh(bufferedImage, phi);
+			int rojoMax = maximos[0];
+			int verdeMax = maximos[1];
+			int azulMax = maximos[2];
+			
 			for (int i = 0; i < nrows; i++) {
 				for (int j = 0; j < ncols; j++) {
 
@@ -221,13 +330,13 @@ public class GeneradorDeRuido {
 					
 					Color color = new Color(bufferedImage.getRGB(i, j));
 					
-					int rojo = (int)(Math.round(color.getRed() * y));
-					int verde = (int)(Math.round(color.getGreen() * y));
-					int azul = (int)(Math.round(color.getBlue() * y));
+					int rojo = color.getRed();
+					int verde = color.getGreen();
+					int azul = color.getBlue();
 
-					int transformadaRojo = ((int)(Math.round(255/Math.log(256))* Math.round(Math.log(1+rojo))));
-					int transformadaVerde = ((int)(Math.round(255/Math.log(256))* Math.round(Math.log(1+verde))));
-					int transformadaAzul = ((int)(Math.round(255/Math.log(256))* Math.round(Math.log(1+azul))));
+					int transformadaRojo = (int) (255/(Math.rint(Math.log10(1+rojoMax)))*(Math.round(Math.log10(1+rojo))));
+					int transformadaVerde = (int) (255/(Math.rint(Math.log10(1+verdeMax)))*(Math.round(Math.log10(1+verde))));
+					int transformadaAzul = (int) (255/(Math.rint(Math.log10(1+azulMax)))*(Math.round(Math.log10(1+azul))));
 					
 					
 					/*if (rojo < 0) rojo = 0;
@@ -248,15 +357,17 @@ public class GeneradorDeRuido {
 
 	
 	
-	public static Imagen generarRuidoSaltAndPepper(Imagen imagenOriginal, int porcentajeDePixelesAContaminar){
+	public static BufferedImage generarRuidoSaltAndPepper(BufferedImage imagen, int porcentajeDePixelesAContaminar){
 		
 		int nrows, ncols; 
-		Imagen imagenConRuido;
-		nrows = imagenOriginal.getBufferedImage().getWidth();
-		ncols = imagenOriginal.getBufferedImage().getHeight();
 		
-		imagenConRuido = new Imagen(imagenOriginal.getBufferedImage(), imagenOriginal.getFormato(), imagenOriginal.getNombre());
-		
+		BufferedImage imagenConRuido;
+		nrows = imagen.getWidth();
+		ncols = imagen.getHeight();
+		imagenConRuido = new BufferedImage(nrows, ncols, BufferedImage.TYPE_INT_RGB);
+		//imagenConRuido = imagen.getBufferedImage();
+		//imagenConRuido = new Imagen(imagen.getBufferedImage(), imagen.getFormato(), "Imagen Con Ruido");
+		//imagenConRuido.setBufferedImage(imagen.getBufferedImage());
 		double densidad = ((nrows*ncols)*porcentajeDePixelesAContaminar)/100;
 		
 		double p0 = 0.2;
@@ -269,6 +380,7 @@ public class GeneradorDeRuido {
 				coordenada[0]= i;
 				coordenada[1]= j;
 				listaDeCoordenadas.add(coordenada);
+				imagenConRuido.setRGB(i, j, imagen.getRGB(i, j));
 			}
 		}
 	
@@ -276,11 +388,12 @@ public class GeneradorDeRuido {
 		
 		for (int h=0; h<=densidad; h++){
 		
-			double x = Math.random();
+			Random numero = new Random();
+			double x = numero.nextGaussian();
 			int[] vector1 = listaDeCoordenadas.get(0);
 
 			//tomo el color de la coordenada obtenida
-			Color color = new Color(imagenOriginal.getBufferedImage().getRGB(vector1[0], vector1[1]));
+			Color color = new Color(imagen.getRGB(vector1[0], vector1[1]));
 			listaDeCoordenadas.remove(0);
 			
 			//Color color = new Color(bufferedImage.getRGB(coordenadaFila, coordenadaColumna));			
@@ -302,7 +415,7 @@ public class GeneradorDeRuido {
 			}
 		
 			Color colorModificado = new Color(rojo, verde, azul);
-			imagenConRuido.getBufferedImage().setRGB(vector1[0], vector1[1], colorModificado.getRGB());
+			imagenConRuido.setRGB(vector1[0], vector1[1], colorModificado.getRGB());
 		}
 		
 		return imagenConRuido;
