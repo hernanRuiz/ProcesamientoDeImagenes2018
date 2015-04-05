@@ -19,7 +19,9 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
+import ar.com.untref.imagenes.dialogs.MascaraGaussianaDialog;
 import ar.com.untref.imagenes.enums.NivelMensaje;
+import ar.com.untref.imagenes.filtros.FiltroGaussiano;
 import ar.com.untref.imagenes.helpers.DialogsHelper;
 import ar.com.untref.imagenes.listeners.GuardarComoListener;
 import ar.com.untref.imagenes.modelo.Imagen;
@@ -387,6 +389,16 @@ public class VentanaRuido extends JFrame {
 		
 		JMenu menuFiltros = new JMenu("Filtros");
 		menuItemEditar.add(menuFiltros);
+		
+		JMenuItem filtroGaussianoMenuItem = new JMenuItem("Filtro Gaussiano");
+		filtroGaussianoMenuItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				MascaraGaussianaDialog m = new MascaraGaussianaDialog(VentanaRuido.this);
+				m.setVisible(true);
+			}
+		});
+		menuFiltros.add(filtroGaussianoMenuItem);
 	}
 		
 	private void cargarImagen(JLabel labelPrincipal,
@@ -453,6 +465,14 @@ public class VentanaRuido extends JFrame {
 
 	public void refrescarCantidadPixeles(int cantidadPixeles){
 		resultadoCantidadPixeles.setText(String.valueOf(cantidadPixeles));
+	}
+
+	public void aplicarFiltroGaussiano(Integer sigmaElegido) {
+		
+		Imagen imagenFiltrada = FiltroGaussiano.aplicarFiltroGaussiano(ProcesadorDeImagenes.obtenerInstancia().getImagenActual(), sigmaElegido);
+		ProcesadorDeImagenes.obtenerInstancia().setImagenActual(imagenFiltrada);
+		
+		VentanaRuido.this.refrescarImagen();
 	}
 	
 }
