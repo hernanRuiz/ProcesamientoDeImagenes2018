@@ -21,7 +21,7 @@ public class ProcesadorDeImagenes {
 	private static ProcesadorDeImagenes instancia;
 	private Archivo archivoActual;
 	private Imagen imagenActual;
-	private Imagen imagenOriginal;
+	private static Imagen imagenOriginal;
 
 	private ProcesadorDeImagenes() {
 	}
@@ -246,7 +246,6 @@ public class ProcesadorDeImagenes {
 			cantidadPixeles = imagenRecortada.getWidth()* imagenRecortada.getHeight();
 			Imagen nuevaImagenRecortada = new Imagen(imagenRecortada, imagenActual.getFormato(), imagenActual.getNombre());
 			this.imagenActual = nuevaImagenRecortada;
-			this.imagenOriginal = nuevaImagenRecortada;
 			ventana.refrescarImagen();
 			ventana.refrescarCantidadPixeles(cantidadPixeles);
 		}
@@ -282,7 +281,8 @@ public class ProcesadorDeImagenes {
 	}
 
 	public Imagen aplicarNegativo(Imagen imagen) {
-
+		
+		imagenOriginal = imagen;
 		Imagen imagenEnNegativo = null;
 		
 		if (imagen != null) {
@@ -302,7 +302,6 @@ public class ProcesadorDeImagenes {
 
 			imagenEnNegativo = new Imagen(resultado, imagen.getFormato(), imagen.getNombre());
 			this.imagenActual = imagenEnNegativo;
-			this.imagenOriginal = imagenEnNegativo;
 		}
 		
 		return imagenEnNegativo;
@@ -318,13 +317,14 @@ public class ProcesadorDeImagenes {
 		return this.archivoActual;
 	}
 	
-public Imagen getImagenOriginal(){
+	public Imagen getImagenOriginal(){
 		
-		return this.imagenOriginal;
+		return imagenOriginal;
 	}
 	
 	public void aumentarContrastePorElCuadrado(Imagen imagen){
 		
+		imagenOriginal = imagen;
 		BufferedImage buffered = imagen.getBufferedImage();
 		
 		for (int x = 0; x < buffered.getWidth(); x++) {
@@ -342,12 +342,12 @@ public Imagen getImagenOriginal(){
 			}
 		}
 		this.imagenActual.setBufferedImage(buffered);
-		this.imagenOriginal.setBufferedImage(buffered);
 		
 	}
 	
 	public void aumentoContrasteAutomatico(Imagen imagen) {
 
+		imagenOriginal = imagen;
 		BufferedImage buffered = imagen.getBufferedImage();
 		int minimoRojo = 255;
 		int maximoRojo = 0;
@@ -408,7 +408,6 @@ public Imagen getImagenOriginal(){
 			}
 		}
 		this.imagenActual.setBufferedImage(buffered);
-		this.imagenOriginal.setBufferedImage(buffered);
 		
 	}
 	
@@ -418,6 +417,7 @@ public Imagen getImagenOriginal(){
 	 */
 	public void umbralizarImagen(Imagen imagen, int umbral){
 		
+		imagenOriginal = imagen; 
 		BufferedImage buffered = imagen.getBufferedImage();
 		
 		for (int x = 0; x < buffered.getWidth(); x++) {
@@ -438,8 +438,158 @@ public Imagen getImagenOriginal(){
 		}
 		
 		this.imagenActual.setBufferedImage(buffered);
-		this.imagenOriginal.setBufferedImage(buffered);
 		
+	}
+	
+	public BufferedImage aplicarTransformacionLogaritmica(BufferedImage bufferedImage){
+		
+		float rojoMax;
+		float verdeMax;
+		float azulMax;
+
+		BufferedImage imagenTransformada;
+		int nrows = bufferedImage.getWidth();
+		int ncols = bufferedImage.getHeight();
+		imagenTransformada = new BufferedImage(nrows, ncols, BufferedImage.TYPE_INT_RGB);
+		
+		Color color = new Color(bufferedImage.getRGB(0, 0));
+		rojoMax = color.getRed();
+		verdeMax = color.getGreen();
+		azulMax = color.getBlue();
+
+		for (int f = 0; f < nrows; f++) {
+			for (int g = 0; g < ncols; g++) {
+
+				Color colorActual = new Color(bufferedImage.getRGB(f, g));
+				int rojoActual = colorActual.getRed();
+				int verdeActual = colorActual.getGreen();
+				int azulActual = colorActual.getBlue();
+				
+				if (rojoMax < rojoActual) {
+					rojoMax = rojoActual;
+				}
+
+				if (verdeMax < verdeActual) {
+					verdeMax = verdeActual;
+				}
+
+				if (azulMax < azulActual) {
+					azulMax = azulActual;
+				}
+
+			}
+
+		}
+
+		float[] maximosYMinimos = new float[6];
+		maximosYMinimos[0] = rojoMax;
+		maximosYMinimos[1] = verdeMax;
+		maximosYMinimos[2] = azulMax;
+		
+		for (int i = 0; i < nrows; i++) {
+			for (int j = 0; j < ncols; j++) {
+
+				Color colorActual = new Color(bufferedImage.getRGB(i, j));
+				int rojoActual = colorActual.getRed();
+				int verdeActual = colorActual.getGreen();
+				int azulActual = colorActual.getBlue();
+				
+				int rojoTransformado = (int) ((255f / (Math.log(rojoMax))) * Math.log(1 + rojoActual));
+				int verdeTransformado = (int) ((255f / (Math.log(verdeMax))) * Math.log(1 + verdeActual));
+				int azulTransformado = (int) ((255f / (Math.log(azulMax))) * Math.log(1 + azulActual));
+
+				Color colorModificado = new Color(rojoTransformado, verdeTransformado, azulTransformado);
+				imagenTransformada.setRGB(i, j, colorModificado.getRGB());
+			}
+		}
+		
+		return imagenTransformada;
+	}
+
+	public BufferedImage aplicarTransformacionLineal(BufferedImage bufferedImage){
+		
+		float rojoMin;
+		float rojoMax;
+		float verdeMin;
+		float verdeMax;
+		float azulMin;
+		float azulMax;
+
+		BufferedImage imagenTransformada;
+		int nrows = bufferedImage.getWidth();
+		int ncols = bufferedImage.getHeight();
+		imagenTransformada = new BufferedImage(nrows, ncols, BufferedImage.TYPE_INT_RGB);
+		
+		Color color = new Color(bufferedImage.getRGB(0, 0));
+		rojoMin = color.getRed();
+		rojoMax = color.getRed();
+		verdeMin = color.getRed();
+		verdeMax = color.getGreen();
+		azulMin = color.getRed();
+		azulMax = color.getBlue();
+
+		for (int f = 0; f < nrows; f++) {
+			for (int g = 0; g < ncols; g++) {
+		
+				Color colorActual = new Color(bufferedImage.getRGB(f, g));
+				int rojoActual = colorActual.getRed();
+				int verdeActual = colorActual.getGreen();
+				int azulActual = colorActual.getBlue();
+				
+				if (rojoMin > rojoActual) {
+					rojoMin = rojoActual;
+				}
+
+				if (rojoMax < rojoActual) {
+					rojoMax = rojoActual;
+				}
+
+				if (verdeMin > verdeActual) {
+					verdeMin = verdeActual;
+				}
+
+				if (verdeMax < verdeActual) {
+					verdeMax = verdeActual;
+				}
+
+				if (azulMin > azulActual) {
+					azulMin = azulActual;
+				}
+
+				if (azulMax < azulActual) {
+					azulMax = azulActual;
+				}
+
+			}
+
+		}
+
+		float[] maximosYMinimos = new float[6];
+		maximosYMinimos[0] = rojoMin;
+		maximosYMinimos[1] = rojoMax;
+		maximosYMinimos[2] = verdeMin;
+		maximosYMinimos[3] = verdeMax;
+		maximosYMinimos[4] = azulMin;
+		maximosYMinimos[5] = azulMax;
+		
+		for (int i = 0; i < nrows; i++) {
+			for (int j = 0; j < ncols; j++) {
+
+				Color colorActual = new Color(bufferedImage.getRGB(i, j));
+				int rojoActual = colorActual.getRed();
+				int verdeActual = colorActual.getGreen();
+				int azulActual = colorActual.getBlue();
+				
+				int rojoTransformado = (int) ((((255f) / (rojoMax - rojoMin)) * rojoActual) - ((rojoMin * 255f) / (rojoMax - rojoMin)));
+				int verdeTransformado = (int) (((255f / (verdeMax - verdeMin)) * verdeActual) - ((verdeMin * 255f) / (verdeMax - verdeMin)));
+				int azulTransformado = (int) (((255f / (azulMax - azulMin)) * azulActual) - ((azulMin * 255f) / (azulMax - azulMin)));
+
+				Color colorModificado = new Color(rojoTransformado, verdeTransformado, azulTransformado);
+				imagenTransformada.setRGB(i, j, colorModificado.getRGB());
+			}
+		}
+		
+		return imagenTransformada;
 	}
 
 }

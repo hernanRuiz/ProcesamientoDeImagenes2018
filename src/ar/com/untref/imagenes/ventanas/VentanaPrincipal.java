@@ -24,6 +24,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
+import ar.com.untref.imagenes.dialogs.OperacionesMatricesDialog;
 import ar.com.untref.imagenes.enums.FormatoDeImagen;
 import ar.com.untref.imagenes.enums.NivelMensaje;
 import ar.com.untref.imagenes.helpers.DialogsHelper;
@@ -34,6 +35,7 @@ import ar.com.untref.imagenes.listeners.UmbralListener;
 import ar.com.untref.imagenes.modelo.Imagen;
 import ar.com.untref.imagenes.procesamiento.ColorManager;
 import ar.com.untref.imagenes.procesamiento.Graficador;
+import ar.com.untref.imagenes.procesamiento.MatricesManager;
 import ar.com.untref.imagenes.procesamiento.ProcesadorDeImagenes;
 
 @SuppressWarnings("serial")
@@ -54,6 +56,7 @@ public class VentanaPrincipal extends JFrame {
 	private JMenuItem menuItemGuardarComo;
 	private JSlider umbralSlider;
 	private JLabel resultadoCantidadPixeles;
+
 
 	public VentanaPrincipal() {
 
@@ -87,12 +90,17 @@ public class VentanaPrincipal extends JFrame {
 		panel.add(panelRaw);
 		
 		final JPanel panelPromedios = new JPanel();
-		JLabel cantidadPixeles = new JLabel("Cantidad de Pixeles:");
+		final JPanel imagenOriginal = new JPanel();
+		panelPromedios.add(imagenOriginal);
+		final JLabel cantidadPixeles = new JLabel("Cantidad de Pixeles:");
+		cantidadPixeles.setVisible(false);
 		resultadoCantidadPixeles = new JLabel("");
+		resultadoCantidadPixeles.setVisible(false);
 		panelPromedios.add(cantidadPixeles);
 		panelPromedios.add(resultadoCantidadPixeles);
 		
-		JButton botonPromedio = new JButton("Valores Promedio:");
+		final JButton botonPromedio = new JButton("Valores Promedio:");
+		botonPromedio.setVisible(false);
 		final JLabel labelPromedioGrises = new JLabel("Niveles de Gris:");
 		labelPromedioGrises.setVisible(false);
 		
@@ -105,6 +113,7 @@ public class VentanaPrincipal extends JFrame {
 		final JLabel labelResultadoPromedioAzul = new JLabel("");
 		labelResultadoPromedioAzul.setVisible(false);
 		
+		
 		panelPromedios.add(botonPromedio, BorderLayout.PAGE_END);
 		panelPromedios.add(labelPromedioGrises, BorderLayout.PAGE_END);
 		panelPromedios.add(labelResultadoPromedioRojo, BorderLayout.PAGE_END);
@@ -112,8 +121,10 @@ public class VentanaPrincipal extends JFrame {
 		panelPromedios.add(labelResultadoPromedioAzul, BorderLayout.PAGE_END);
 		
 		contentPane.add(panelPromedios, BorderLayout.PAGE_END);
+		
+		
 		panelPromedios.add(labelPromedioGrises);
-		panelPromedios.setVisible(false);
+		panelPromedios.setVisible(true);
 		
 		botonPromedio.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -130,6 +141,16 @@ public class VentanaPrincipal extends JFrame {
 				}
 			
 		});
+		
+		JButton volverALaImagenOriginal = new JButton("Imagen Original");
+		volverALaImagenOriginal.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				Imagen imageOriginal = ProcesadorDeImagenes.obtenerInstancia().getImagenOriginal();
+				ProcesadorDeImagenes.obtenerInstancia().setImagenActual(imageOriginal);
+				VentanaPrincipal.this.refrescarImagen();
+			}
+		});
+		imagenOriginal.add(volverALaImagenOriginal);
 		
 		JLabel labelTamañoRAW = new JLabel("Dimensiones RAW");
 		panelRaw.add(labelTamañoRAW);
@@ -438,6 +459,22 @@ public class VentanaPrincipal extends JFrame {
 		});
 		menuFiltros.add(menuItemAumentoContrasteAutomatico);
 		
+		
+		JMenuItem menuItemCompresionDeRangoDinamico = new JMenuItem("Compresion de Rango Din\u00E1mico");
+		menuItemCompresionDeRangoDinamico.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				Imagen imagenActual = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
+				BufferedImage imagenTransformada = ProcesadorDeImagenes.obtenerInstancia().aplicarTransformacionLogaritmica(imagenActual.getBufferedImage());
+				Imagen nuevaImagenActual = new Imagen(imagenTransformada, imagenActual.getFormato(), imagenActual.getNombre());
+				ProcesadorDeImagenes.obtenerInstancia().setImagenActual(nuevaImagenActual);
+				VentanaPrincipal.this.refrescarImagen();
+			}
+		});
+		menuFiltros.add(menuItemCompresionDeRangoDinamico);
+		
+		
+		
 		menuItemTemplates = new JMenu("Plantillas");
 		menuBar.add(menuItemTemplates);
 		
@@ -445,7 +482,9 @@ public class VentanaPrincipal extends JFrame {
 		menuItemImagenConCuadrado.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
-				panelPromedios.setVisible(false);
+				cantidadPixeles.setVisible(false);
+				resultadoCantidadPixeles.setVisible(false);
+				botonPromedio.setVisible(false);
 				BufferedImage buf = Graficador.crearImagenConCuadradoEnElCentro(200, 200, 40);
 				Imagen imagenConCuadrado = new Imagen(buf, FormatoDeImagen.JPG, "Imagen Con Cuadrado");
 				ProcesadorDeImagenes.obtenerInstancia().setImagenActual(imagenConCuadrado);
@@ -458,7 +497,9 @@ public class VentanaPrincipal extends JFrame {
 		menuItemImagenConCirculo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
-				panelPromedios.setVisible(false);
+				cantidadPixeles.setVisible(false);
+				resultadoCantidadPixeles.setVisible(false);
+				botonPromedio.setVisible(false);
 				BufferedImage buf = Graficador.crearImagenConCirculoEnElMedio(200,200,40);
 				Imagen imagenConCirculo = new Imagen(buf, FormatoDeImagen.JPG, "Imagen Con Circulo");
 				ProcesadorDeImagenes.obtenerInstancia().setImagenActual(imagenConCirculo);
@@ -471,7 +512,9 @@ public class VentanaPrincipal extends JFrame {
 		menuItemDegradeDeGrises.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
-				panelPromedios.setVisible(false);
+				cantidadPixeles.setVisible(false);
+				resultadoCantidadPixeles.setVisible(false);
+				botonPromedio.setVisible(false);
 				BufferedImage buf = Graficador.crearImagenConDegradeDeGrises(200, 250);
 				Imagen degrade = new Imagen(buf, FormatoDeImagen.JPG, "Degradé de grises");
 				ProcesadorDeImagenes.obtenerInstancia().setImagenActual(degrade);
@@ -484,7 +527,9 @@ public class VentanaPrincipal extends JFrame {
 		menuItemDegradeColor.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
-				panelPromedios.setVisible(false);
+				cantidadPixeles.setVisible(false);
+				resultadoCantidadPixeles.setVisible(false);
+				botonPromedio.setVisible(false);
 				BufferedImage buf = Graficador.crearImagenConDegradeColor(200, 250);
 				Imagen degrade = new Imagen(buf, FormatoDeImagen.JPG, "Degradé de color");
 				ProcesadorDeImagenes.obtenerInstancia().setImagenActual(degrade);
@@ -496,11 +541,25 @@ public class VentanaPrincipal extends JFrame {
 		JMenuItem menuItemPromedioGrises = new JMenuItem("Valores Promedio");
 		menuItemPromedioGrises.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				panelPromedios.setVisible(true);
+				cantidadPixeles.setVisible(true);
+				resultadoCantidadPixeles.setVisible(true);
+				botonPromedio.setVisible(true);
 				}
 			
 		});
 		menuItemEditar.add(menuItemPromedioGrises);
+		
+		
+		JMenuItem menuItemOperacionesMatrices = new JMenuItem("Operaciones");
+		menuItemOperacionesMatrices.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				OperacionesMatricesDialog m = new OperacionesMatricesDialog(VentanaPrincipal.this);
+				m.setVisible(true);
+			}
+			
+		});
+		menuItemEditar.add(menuItemOperacionesMatrices);
+		
 	}
 	
 	private void cargarImagen(JLabel labelPrincipal,
@@ -570,4 +629,93 @@ public class VentanaPrincipal extends JFrame {
 		resultadoCantidadPixeles.setText(String.valueOf(cantidadPixeles));
 	}
 	
+	public void obtenerMatrizResultanteDeSuma(Imagen imagen){
+		
+		int[][] matriz2 = ProcesadorDeImagenes.obtenerInstancia().calcularMatrizDeLaImagen(imagen.getBufferedImage());
+		
+		BufferedImage bufferedImage = ProcesadorDeImagenes.obtenerInstancia().getImagenActual().getBufferedImage();
+		int[][] matriz1 = ProcesadorDeImagenes.obtenerInstancia().calcularMatrizDeLaImagen(bufferedImage);
+		
+		int[][] matrizResultante = MatricesManager.sumarMatrices(matriz1, matriz2);	    					
+		Imagen imagenAnterior = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
+		BufferedImage imagenResultante = MatricesManager.obtenerImagenDeMatriz(matrizResultante);
+		BufferedImage imagenResultanteTransformada = ProcesadorDeImagenes.obtenerInstancia().aplicarTransformacionLineal(imagenResultante);
+		Imagen nuevaImagenActual = new Imagen(imagenResultanteTransformada, imagenAnterior.getFormato(), imagenAnterior.getNombre());
+		ProcesadorDeImagenes.obtenerInstancia().setImagenActual(nuevaImagenActual);
+		VentanaPrincipal.this.refrescarImagen();
+	}
+	
+	public void obtenerMatrizResultanteDeResta(Imagen imagen){
+		
+		int[][] matriz2 = ProcesadorDeImagenes.obtenerInstancia().calcularMatrizDeLaImagen(imagen.getBufferedImage());
+		
+		BufferedImage bufferedImage = ProcesadorDeImagenes.obtenerInstancia().getImagenActual().getBufferedImage();
+		int[][] matriz1 = ProcesadorDeImagenes.obtenerInstancia().calcularMatrizDeLaImagen(bufferedImage);
+		
+		int[][] matrizResultante = MatricesManager.restarMatrices(matriz1, matriz2);	    					
+		Imagen imagenAnterior = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
+		BufferedImage imagenResultante = MatricesManager.obtenerImagenDeMatriz(matrizResultante);
+		BufferedImage imagenResultanteTransformada = ProcesadorDeImagenes.obtenerInstancia().aplicarTransformacionLineal(imagenResultante);
+		Imagen nuevaImagenActual = new Imagen(imagenResultanteTransformada, imagenAnterior.getFormato(), imagenAnterior.getNombre());
+		ProcesadorDeImagenes.obtenerInstancia().setImagenActual(nuevaImagenActual);
+		VentanaPrincipal.this.refrescarImagen();
+	}
+	
+	public void obtenerMatrizResultanteDeMultiplicar(Imagen imagen){
+		
+		int[][] matriz2 = ProcesadorDeImagenes.obtenerInstancia().calcularMatrizDeLaImagen(imagen.getBufferedImage());
+		
+		BufferedImage bufferedImage = ProcesadorDeImagenes.obtenerInstancia().getImagenActual().getBufferedImage();
+		int[][] matriz1 = ProcesadorDeImagenes.obtenerInstancia().calcularMatrizDeLaImagen(bufferedImage);
+		
+		int[][] matrizResultante = MatricesManager.multiplicarMatrices(matriz1, matriz2);	    					
+		Imagen imagenAnterior = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
+		BufferedImage imagenResultante = MatricesManager.obtenerImagenDeMatriz(matrizResultante);
+		BufferedImage imagenResultanteTransformada = ProcesadorDeImagenes.obtenerInstancia().aplicarTransformacionLogaritmica(imagenResultante);
+		Imagen nuevaImagenActual = new Imagen(imagenResultanteTransformada, imagenAnterior.getFormato(), imagenAnterior.getNombre());
+		ProcesadorDeImagenes.obtenerInstancia().setImagenActual(nuevaImagenActual);
+		VentanaPrincipal.this.refrescarImagen();
+	}
+	
+	public void obtenerMatrizResultanteDeSumaEscalar(int escalar){
+		
+		BufferedImage bufferedImage = ProcesadorDeImagenes.obtenerInstancia().getImagenActual().getBufferedImage();
+		int[][] matriz = ProcesadorDeImagenes.obtenerInstancia().calcularMatrizDeLaImagen(bufferedImage);
+		
+		int[][] matrizResultante = MatricesManager.sumarMatrizYEscalar(matriz, escalar);	    					
+		Imagen imagenAnterior = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
+		BufferedImage imagenResultante = MatricesManager.obtenerImagenDeMatriz(matrizResultante);
+		BufferedImage imagenResultanteTransformada = ProcesadorDeImagenes.obtenerInstancia().aplicarTransformacionLineal(imagenResultante);
+		Imagen nuevaImagenActual = new Imagen(imagenResultanteTransformada, imagenAnterior.getFormato(), imagenAnterior.getNombre());
+		ProcesadorDeImagenes.obtenerInstancia().setImagenActual(nuevaImagenActual);
+		VentanaPrincipal.this.refrescarImagen();
+	}
+	
+	public void obtenerMatrizResultanteDeRestaEscalar(int escalar){
+		
+		BufferedImage bufferedImage = ProcesadorDeImagenes.obtenerInstancia().getImagenActual().getBufferedImage();
+		int[][] matriz = ProcesadorDeImagenes.obtenerInstancia().calcularMatrizDeLaImagen(bufferedImage);
+		
+		int[][] matrizResultante = MatricesManager.restarMatrizYEscalar(matriz, escalar);	    					
+		Imagen imagenAnterior = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
+		BufferedImage imagenResultante = MatricesManager.obtenerImagenDeMatriz(matrizResultante);
+		BufferedImage imagenResultanteTransformada = ProcesadorDeImagenes.obtenerInstancia().aplicarTransformacionLineal(imagenResultante);
+		Imagen nuevaImagenActual = new Imagen(imagenResultanteTransformada, imagenAnterior.getFormato(), imagenAnterior.getNombre());
+		ProcesadorDeImagenes.obtenerInstancia().setImagenActual(nuevaImagenActual);
+		VentanaPrincipal.this.refrescarImagen();
+	}
+	
+	public void obtenerMatrizResultanteDeMultiplicarPorEscalar(int escalar){
+		
+		BufferedImage bufferedImage = ProcesadorDeImagenes.obtenerInstancia().getImagenActual().getBufferedImage();
+		int[][] matriz = ProcesadorDeImagenes.obtenerInstancia().calcularMatrizDeLaImagen(bufferedImage);
+		
+		int[][] matrizResultante = MatricesManager.multiplicarMatrizPorEscalar(matriz, escalar);	    					
+		Imagen imagenAnterior = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
+		BufferedImage imagenResultante = MatricesManager.obtenerImagenDeMatriz(matrizResultante);
+		BufferedImage imagenResultanteTransformada = ProcesadorDeImagenes.obtenerInstancia().aplicarTransformacionLogaritmica(imagenResultante);
+		Imagen nuevaImagenActual = new Imagen(imagenResultanteTransformada, imagenAnterior.getFormato(), imagenAnterior.getNombre());
+		ProcesadorDeImagenes.obtenerInstancia().setImagenActual(nuevaImagenActual);
+		VentanaPrincipal.this.refrescarImagen();
+	}
 }

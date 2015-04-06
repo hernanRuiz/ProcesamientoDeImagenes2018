@@ -47,13 +47,14 @@ public class VentanaRuido extends JFrame {
 	private JMenuItem menuItemGuardarComo;
 	private JLabel resultadoCantidadPixeles;
 	private JComboBox<String> comboGauss;
-	
+	private int cantidadDePixeles;
 	
 	public VentanaRuido(final Imagen imagenSinCambios) {
 		
 		this.setTitle("Generador de Ruido y Filtros");
 		VentanaRuido.this.setExtendedState(VentanaRuido.this.getExtendedState() | JFrame.MAXIMIZED_BOTH);
-				
+		
+		
 		//setDefaultCloseOperation(JFrame.);
 		setBounds(100, 100, 800, 600);
 		
@@ -87,6 +88,8 @@ public class VentanaRuido extends JFrame {
 		resultadoCantidadPixeles = new JLabel("");
 		panelPromedios.add(cantidadPixeles);
 		panelPromedios.add(resultadoCantidadPixeles);
+		cantidadDePixeles = imagenSinCambios.getBufferedImage().getHeight()*imagenSinCambios.getBufferedImage().getWidth();
+		refrescarCantidadPixeles(cantidadDePixeles);
 		
 		JButton botonPromedio = new JButton("Valores Promedio:");
 		final JLabel labelPromedioGrises = new JLabel("Niveles de Gris:");
@@ -108,8 +111,23 @@ public class VentanaRuido extends JFrame {
 		panelPromedios.add(labelResultadoPromedioAzul, BorderLayout.PAGE_END);
 		
 		contentPane.add(panelPromedios, BorderLayout.PAGE_END);
-		panelPromedios.setVisible(false);
+		panelPromedios.setVisible(true);
 
+		botonPromedio.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Imagen imagen = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
+				BufferedImage imagenActual = imagen.getBufferedImage(); 
+				int[] promedios = ProcesadorDeImagenes.obtenerInstancia().calcularValoresPromedio(imagenActual, imagenActual.getWidth(), imagenActual.getHeight());
+				
+					labelResultadoPromedioRojo.setVisible(true);
+					labelResultadoPromedioRojo.setText("Rojo: " + String.valueOf(promedios[0]));
+					labelResultadoPromedioVerde.setVisible(true);
+					labelResultadoPromedioVerde.setText("Verde: " + String.valueOf(promedios[1]));
+					labelResultadoPromedioAzul.setVisible(true);
+					labelResultadoPromedioAzul.setText("Azul: " + String.valueOf(promedios[2]));
+				}
+			
+		});
 		
 		String[] opcionesGauss = {"Ruido de Gauss", "Ruido Blanco de Gauss"};
 		comboGauss = new JComboBox<String>(opcionesGauss);
@@ -408,6 +426,7 @@ public class VentanaRuido extends JFrame {
 		refrescarCantidadPixeles(cantidadPixeles);
 		actualizarPanelDeImagen(menuItemGuardarComo, imagenElegida);
 	}
+	
 	
 	private void inhabilitarItem(JMenuItem item){
 		
