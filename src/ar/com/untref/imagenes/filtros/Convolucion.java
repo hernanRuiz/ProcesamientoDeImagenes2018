@@ -67,7 +67,6 @@ public class Convolucion implements BufferedImageOp, RasterOp {
 	}
 
 	public final WritableRaster filter(Raster imagenInicial, WritableRaster imagenDestino) {
-		
 		if (imagenInicial == imagenDestino)
 			throw new IllegalArgumentException("imagen origen y destino deben ser distintas");
 		if (kernel.getWidth() > imagenInicial.getWidth()
@@ -100,48 +99,65 @@ public class Convolucion implements BufferedImageOp, RasterOp {
 			for (int y = 0; y < altoDeLaRegionAlcanzable; y++) {
 
 				for (int banda = 0; banda < imagenInicial.getNumBands(); banda++) {
-					float valorAcumulado = 0;
+					float v = 0;
 					imagenInicial.getSamples(x, y, anchoMascara, alturaMascara, banda, matrizTemporal);
 					for (int i = 0; i < matrizTemporal.length; i++)
-						valorAcumulado += matrizTemporal[matrizTemporal.length - i - 1] * valoresDeLaMascara[i];
+						v += matrizTemporal[matrizTemporal.length - i - 1] * valoresDeLaMascara[i];
 
-					//TODO: cambiar a transformacion
-					if (valorAcumulado > valorMaximo[banda])
-						valorAcumulado = valorMaximo[banda];
-					else if (valorAcumulado < 0)
-						valorAcumulado = 0;
+					//Truncado
+					if (v > valorMaximo[banda])
+						v = valorMaximo[banda];
+					else if (v < 0)
+						v = 0;
 
-					imagenDestino.setSample(x + kernel.getXOrigin(), y + kernel.getYOrigin(), banda, valorAcumulado);
+					imagenDestino.setSample(x + kernel.getXOrigin(), y + kernel.getYOrigin(), banda, v);
 				}
 			}
 		}
 
 		return imagenDestino;
 	}
-
-	private void completarBorde(Raster src, WritableRaster dest, int x, int y, int w,
-			int h, int edgeOp) {
-		if (w <= 0)
-			return;
-		if (h <= 0)
-			return;
-		
-		float[] zeros = new float[src.getNumBands() * w * h];
-		dest.setPixels(x, y, w, h, zeros);
-	}
-
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * java.awt.image.RasterOp#createCompatibleDestRaster(java.awt.image.Raster)
+	 */
 	public WritableRaster createCompatibleDestRaster(Raster src) {
 		return src.createCompatibleWritableRaster();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * java.awt.image.BufferedImageOp#getBounds2D(java.awt.image.BufferedImage)
+	 */
 	public final Rectangle2D getBounds2D(BufferedImage src) {
 		return src.getRaster().getBounds();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.awt.image.RasterOp#getBounds2D(java.awt.image.Raster)
+	 */
 	public final Rectangle2D getBounds2D(Raster src) {
 		return src.getBounds();
 	}
 
+	/**
+	 * Returns the corresponding destination point for a source point. Because
+	 * this is not a geometric operation, the destination and source points will
+	 * be identical.
+	 * 
+	 * @param src
+	 *            The source point.
+	 * @param dst
+	 *            The transformed destination point.
+	 * @return The transformed destination point.
+	 */
 	public final Point2D getPoint2D(Point2D src, Point2D dst) {
 		if (dst == null)
 			return (Point2D) src.clone();
