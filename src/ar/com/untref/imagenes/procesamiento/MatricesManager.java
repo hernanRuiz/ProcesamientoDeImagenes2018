@@ -1,13 +1,9 @@
 package ar.com.untref.imagenes.procesamiento;
 
 import java.awt.image.BufferedImage;
-import javax.swing.JPanel;
-import ar.com.untref.imagenes.enums.NivelMensaje;
-import ar.com.untref.imagenes.helpers.DialogsHelper;
 
 public class MatricesManager {
 
-	private static JPanel contentPane;
 	static float[][] matrizRojos;
 	static float[][] matrizVerdes;
 	static float[][] matrizAzules;
@@ -15,14 +11,10 @@ public class MatricesManager {
 	public static int[][] multiplicarMatrices(int[][] matriz1, int[][] matriz2) {
 
 		int matriz1CantidadColumnas = matriz1[0].length;
-
-		int matriz2CantidadFilas = matriz2.length;
-
 		int filasMatrizResultante = matriz1.length;
 		int columnasMatrizResultante = matriz2[0].length;
 		int[][] matrizResultante = new int[filasMatrizResultante][columnasMatrizResultante];
 
-		if (matriz1CantidadColumnas == matriz2CantidadFilas) {
 			for (int i = 0; i < filasMatrizResultante; i++) {
 				for (int j = 0; j < columnasMatrizResultante; j++) {
 					for (int k = 0; k < matriz1CantidadColumnas; k++) {
@@ -30,12 +22,10 @@ public class MatricesManager {
 					}
 				}
 			}
-		} else {
-			DialogsHelper.mostarMensaje(contentPane, "La multiplicación no es posible si la cantidad de columnas de una matriz no coincide con la cantidad de filas de la otra", NivelMensaje.ERROR);
-		}
 		return matrizResultante;
 	}
 
+	
 	public static int[][] multiplicarMatrizPorEscalar(int[][] matriz,
 			int escalar) {
 
@@ -67,6 +57,7 @@ public class MatricesManager {
 		return matrizResultante;
 	}
 	
+	
 	public static int[][] restarMatrizYEscalar(int[][] matriz,
 			int escalar) {
 
@@ -82,51 +73,38 @@ public class MatricesManager {
 		return matrizResultante;
 	}
 
+	
 	public static int[][] sumarMatrices(int[][] matriz1, int[][] matriz2) {
-		int matriz1CantidadFilas = matriz1.length;
-		int matriz1CantidadColumnas = matriz1[0].length;
-		int matriz2CantidadFilas = matriz2.length;
-		int matriz2CantidadColumnas = matriz2[0].length;
 		int filasMatrizResultante = matriz1.length;
 		int columnasMatrizResultante = matriz1[0].length;
 		int[][] matrizResultante = new int[filasMatrizResultante][columnasMatrizResultante];
 
-		if (matriz1CantidadFilas == matriz2CantidadFilas
-				&& matriz1CantidadColumnas == matriz2CantidadColumnas) {
 			for (int i = 0; i < filasMatrizResultante; i++) {
 				for (int j = 0; j < columnasMatrizResultante; j++) {
 					matrizResultante[i][j] += matriz1[i][j] + matriz2[i][j];
 				}
 			}
-		} else {
-			DialogsHelper.mostarMensaje(contentPane, "La suma no es posible si las matrices no coinciden en la cantidad de filas y columnas", NivelMensaje.ERROR);
-
-		}
+		
 		return matrizResultante;
 	}
 
+	
 	public static int[][] restarMatrices(int[][] matriz1, int[][] matriz2) {
-		int matriz1CantidadFilas = matriz1.length;
-		int matriz1CantidadColumnas = matriz1[0].length;
-		int matriz2CantidadFilas = matriz2.length;
-		int matriz2CantidadColumnas = matriz2[0].length;
 		int filasMatrizResultante = matriz1.length;
 		int columnasMatrizResultante = matriz1[0].length;
 		int[][] matrizResultante = new int[filasMatrizResultante][columnasMatrizResultante];
 
-		if (matriz1CantidadFilas == matriz2CantidadFilas
-				&& matriz1CantidadColumnas == matriz2CantidadColumnas) {
+		
 			for (int i = 0; i < filasMatrizResultante; i++) {
 				for (int j = 0; j < columnasMatrizResultante; j++) {
 					matrizResultante[i][j] += matriz1[i][j] - matriz2[i][j];
 				}
 			}
-		} else {
-			DialogsHelper.mostarMensaje(contentPane, "La resta no es posible si las matrices no coinciden en la cantidad de filas y columnas", NivelMensaje.ERROR);
-		}
+		
 		return matrizResultante;
 	}
 
+	
 	public static void toString(int[][] m) {
 		String barra = "|";
 		for (int i = 0; i < m.length; i++) {

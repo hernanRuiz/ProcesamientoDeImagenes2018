@@ -33,7 +33,7 @@ public class OperacionesMatricesDialog extends JDialog {
 	private JScrollPane comboSignos;
 	private JScrollPane comboFactores;
 	private JTextField textFieldEscalar;
-	
+
 	public OperacionesMatricesDialog(VentanaPrincipal ventana) {
 		super(ventana);
 		this.ventana = ventana;
@@ -42,19 +42,20 @@ public class OperacionesMatricesDialog extends JDialog {
 
 	private void initUI() {
 
-
-		labelInstrucciones = new JLabel("Elija primero el signo de la operación a realizar");
+		labelInstrucciones = new JLabel(
+				"Elija primero el signo de la operación a realizar");
 		labelInstrucciones.setFont(new Font("Serif", Font.BOLD, 13));
-		
+
 		labelSigno = new JLabel("Signo");
 		labelInstrucciones.setFont(new Font("Serif", Font.BOLD, 14));
 
-		labelInstrucciones2 = new JLabel("Ahora elija el segundo factor: escalar o matriz");
+		labelInstrucciones2 = new JLabel(
+				"Ahora elija el segundo factor: escalar o matriz");
 		labelInstrucciones2.setFont(new Font("Serif", Font.BOLD, 13));
-		
+
 		labelFactores = new JLabel("Segundo Factor");
 		labelFactores.setFont(new Font("Serif", Font.BOLD, 14));
-		
+
 		crearCombo();
 		createLayout();
 
@@ -75,117 +76,142 @@ public class OperacionesMatricesDialog extends JDialog {
 		gl.setAutoCreateGaps(true);
 
 		gl.setHorizontalGroup(gl.createParallelGroup(Alignment.CENTER)
-				.addComponent(labelInstrucciones).addComponent(labelSigno).addComponent(comboSignos).addComponent(labelInstrucciones2).addComponent(labelFactores).addComponent(comboFactores).addComponent(textFieldEscalar).addComponent(botonConfirmar).addGap(200));
+				.addComponent(labelInstrucciones).addComponent(labelSigno)
+				.addComponent(comboSignos).addComponent(labelInstrucciones2)
+				.addComponent(labelFactores).addComponent(comboFactores)
+				.addComponent(textFieldEscalar).addComponent(botonConfirmar)
+				.addGap(200));
 
 		gl.setVerticalGroup(gl.createSequentialGroup().addGap(30)
-				.addComponent(labelInstrucciones).addGap(20).addComponent(labelSigno).addGap(20).addComponent(comboSignos)
-				.addGap(20).addComponent(labelInstrucciones2).addGap(20).addComponent(labelFactores).addGap(20).addComponent(comboFactores).addGap(20).addComponent(textFieldEscalar).addGap(20).addComponent(botonConfirmar).addGap(30));
-		
-		
+				.addComponent(labelInstrucciones).addGap(20)
+				.addComponent(labelSigno).addGap(20).addComponent(comboSignos)
+				.addGap(20).addComponent(labelInstrucciones2).addGap(20)
+				.addComponent(labelFactores).addGap(20)
+				.addComponent(comboFactores).addGap(20)
+				.addComponent(textFieldEscalar).addGap(20)
+				.addComponent(botonConfirmar).addGap(30));
 
 		pack();
 	}
-	
-	private void crearCombo(){                                    
-	      
+
+	private void crearCombo() {
+
 		labelSigno.setText("Signo");
 
-	      final DefaultComboBoxModel<String> signos = new DefaultComboBoxModel<String>();
+		final DefaultComboBoxModel<String> signos = new DefaultComboBoxModel<String>();
 
-	      final String sumar = new String ("+");
-	      final String restar = new String ("-");
-	      final String multiplicar = new String ("*");
-	      
-	      signos.addElement(sumar);
-	      signos.addElement(restar);
-	      signos.addElement(multiplicar);
+		final String sumar = new String("+");
+		final String restar = new String("-");
+		final String multiplicar = new String("*");
 
-	      final JComboBox<String> combo = new JComboBox<String>(signos);    
-	      combo.setSelectedIndex(0);
+		signos.addElement(sumar);
+		signos.addElement(restar);
+		signos.addElement(multiplicar);
 
-	      comboSignos = new JScrollPane(combo);  
+		final JComboBox<String> combo = new JComboBox<String>(signos);
+		combo.setSelectedIndex(0);
 
-	      final DefaultComboBoxModel<String> factores = new DefaultComboBoxModel<String>();
+		comboSignos = new JScrollPane(combo);
 
-	      String escalar = new String ("Escalar");
-	      String matriz = new String ("Imagen");
-	      
-	      factores.addElement(matriz);
-	      factores.addElement(escalar);
-	      
-	      final JComboBox<String> combo2 = new JComboBox<String>(factores);    
-	      combo2.setSelectedIndex(0);
-	      
-	      comboFactores = new JScrollPane(combo2);
-	      
-	      botonConfirmar = new JButton("Listo");
-	      
-	      textFieldEscalar = new JTextField();
+		final DefaultComboBoxModel<String> factores = new DefaultComboBoxModel<String>();
 
-	      botonConfirmar.addActionListener(new ActionListener() {
-	         public void actionPerformed(ActionEvent e) { 
-	        	 
-	        	 signoElegido = (String)combo.getItemAt(combo.getSelectedIndex());
-	        	 factorElegido = (String)combo2.getItemAt(combo2.getSelectedIndex());
-	               
-	        	 if (signoElegido == sumar){
-	        	   switch (factorElegido) {
-               	
-	        	   		case "Escalar":
-               		
-	        	   			int valorEscalar = Integer.valueOf(textFieldEscalar.getText().trim());
-	        	   			ventana.obtenerMatrizResultanteDeSumaEscalar(valorEscalar);
-	        	   			OperacionesMatricesDialog.this.setVisible(false);
-	        	   
-	        	   		case "Imagen":
-	                	    	        				
-	    					Imagen segundaImagen = abrirImagen();
-	    					ventana.obtenerMatrizResultanteDeSuma(segundaImagen);
-	    					OperacionesMatricesDialog.this.setVisible(false);
-	    					
-	                
-	                }
+		String escalar = new String("Escalar");
+		String matriz = new String("Imagen");
 
-	             }else if (signoElegido == restar){
-	            	 switch (factorElegido) {
-		               	
-		        	   	case "Escalar":
-	                		
-		        	   			int valorEscalar = Integer.valueOf(textFieldEscalar.getText().trim());
-		        	   			ventana.obtenerMatrizResultanteDeRestaEscalar(valorEscalar);
-		        	   			OperacionesMatricesDialog.this.setVisible(false);
-		        	   
-		        	   	case "Imagen":
-		                	    	        			
-		    					Imagen segundaImagen = abrirImagen();
-		    					ventana.obtenerMatrizResultanteDeResta(segundaImagen);
-		    					OperacionesMatricesDialog.this.setVisible(false);
-		    					
-		                }
-	                          
-	         }else if (signoElegido == multiplicar){
-	        	   switch (factorElegido) {
-	               	
-	        	   		case "Escalar":
-               		
-	        	   				int valorEscalar = Integer.valueOf(textFieldEscalar.getText().trim());
-	        	   				ventana.obtenerMatrizResultanteDeMultiplicarPorEscalar(valorEscalar);
-	        	   				OperacionesMatricesDialog.this.setVisible(false);
-	        	   
-	        	   		case "Imagen":
-	                	    	        				
-	        	   				Imagen segundaImagen = abrirImagen();
-	        	   				ventana.obtenerMatrizResultanteDeMultiplicar(segundaImagen);
-	        	   				OperacionesMatricesDialog.this.setVisible(false);
-	    				
-	                }
-	         }
-	       }
-	      }); 
-	   }
-	
+		factores.addElement(matriz);
+		factores.addElement(escalar);
+
+		final JComboBox<String> combo2 = new JComboBox<String>(factores);
+		combo2.setSelectedIndex(0);
+
+		comboFactores = new JScrollPane(combo2);
+
+		botonConfirmar = new JButton("Listo");
+
+		textFieldEscalar = new JTextField();
+
+		botonConfirmar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+				signoElegido = (String) combo.getItemAt(combo
+						.getSelectedIndex());
+				factorElegido = (String) combo2.getItemAt(combo2
+						.getSelectedIndex());
+
+				if (signoElegido == sumar) {
+
+					switch (factorElegido) {
+
+					case "Escalar":
+
+						int valorEscalar = Integer.valueOf(textFieldEscalar
+								.getText().trim());
+						ventana.obtenerMatrizResultanteDeSumaEscalar(valorEscalar);
+						OperacionesMatricesDialog.this.setVisible(false);
+						break;
+
+					case "Imagen":
+
+						Imagen primeraImagen = ProcesadorDeImagenes
+								.obtenerInstancia().getImagenActual();
+						Imagen segundaImagen = abrirImagen();
+						ventana.obtenerMatrizResultanteDeSuma(primeraImagen,
+								segundaImagen);
+						OperacionesMatricesDialog.this.setVisible(false);
+						break;
+
+					}
+
+				} else if (signoElegido == restar) {
+					switch (factorElegido) {
+
+					case "Escalar":
+
+						int valorEscalar = Integer.valueOf(textFieldEscalar
+								.getText().trim());
+						ventana.obtenerMatrizResultanteDeRestaEscalar(valorEscalar);
+						OperacionesMatricesDialog.this.setVisible(false);
+						break;
+
+					case "Imagen":
+
+						Imagen primeraImagen = ProcesadorDeImagenes
+								.obtenerInstancia().getImagenActual();
+						Imagen segundaImagen = abrirImagen();
+						ventana.obtenerMatrizResultanteDeResta(primeraImagen,
+								segundaImagen);
+						OperacionesMatricesDialog.this.setVisible(false);
+						break;
+					}
+
+				} else if (signoElegido == multiplicar) {
+					switch (factorElegido) {
+
+					case "Escalar":
+
+						int valorEscalar = Integer.valueOf(textFieldEscalar
+								.getText().trim());
+						ventana.obtenerMatrizResultanteDeMultiplicarPorEscalar(valorEscalar);
+						OperacionesMatricesDialog.this.setVisible(false);
+						break;
+
+					case "Imagen":
+						Imagen primeraImagen = ProcesadorDeImagenes
+								.obtenerInstancia().getImagenActual();
+						Imagen segundaImagen = abrirImagen();
+						ventana.obtenerMatrizResultanteDeMultiplicar(
+								primeraImagen, segundaImagen);
+						OperacionesMatricesDialog.this.setVisible(false);
+						break;
+					}
+				}
+			}
+		});
+	}
+
 	private Imagen abrirImagen() {
-		Imagen imagenElegida = ProcesadorDeImagenes.obtenerInstancia().cargarUnaImagenDesdeArchivo();
+		Imagen imagenElegida = ProcesadorDeImagenes.obtenerInstancia()
+				.cargarUnaImagenDesdeArchivo();
 		return imagenElegida;
 	}
 }

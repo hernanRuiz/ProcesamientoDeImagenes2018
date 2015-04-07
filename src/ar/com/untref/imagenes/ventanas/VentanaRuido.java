@@ -134,7 +134,7 @@ public class VentanaRuido extends JFrame {
 		});
 		
 		String[] opcionesGauss = {"Ruido de Gauss", "Ruido Blanco de Gauss"};
-		comboGauss = new JComboBox(opcionesGauss);
+		comboGauss = new JComboBox<String>(opcionesGauss);
 		comboGauss.setSelectedIndex(0);
 		panelRuido.add(comboGauss);
 		comboGauss.addActionListener(new ActionListener(){
