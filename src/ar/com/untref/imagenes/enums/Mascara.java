@@ -3,6 +3,7 @@ package ar.com.untref.imagenes.enums;
 public enum Mascara {
 
 	MEDIA("Máscara de la media"),
+	PASA_BAJOS("Máscara pasa bajos"),
 	PASA_ALTOS("Máscara pasa altos");
 	
 	private String descripcion;

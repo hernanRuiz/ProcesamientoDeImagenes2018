@@ -5,12 +5,12 @@ import java.awt.image.Kernel;
 
 import ar.com.untref.imagenes.modelo.Imagen;
 
-public class FiltroPasaAltos {
+public class FiltroPasaBajos {
 
-	public static Imagen aplicarFiltroPasaAltos(Imagen imagenOriginal,
+	public static Imagen aplicarFiltroPasaBajos(Imagen imagenOriginal,
 			int longitudMascara) {
 
-		float[][] mascara = generarMascaraPasaAltos(longitudMascara);
+		float[][] mascara = generarMascaraPasaBajos(longitudMascara);
 
 		BufferedImage im = new BufferedImage(imagenOriginal.getBufferedImage()
 				.getWidth(), imagenOriginal.getBufferedImage().getHeight(),
@@ -40,7 +40,7 @@ public class FiltroPasaAltos {
 		return imagenFiltrada;
 	}
 
-	private static float[][] generarMascaraPasaAltos(int longMascara) {
+	private static float[][] generarMascaraPasaBajos(int longMascara) {
 
 		float[][] mascara = new float[longMascara][longMascara];
 
@@ -49,7 +49,7 @@ public class FiltroPasaAltos {
 				
 				if (j == longMascara/2 && i == longMascara/2){
 					
-					mascara[i][j] = (longMascara * longMascara);
+					mascara[i][j] = (longMascara * longMascara)-1;
 				} else {
 					
 					mascara[i][j] = -1;

@@ -99,12 +99,19 @@ public class MedidaMascaraDialog extends JDialog {
 	        	 if (combo.getSelectedIndex() != -1) {                     
 	               longitudMascaraElegida = (Integer)combo.getItemAt(combo.getSelectedIndex());
 	               
-	               if (mascara == Mascara.MEDIA){
-	            	   
-	            	   ventana.aplicarFiltroDeLaMedia(longitudMascaraElegida);
-	               } else {
-	            	   
-	            	   ventana.aplicarFiltroPasaAltos(longitudMascaraElegida);
+	               switch (mascara){
+	               
+	               		case MEDIA:
+	               			ventana.aplicarFiltroDeLaMedia(longitudMascaraElegida);
+	               			break;
+	               		case PASA_ALTOS:
+	               			ventana.aplicarFiltroPasaAltos(longitudMascaraElegida);
+	               			break;
+	               		case PASA_BAJOS:
+               				ventana.aplicarFiltroPasaBajos(longitudMascaraElegida);
+	               			break;
+	               		default:
+	               			break;
 	               }
 	               MedidaMascaraDialog.this.dispose();
 	            }              
