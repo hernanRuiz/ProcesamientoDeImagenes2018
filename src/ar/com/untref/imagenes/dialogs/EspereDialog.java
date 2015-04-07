@@ -2,6 +2,7 @@ package ar.com.untref.imagenes.dialogs;
 
 import java.awt.Container;
 import java.awt.Dimension;
+import java.util.Random;
 
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
@@ -28,6 +29,15 @@ public class EspereDialog extends JDialog {
 	
 	public void mostrar(){
 
+		Random random = new Random();
+		if(random.nextBoolean()){
+
+			labelImagen.setIcon( new ImageIcon("resources/emc.gif") );
+		} else {
+			
+			labelImagen.setIcon( new ImageIcon("resources/pensador.gif") );
+		}
+		
 		setVisible(true);
 	}
 	
@@ -39,7 +49,7 @@ public class EspereDialog extends JDialog {
 	private void initUI() {
 
 		panel = new JPanel();
-		panel.setPreferredSize(new Dimension(400, 20));
+		panel.setPreferredSize(new Dimension(800, 20));
 		
 		labelEspera = new JLabel("Procesando ");
 		labelEspera.setHorizontalTextPosition( JLabel.LEADING );
@@ -56,7 +66,6 @@ public class EspereDialog extends JDialog {
 		
 		labelImagen = new JLabel();
 		labelImagen.setHorizontalTextPosition( JLabel.LEADING );
-		labelImagen.setIcon( new ImageIcon("resources/pensador.gif") );
 		
 		panel.add(labelEspera);
 		createLayout();
