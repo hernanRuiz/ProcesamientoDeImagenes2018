@@ -352,6 +352,7 @@ public class VentanaRuido extends JFrame {
 			public void actionPerformed(ActionEvent arg0) {
 				ProcesadorDeImagenes.obtenerInstancia().setImagenActual(VentanaRuido.imagenSinCambios);
 				VentanaRuido.this.refrescarImagen();
+				VentanaRuido.this.refrescarCantidadPixeles(VentanaRuido.imagenSinCambios.getBufferedImage().getWidth()*VentanaRuido.imagenSinCambios.getBufferedImage().getHeight());
 			}
 		});
 		panelRuido.add(volverALaImagenOriginal);

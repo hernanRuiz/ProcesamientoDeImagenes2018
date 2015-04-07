@@ -168,6 +168,8 @@ public class VentanaPrincipal extends JFrame {
 				Imagen imageOriginal = ProcesadorDeImagenes.obtenerInstancia().getImagenOriginal();
 				ProcesadorDeImagenes.obtenerInstancia().setImagenActual(imageOriginal);
 				VentanaPrincipal.this.refrescarImagen();
+				VentanaPrincipal.this.refrescarCantidadPixeles(ProcesadorDeImagenes.obtenerInstancia().getImagenOriginal().getBufferedImage().getWidth()*ProcesadorDeImagenes.obtenerInstancia().getImagenOriginal().getBufferedImage().getHeight());
+
 			}
 		});
 		imagenOriginal.add(volverALaImagenOriginal);
