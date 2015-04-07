@@ -12,7 +12,7 @@ import java.awt.image.Raster;
 import java.awt.image.RasterOp;
 import java.awt.image.WritableRaster;
 
-public class Convolucion implements BufferedImageOp, RasterOp {
+public class Filtro implements BufferedImageOp, RasterOp {
 
 	public static final int PIXELES_BORDE_EN_CERO = 0;
 
@@ -20,7 +20,7 @@ public class Convolucion implements BufferedImageOp, RasterOp {
 	private int condicionBorde;
 	private RenderingHints hints;
 
-	public Convolucion(Kernel kernel) {
+	public Filtro(Kernel kernel) {
 		this.kernel = kernel;
 		condicionBorde = PIXELES_BORDE_EN_CERO;
 	}
@@ -118,46 +118,18 @@ public class Convolucion implements BufferedImageOp, RasterOp {
 		return imagenDestino;
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * java.awt.image.RasterOp#createCompatibleDestRaster(java.awt.image.Raster)
-	 */
 	public WritableRaster createCompatibleDestRaster(Raster src) {
 		return src.createCompatibleWritableRaster();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * java.awt.image.BufferedImageOp#getBounds2D(java.awt.image.BufferedImage)
-	 */
 	public final Rectangle2D getBounds2D(BufferedImage src) {
 		return src.getRaster().getBounds();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.awt.image.RasterOp#getBounds2D(java.awt.image.Raster)
-	 */
 	public final Rectangle2D getBounds2D(Raster src) {
 		return src.getBounds();
 	}
 
-	/**
-	 * Returns the corresponding destination point for a source point. Because
-	 * this is not a geometric operation, the destination and source points will
-	 * be identical.
-	 * 
-	 * @param src
-	 *            The source point.
-	 * @param dst
-	 *            The transformed destination point.
-	 * @return The transformed destination point.
-	 */
 	public final Point2D getPoint2D(Point2D src, Point2D dst) {
 		if (dst == null)
 			return (Point2D) src.clone();

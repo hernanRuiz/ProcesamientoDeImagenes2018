@@ -29,12 +29,11 @@ public class FiltroGaussiano {
             }
         }
 
-        //Creamos la operación de convolución.
         Kernel kernel = new Kernel(width, height, filtroK);
-        Convolucion convolucion = new Convolucion(kernel);
+        Filtro filtro = new Filtro(kernel);
 
         //Aplicamos el filtro
-        convolucion.filter(imagenOriginal.getBufferedImage(), imagenFiltrada.getBufferedImage());
+        filtro.filter(imagenOriginal.getBufferedImage(), imagenFiltrada.getBufferedImage());
 
 		return imagenFiltrada;
 	}

@@ -19,8 +19,10 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
+import ar.com.untref.imagenes.dialogs.MascaraDeLaMediaDialog;
 import ar.com.untref.imagenes.dialogs.MascaraGaussianaDialog;
 import ar.com.untref.imagenes.enums.NivelMensaje;
+import ar.com.untref.imagenes.filtros.FiltroDeLaMedia;
 import ar.com.untref.imagenes.filtros.FiltroGaussiano;
 import ar.com.untref.imagenes.helpers.DialogsHelper;
 import ar.com.untref.imagenes.listeners.GuardarComoListener;
@@ -48,9 +50,11 @@ public class VentanaRuido extends JFrame {
 	private JLabel resultadoCantidadPixeles;
 	private JComboBox<String> comboGauss;
 	private int cantidadDePixeles;
+	private static Imagen imagenSinCambios;
 	
-	public VentanaRuido(final Imagen imagenSinCambios) {
+	public VentanaRuido(Imagen imagenSCambios) {
 		
+		imagenSinCambios = imagenSCambios;
 		this.setTitle("Generador de Ruido y Filtros");
 		VentanaRuido.this.setExtendedState(VentanaRuido.this.getExtendedState() | JFrame.MAXIMIZED_BOTH);
 		
@@ -130,7 +134,7 @@ public class VentanaRuido extends JFrame {
 		});
 		
 		String[] opcionesGauss = {"Ruido de Gauss", "Ruido Blanco de Gauss"};
-		comboGauss = new JComboBox<String>(opcionesGauss);
+		comboGauss = new JComboBox(opcionesGauss);
 		comboGauss.setSelectedIndex(0);
 		panelRuido.add(comboGauss);
 		comboGauss.addActionListener(new ActionListener(){
@@ -346,7 +350,7 @@ public class VentanaRuido extends JFrame {
 		JButton volverALaImagenOriginal = new JButton("Imagen Original");
 		volverALaImagenOriginal.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				ProcesadorDeImagenes.obtenerInstancia().setImagenActual(imagenSinCambios);
+				ProcesadorDeImagenes.obtenerInstancia().setImagenActual(VentanaRuido.imagenSinCambios);
 				VentanaRuido.this.refrescarImagen();
 			}
 		});
@@ -358,7 +362,7 @@ public class VentanaRuido extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				
 				VentanaRuido.this.setVisible(false);
-				ProcesadorDeImagenes.obtenerInstancia().setImagenActual(imagenSinCambios);
+				ProcesadorDeImagenes.obtenerInstancia().setImagenActual(VentanaRuido.imagenSinCambios);
 				VentanaRuido.this.refrescarImagen();
 			}
 		});
@@ -371,6 +375,7 @@ public class VentanaRuido extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 			
 				cargarImagen(labelPrincipal, menuItemGuardarComo);
+				VentanaRuido.imagenSinCambios = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
 			}
 		});
 		
@@ -416,6 +421,16 @@ public class VentanaRuido extends JFrame {
 				m.setVisible(true);
 			}
 		});
+		
+		JMenuItem menuItemFiltroMedia = new JMenuItem("FiltroDeLaMedia");
+		menuItemFiltroMedia.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				MascaraDeLaMediaDialog d = new MascaraDeLaMediaDialog(VentanaRuido.this);
+				d.setVisible(true);
+			}
+		});
+		menuFiltros.add(menuItemFiltroMedia);
 		menuFiltros.add(filtroGaussianoMenuItem);
 	}
 		
@@ -489,6 +504,14 @@ public class VentanaRuido extends JFrame {
 	public void aplicarFiltroGaussiano(Integer sigmaElegido) {
 		
 		Imagen imagenFiltrada = FiltroGaussiano.aplicarFiltroGaussiano(ProcesadorDeImagenes.obtenerInstancia().getImagenActual(), sigmaElegido);
+		ProcesadorDeImagenes.obtenerInstancia().setImagenActual(imagenFiltrada);
+		
+		VentanaRuido.this.refrescarImagen();
+	}
+
+	public void aplicarFiltroDeLaMedia(Integer longitudMascara) {
+
+		Imagen imagenFiltrada = FiltroDeLaMedia.aplicarFiltroDeLaMedia(ProcesadorDeImagenes.obtenerInstancia().getImagenActual(), longitudMascara);
 		ProcesadorDeImagenes.obtenerInstancia().setImagenActual(imagenFiltrada);
 		
 		VentanaRuido.this.refrescarImagen();
