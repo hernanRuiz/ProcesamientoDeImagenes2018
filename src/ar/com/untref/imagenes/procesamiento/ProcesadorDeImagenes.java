@@ -21,7 +21,7 @@ public class ProcesadorDeImagenes {
 	private static ProcesadorDeImagenes instancia;
 	private Archivo archivoActual;
 	private Imagen imagenActual;
-	private static Imagen imagenOriginal;
+	private Imagen imagenOriginal;
 
 	private ProcesadorDeImagenes() {
 	}
@@ -322,6 +322,10 @@ public class ProcesadorDeImagenes {
 		return imagenOriginal;
 	}
 	
+	public void setImagenOriginal(Imagen imagen){
+		this.imagenOriginal = imagen;
+	}
+	
 	public void aumentarContrastePorElCuadrado(Imagen imagen){
 		
 		imagenOriginal = imagen;
@@ -415,15 +419,14 @@ public class ProcesadorDeImagenes {
 	 * @param imagen - imagen a umbralizar
 	 * @param umbral - valor que hará de separador entre valores 0 y 255
 	 */
-	public void umbralizarImagen(Imagen imagen, int umbral){
+	public void umbralizarImagen(int umbral){
 		
-		imagenOriginal = imagen; 
-		BufferedImage buffered = imagen.getBufferedImage();
+		BufferedImage buffered = new BufferedImage(imagenOriginal.getBufferedImage().getWidth(), imagenOriginal.getBufferedImage().getHeight(), imagenOriginal.getBufferedImage().getType());
 		
 		for (int x = 0; x < buffered.getWidth(); x++) {
 			for (int y = 0; y < buffered.getHeight(); y++) {
 
-				int rgba = buffered.getRGB(x, y);
+				int rgba = imagenOriginal.getBufferedImage().getRGB(x, y);
 				Color col = new Color(rgba, true);
 				
 				if ( col.getRed()<= umbral){
@@ -437,8 +440,7 @@ public class ProcesadorDeImagenes {
 			}
 		}
 		
-		this.imagenActual.setBufferedImage(buffered);
-		
+		this.imagenActual = new Imagen(buffered, imagenOriginal.getFormato(), imagenOriginal.getNombre());
 	}
 	
 	public BufferedImage aplicarTransformacionLogaritmica(BufferedImage bufferedImage){

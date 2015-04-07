@@ -10,13 +10,12 @@ import ar.com.untref.imagenes.ventanas.VentanaPrincipal;
 
 public class UmbralListener implements ChangeListener {
 
-	private Imagen imagen;
 	private VentanaPrincipal ventana;
 
 	public UmbralListener(Imagen imagen, VentanaPrincipal ventana) {
 
-		this.imagen = imagen;
 		this.ventana = ventana;
+		ProcesadorDeImagenes.obtenerInstancia().setImagenOriginal(imagen);
 	}
 
 	@Override
@@ -25,7 +24,7 @@ public class UmbralListener implements ChangeListener {
 		JSlider source = (JSlider) e.getSource();
 		if (!source.getValueIsAdjusting()) {
 
-			ProcesadorDeImagenes.obtenerInstancia().umbralizarImagen(imagen, ((JSlider) e.getSource()).getValue());
+			ProcesadorDeImagenes.obtenerInstancia().umbralizarImagen(((JSlider) e.getSource()).getValue());
 			ventana.refrescarImagen();
 		}
 	}
