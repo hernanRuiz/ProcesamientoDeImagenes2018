@@ -95,6 +95,10 @@ public class Filtro implements BufferedImageOp, RasterOp {
 		float[] valoresDeLaMascara = kernel.getKernelData(null);
 		float[] matrizTemporal = new float[anchoMascara * alturaMascara];
 
+		float[]maximosYMinimos = calcularMaximosYMinimos(imagenInicial, imagenDestino);
+		float minimo = maximosYMinimos[0];
+		float maximo = maximosYMinimos[1];
+		
 		for (int x = 0; x < anchoDeLaRegionAlcanzable; x++) {
 			for (int y = 0; y < altoDeLaRegionAlcanzable; y++) {
 
@@ -104,13 +108,16 @@ public class Filtro implements BufferedImageOp, RasterOp {
 					for (int i = 0; i < matrizTemporal.length; i++)
 						v += matrizTemporal[matrizTemporal.length - i - 1] * valoresDeLaMascara[i];
 
-					//Truncado
+					/*Truncado
 					if (v > valorMaximo[banda])
 						v = valorMaximo[banda];
 					else if (v < 0)
-						v = 0;
+						v = 0;*/
+					
+					float vTransformado = ((((float)valorMaximo[banda]) / (maximo - minimo)) * v) - ((minimo * (float)valorMaximo[banda]) / (maximo - minimo));
 
-					imagenDestino.setSample(x + kernel.getXOrigin(), y + kernel.getYOrigin(), banda, v);
+					imagenDestino.setSample(x + kernel.getXOrigin(), y + kernel.getYOrigin(), banda, vTransformado);
+					
 				}
 			}
 		}
@@ -135,5 +142,47 @@ public class Filtro implements BufferedImageOp, RasterOp {
 			return (Point2D) src.clone();
 		dst.setLocation(src);
 		return dst;
+	}
+	
+	public float[] calcularMaximosYMinimos(Raster imagenInicial, WritableRaster imagenDestino){
+		
+		int anchoMascara = kernel.getWidth();
+		int alturaMascara = kernel.getHeight();
+		int izquierda = kernel.getXOrigin();
+		int derecha = Math.max(anchoMascara - izquierda - 1, 0);
+		int arriba = kernel.getYOrigin();
+		int abajo = Math.max(alturaMascara - arriba - 1, 0);
+		
+		float maximo = 0;
+		float minimo = 0;
+
+		int anchoDeLaRegionAlcanzable = imagenInicial.getWidth() - izquierda - derecha;
+		int altoDeLaRegionAlcanzable = imagenInicial.getHeight() - arriba - abajo;
+		float[] valoresDeLaMascara = kernel.getKernelData(null);
+		float[] matrizTemporal = new float[anchoMascara * alturaMascara];
+
+		for (int x = 0; x < anchoDeLaRegionAlcanzable; x++) {
+			for (int y = 0; y < altoDeLaRegionAlcanzable; y++) {
+
+				for (int banda = 0; banda < imagenInicial.getNumBands(); banda++) {
+					float v = 0;
+					imagenInicial.getSamples(x, y, anchoMascara, alturaMascara, banda, matrizTemporal);
+					for (int i = 0; i < matrizTemporal.length; i++)
+						v += matrizTemporal[matrizTemporal.length - i - 1] * valoresDeLaMascara[i];
+					
+					if (maximo < v){
+						maximo = v;
+					}
+					
+					if(minimo > v){
+						minimo = v;
+					}
+				}
+			}
+		}
+		float[] maximosYMinimos = new float[2];
+		maximosYMinimos[0] = minimo;
+		maximosYMinimos[1] = maximo;
+		return maximosYMinimos;
 	}
 }

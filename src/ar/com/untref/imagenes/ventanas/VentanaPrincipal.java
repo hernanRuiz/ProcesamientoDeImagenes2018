@@ -689,6 +689,7 @@ VentanaPrincipal.this.setExtendedState(VentanaPrincipal.this.getExtendedState() 
 		if (matriz1CantidadFilas == matriz2CantidadFilas && matriz1CantidadColumnas == matriz2CantidadColumnas) {
 			
 			matrizResultante = MatricesManager.sumarMatrices(matriz1, matriz2);
+			
 			Imagen imagenAnterior = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
 			BufferedImage imagenResultante = MatricesManager.obtenerImagenDeMatriz(matrizResultante);
 			BufferedImage imagenResultanteTransformada = ProcesadorDeImagenes.obtenerInstancia().aplicarTransformacionLineal(imagenResultante);
@@ -769,6 +770,7 @@ VentanaPrincipal.this.setExtendedState(VentanaPrincipal.this.getExtendedState() 
 		int[][] matriz = ProcesadorDeImagenes.obtenerInstancia().calcularMatrizDeLaImagen(bufferedImage);
 		
 		int[][] matrizResultante = MatricesManager.sumarMatrizYEscalar(matriz, escalar);	    					
+		
 		Imagen imagenAnterior = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
 		BufferedImage imagenResultante = MatricesManager.obtenerImagenDeMatriz(matrizResultante);
 		BufferedImage imagenResultanteTransformada = ProcesadorDeImagenes.obtenerInstancia().aplicarTransformacionLineal(imagenResultante);
