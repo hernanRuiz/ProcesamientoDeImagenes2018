@@ -17,6 +17,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.SwingWorker;
 import javax.swing.border.EmptyBorder;
 
 import ar.com.untref.imagenes.dialogs.EspereDialog;
@@ -198,14 +199,26 @@ public class VentanaRuido extends JFrame {
 					
 					try {
 						
-					Integer sigma = Integer.valueOf(campoSigma);
-					Integer mu = Integer.valueOf(campoMu);
-					BufferedImage bufferedImage = GeneradorDeRuido.generarRuidoGauss(ProcesadorDeImagenes.obtenerInstancia().getImagenActual().getBufferedImage(), sigma, mu);
-					Imagen imagenAnterior = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
-					Imagen nuevaImagenActual = new Imagen(bufferedImage, imagenAnterior.getFormato(), imagenAnterior.getNombre());
-					ProcesadorDeImagenes.obtenerInstancia().setImagenActual(nuevaImagenActual);
+					final Integer sigma = Integer.valueOf(campoSigma);
+					final Integer mu = Integer.valueOf(campoMu);
 					
-					VentanaRuido.this.refrescarImagen();
+					SwingWorker<Void, Void> mySwingWorker = new SwingWorker<Void, Void>(){
+				         @Override
+				         protected Void doInBackground() throws Exception {
+
+				        	BufferedImage bufferedImage = GeneradorDeRuido.generarRuidoGauss(ProcesadorDeImagenes.obtenerInstancia().getImagenActual().getBufferedImage(), sigma, mu);
+							Imagen imagenAnterior = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
+							Imagen nuevaImagenActual = new Imagen(bufferedImage, imagenAnterior.getFormato(), imagenAnterior.getNombre());
+							ProcesadorDeImagenes.obtenerInstancia().setImagenActual(nuevaImagenActual);
+							
+							VentanaRuido.this.refrescarImagen();
+				            
+							return null;
+				         }
+				      };
+
+				      mySwingWorker.execute();
+				      mostrarDialogoDeEspera();
 					
 					} catch (Exception e) {
 						
@@ -242,13 +255,25 @@ public class VentanaRuido extends JFrame {
 					
 					try {
 						
-					Integer lambda = Integer.valueOf(campoLambda);
-					BufferedImage bufferedImage = GeneradorDeRuido.generarRuidoExponencialMultiplicativo(ProcesadorDeImagenes.obtenerInstancia().getImagenActual().getBufferedImage(), lambda);
-					Imagen imagenAnterior = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
-					Imagen nuevaImagenActual = new Imagen(bufferedImage, imagenAnterior.getFormato(), imagenAnterior.getNombre());
-					ProcesadorDeImagenes.obtenerInstancia().setImagenActual(nuevaImagenActual);
+					final Integer lambda = Integer.valueOf(campoLambda);
 					
-					VentanaRuido.this.refrescarImagen();
+					SwingWorker<Void, Void> mySwingWorker = new SwingWorker<Void, Void>(){
+				         @Override
+				         protected Void doInBackground() throws Exception {
+
+				        	BufferedImage bufferedImage = GeneradorDeRuido.generarRuidoExponencialMultiplicativo(ProcesadorDeImagenes.obtenerInstancia().getImagenActual().getBufferedImage(), lambda);
+							Imagen imagenAnterior = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
+							Imagen nuevaImagenActual = new Imagen(bufferedImage, imagenAnterior.getFormato(), imagenAnterior.getNombre());
+							ProcesadorDeImagenes.obtenerInstancia().setImagenActual(nuevaImagenActual);
+							
+							VentanaRuido.this.refrescarImagen();
+				            
+							return null;
+				         }
+				      };
+
+				      mySwingWorker.execute();
+				      mostrarDialogoDeEspera();
 					
 					} catch (Exception e) {
 						
@@ -286,13 +311,26 @@ public class VentanaRuido extends JFrame {
 					
 					try {
 						
-					Integer phi = Integer.valueOf(campoPhi);
-					BufferedImage bufferedImage = GeneradorDeRuido.generarRuidoRayleighMultiplicativo(ProcesadorDeImagenes.obtenerInstancia().getImagenActual().getBufferedImage(), phi);
-					Imagen imagenAnterior = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
-					Imagen nuevaImagenActual = new Imagen(bufferedImage, imagenAnterior.getFormato(), imagenAnterior.getNombre());
-					ProcesadorDeImagenes.obtenerInstancia().setImagenActual(nuevaImagenActual);
+					final Integer phi = Integer.valueOf(campoPhi);
 					
-					VentanaRuido.this.refrescarImagen();
+					
+					SwingWorker<Void, Void> mySwingWorker = new SwingWorker<Void, Void>(){
+				         @Override
+				         protected Void doInBackground() throws Exception {
+
+				        	BufferedImage bufferedImage = GeneradorDeRuido.generarRuidoRayleighMultiplicativo(ProcesadorDeImagenes.obtenerInstancia().getImagenActual().getBufferedImage(), phi);
+							Imagen imagenAnterior = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
+							Imagen nuevaImagenActual = new Imagen(bufferedImage, imagenAnterior.getFormato(), imagenAnterior.getNombre());
+							ProcesadorDeImagenes.obtenerInstancia().setImagenActual(nuevaImagenActual);
+							
+							VentanaRuido.this.refrescarImagen();
+			            
+							return null;
+				         }
+				      };
+				      
+				      mySwingWorker.execute();
+				      mostrarDialogoDeEspera();
 					
 					} catch (Exception e) {
 						
@@ -330,13 +368,25 @@ public class VentanaRuido extends JFrame {
 					
 					try {
 						
-					Integer porcentaje = Integer.valueOf(campoPorcentaje);
-					BufferedImage bufferedImage = GeneradorDeRuido.generarRuidoSaltAndPepper(ProcesadorDeImagenes.obtenerInstancia().getImagenActual().getBufferedImage(), porcentaje);
-					Imagen imagenAnterior = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
-					Imagen nuevaImagenActual = new Imagen(bufferedImage, imagenAnterior.getFormato(), imagenAnterior.getNombre());
-					ProcesadorDeImagenes.obtenerInstancia().setImagenActual(nuevaImagenActual);
+					final Integer porcentaje = Integer.valueOf(campoPorcentaje);
 					
-					VentanaRuido.this.refrescarImagen();
+					SwingWorker<Void, Void> mySwingWorker = new SwingWorker<Void, Void>(){
+				         @Override
+				         protected Void doInBackground() throws Exception {
+
+				        	BufferedImage bufferedImage = GeneradorDeRuido.generarRuidoSaltAndPepper(ProcesadorDeImagenes.obtenerInstancia().getImagenActual().getBufferedImage(), porcentaje);
+							Imagen imagenAnterior = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
+							Imagen nuevaImagenActual = new Imagen(bufferedImage, imagenAnterior.getFormato(), imagenAnterior.getNombre());
+							ProcesadorDeImagenes.obtenerInstancia().setImagenActual(nuevaImagenActual);
+							
+							VentanaRuido.this.refrescarImagen();
+			            
+							return null;
+				         }
+				      };
+				      
+				      mySwingWorker.execute();
+				      mostrarDialogoDeEspera();
 					
 					} catch (Exception e) {
 						
@@ -506,20 +556,42 @@ public class VentanaRuido extends JFrame {
 		resultadoCantidadPixeles.setText(String.valueOf(cantidadPixeles));
 	}
 
-	public void aplicarFiltroGaussiano(Integer sigmaElegido) {
+	public void aplicarFiltroGaussiano(final Integer sigmaElegido) {
 		
-		Imagen imagenFiltrada = FiltroGaussiano.aplicarFiltroGaussiano(ProcesadorDeImagenes.obtenerInstancia().getImagenActual(), sigmaElegido);
-		ProcesadorDeImagenes.obtenerInstancia().setImagenActual(imagenFiltrada);
+		SwingWorker<Void, Void> mySwingWorker = new SwingWorker<Void, Void>(){
+	         @Override
+	         protected Void doInBackground() throws Exception {
 
-		VentanaRuido.this.refrescarImagen();
+	            Imagen imagenFiltrada = FiltroGaussiano.aplicarFiltroGaussiano(ProcesadorDeImagenes.obtenerInstancia().getImagenActual(), sigmaElegido);
+	    		ProcesadorDeImagenes.obtenerInstancia().setImagenActual(imagenFiltrada);
+
+	    		VentanaRuido.this.refrescarImagen();
+
+	            return null;
+	         }
+	      };
+
+	      mySwingWorker.execute();
+	      mostrarDialogoDeEspera();
 	}
 
-	public void aplicarFiltroDeLaMedia(Integer longitudMascara) {
+	public void aplicarFiltroDeLaMedia(final Integer longitudMascara) {
 
-		Imagen imagenFiltrada = FiltroDeLaMedia.aplicarFiltroDeLaMedia(ProcesadorDeImagenes.obtenerInstancia().getImagenActual(), longitudMascara);
-		ProcesadorDeImagenes.obtenerInstancia().setImagenActual(imagenFiltrada);
-		
-		VentanaRuido.this.refrescarImagen();
+		SwingWorker<Void, Void> mySwingWorker = new SwingWorker<Void, Void>(){
+	         @Override
+	         protected Void doInBackground() throws Exception {
+
+	        	Imagen imagenFiltrada = FiltroDeLaMedia.aplicarFiltroDeLaMedia(ProcesadorDeImagenes.obtenerInstancia().getImagenActual(), longitudMascara);
+	     		ProcesadorDeImagenes.obtenerInstancia().setImagenActual(imagenFiltrada);
+	     		
+	     		VentanaRuido.this.refrescarImagen();
+	     		
+	            return null;
+	         }
+	      };
+
+	      mySwingWorker.execute();
+	      mostrarDialogoDeEspera();
 	}
 	
 	public void mostrarDialogoDeEspera(){

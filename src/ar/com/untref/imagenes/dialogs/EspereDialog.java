@@ -19,8 +19,7 @@ public class EspereDialog extends JDialog {
 	private JLabel labelEspera;
 	private JLabel labelImagen;
 	private JPanel panel;
-	private AnimatedIcon icon2;
-	private AnimatedIcon pensador;
+	private AnimatedIcon puntosSuspensivos;
 	
 	public EspereDialog(){
 		
@@ -44,28 +43,40 @@ public class EspereDialog extends JDialog {
 		
 		labelEspera = new JLabel("Procesando ");
 		labelEspera.setHorizontalTextPosition( JLabel.LEADING );
-		icon2 = new AnimatedIcon( labelEspera );
-		icon2.setAlignmentX( AnimatedIcon.LEFT );
-		icon2.addIcon( new TextIcon(labelEspera, ".") );
-		icon2.addIcon( new TextIcon(labelEspera, "..") );
-		icon2.addIcon( new TextIcon(labelEspera, "...") );
-		icon2.addIcon( new TextIcon(labelEspera, "....") );
-		icon2.addIcon( new TextIcon(labelEspera, ".....") );
-		labelEspera.setIcon( icon2 );
+		puntosSuspensivos = new AnimatedIcon( labelEspera );
+		puntosSuspensivos.setAlignmentX( AnimatedIcon.LEFT );
+		puntosSuspensivos.addIcon( new TextIcon(labelEspera, ".") );
+		puntosSuspensivos.addIcon( new TextIcon(labelEspera, "..") );
+		puntosSuspensivos.addIcon( new TextIcon(labelEspera, "...") );
+		puntosSuspensivos.addIcon( new TextIcon(labelEspera, "....") );
+		puntosSuspensivos.addIcon( new TextIcon(labelEspera, ".....") );
+		labelEspera.setIcon( puntosSuspensivos );
 		
-		icon2.start();
+		puntosSuspensivos.start();
 		
 		labelImagen = new JLabel();
 		labelImagen.setHorizontalTextPosition( JLabel.LEADING );
-		pensador = new AnimatedIcon( labelImagen );
-		pensador.setAlignmentX( AnimatedIcon.LEFT );
-		pensador.addIcon( new ImageIcon("resources/pensa1.png") );
-		pensador.addIcon( new ImageIcon("resources/pensa2.png") );
-		pensador.addIcon( new ImageIcon("resources/pensa3.png") );
-
-		pensador.start();
-		labelImagen.setIcon( pensador );
+		labelImagen.setIcon( new ImageIcon("resources/pensador.gif") );
 		
+		panel.add(labelEspera);
+		createLayout();
+		
+		setModalityType(ModalityType.APPLICATION_MODAL);
+
+		setTitle("Un momento");
+		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		setLocationRelativeTo(getParent());
+		
+		setModalityType(ModalityType.APPLICATION_MODAL);
+
+		setTitle("Un momento");
+		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		setLocationRelativeTo(getParent());
+		
+		labelImagen = new JLabel();
+		labelImagen.setHorizontalTextPosition( JLabel.LEADING );
+		labelImagen.setIcon( new ImageIcon("resources/pensador.gif") );
+
 		panel.add(labelEspera);
 		createLayout();
 		
