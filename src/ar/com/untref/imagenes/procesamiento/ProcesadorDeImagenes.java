@@ -7,7 +7,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 
 import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
+import javax.swing.JLabel;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import ar.com.untref.imagenes.enums.FormatoDeImagen;
@@ -22,6 +24,11 @@ public class ProcesadorDeImagenes {
 	private Archivo archivoActual;
 	private Imagen imagenActual;
 	private Imagen imagenOriginal;
+	private static JLabel labelImagenMarcada;
+	private Integer x1;
+	private Integer x2;
+	private Integer y1;
+	private Integer y2;
 
 	private ProcesadorDeImagenes() {
 	}
@@ -594,4 +601,52 @@ public class ProcesadorDeImagenes {
 		return imagenTransformada;
 	}
 
+	public JLabel marcarImagenActual(Integer x1, Integer y1, Integer x2,
+			Integer y2, VentanaPrincipal ventana) {
+
+		this.x1 = x1;
+		this.x2 = x2;
+		this.y1 = y1;
+		this.y2 = y2;
+		
+		int cantidadPixeles = 0;
+		if (imagenActual != null) {
+
+			int ancho = x2 - x1;
+			int alto = y2 - y1;
+			/*int[][] matrizRecortada = new int[ancho + 1][alto + 1];
+
+			for (int i = 0; i <= ancho; i++) {
+				for (int j = 0; j <= alto; j++) {
+					int valorDelPixel = imagenActual.getBufferedImage().getRGB(
+							i + x1, j + y1);
+
+					matrizRecortada[i][j] = valorDelPixel;
+				}
+			}*/
+			
+			//BufferedImage imagenRecortada = getBufferedImageDeMatriz(matrizRecortada, ancho+1, alto+1);
+			BufferedImage imagenRecortada = imagenActual.getBufferedImage().getSubimage(x1, y1, ancho, alto);
+			cantidadPixeles = imagenRecortada.getWidth()* imagenRecortada.getHeight();
+			Imagen nuevaImagenRecortada = new Imagen(imagenRecortada, imagenActual.getFormato(), imagenActual.getNombre());
+			this.imagenActual = nuevaImagenRecortada;
+			labelImagenMarcada = new JLabel(new ImageIcon(imagenActual.getBufferedImage()));
+			
+			ventana.mostrarImagenMarcada();
+			ventana.refrescarCantidadPixeles(cantidadPixeles);
+		}
+		return labelImagenMarcada;
+	}
+	
+	public Integer[] getXEY(){
+		Integer[] valoresXEY = new Integer[4];
+		valoresXEY[0] = x1;
+		valoresXEY[1] = x2;
+		valoresXEY[2] = y1;
+		valoresXEY[3] = y2;
+		
+		return valoresXEY;
+	}
+
+	
 }

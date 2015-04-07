@@ -137,7 +137,7 @@ public class VentanaRuido extends JFrame {
 		});
 		
 		String[] opcionesGauss = {"Ruido de Gauss", "Ruido Blanco de Gauss"};
-		comboGauss = new JComboBox(opcionesGauss);
+		comboGauss = new JComboBox<String>(opcionesGauss);
 		comboGauss.setSelectedIndex(0);
 		panelRuido.add(comboGauss);
 		comboGauss.addActionListener(new ActionListener(){
@@ -355,6 +355,7 @@ public class VentanaRuido extends JFrame {
 			public void actionPerformed(ActionEvent arg0) {
 				ProcesadorDeImagenes.obtenerInstancia().setImagenActual(VentanaRuido.imagenSinCambios);
 				VentanaRuido.this.refrescarImagen();
+				VentanaRuido.this.refrescarCantidadPixeles(VentanaRuido.imagenSinCambios.getBufferedImage().getWidth()*VentanaRuido.imagenSinCambios.getBufferedImage().getHeight());
 			}
 		});
 		panelRuido.add(volverALaImagenOriginal);

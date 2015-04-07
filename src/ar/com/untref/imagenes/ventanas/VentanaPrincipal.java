@@ -4,6 +4,8 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -29,6 +31,7 @@ import ar.com.untref.imagenes.enums.FormatoDeImagen;
 import ar.com.untref.imagenes.enums.NivelMensaje;
 import ar.com.untref.imagenes.helpers.DialogsHelper;
 import ar.com.untref.imagenes.listeners.GuardarComoListener;
+import ar.com.untref.imagenes.listeners.MarcarImagenListener;
 import ar.com.untref.imagenes.listeners.MostrarTablaDeColoresListener;
 import ar.com.untref.imagenes.listeners.RecortarImagenListener;
 import ar.com.untref.imagenes.listeners.UmbralListener;
@@ -92,6 +95,23 @@ public class VentanaPrincipal extends JFrame {
 		final JPanel panelPromedios = new JPanel();
 		final JPanel imagenOriginal = new JPanel();
 		panelPromedios.add(imagenOriginal);
+		
+		final JButton botonSeleccionar = new JButton("Seleccionar");
+		botonSeleccionar.setVisible(false);
+		botonSeleccionar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Imagen imagen = ProcesadorDeImagenes.obtenerInstancia().getImagenOriginal();
+				int cantidadPixeles = imagen.getBufferedImage().getHeight() * imagen.getBufferedImage().getWidth();
+				ProcesadorDeImagenes.obtenerInstancia().setImagenActual(imagen);
+				VentanaPrincipal.this.refrescarImagen();
+				VentanaPrincipal.this.refrescarCantidadPixeles(cantidadPixeles);
+				
+				DialogsHelper.mostarMensaje(contentPane, "Cliquea en la esquina superior izquierda y la inferior derecha que formarán el cuadrado para marcar una región en la imagen");
+				labelPrincipal.addMouseListener(new MarcarImagenListener(VentanaPrincipal.this));
+			}
+		});
+		panelPromedios.add(botonSeleccionar);
+		
 		final JLabel cantidadPixeles = new JLabel("Cantidad de Pixeles:");
 		cantidadPixeles.setVisible(false);
 		resultadoCantidadPixeles = new JLabel("");
@@ -148,6 +168,8 @@ public class VentanaPrincipal extends JFrame {
 				Imagen imageOriginal = ProcesadorDeImagenes.obtenerInstancia().getImagenOriginal();
 				ProcesadorDeImagenes.obtenerInstancia().setImagenActual(imageOriginal);
 				VentanaPrincipal.this.refrescarImagen();
+				VentanaPrincipal.this.refrescarCantidadPixeles(ProcesadorDeImagenes.obtenerInstancia().getImagenOriginal().getBufferedImage().getWidth()*ProcesadorDeImagenes.obtenerInstancia().getImagenOriginal().getBufferedImage().getHeight());
+
 			}
 		});
 		imagenOriginal.add(volverALaImagenOriginal);
@@ -482,6 +504,7 @@ public class VentanaPrincipal extends JFrame {
 		menuItemImagenConCuadrado.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
+				botonSeleccionar.setVisible(false);
 				cantidadPixeles.setVisible(false);
 				resultadoCantidadPixeles.setVisible(false);
 				botonPromedio.setVisible(false);
@@ -497,6 +520,7 @@ public class VentanaPrincipal extends JFrame {
 		menuItemImagenConCirculo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
+				botonSeleccionar.setVisible(false);
 				cantidadPixeles.setVisible(false);
 				resultadoCantidadPixeles.setVisible(false);
 				botonPromedio.setVisible(false);
@@ -512,6 +536,7 @@ public class VentanaPrincipal extends JFrame {
 		menuItemDegradeDeGrises.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
+				botonSeleccionar.setVisible(false);
 				cantidadPixeles.setVisible(false);
 				resultadoCantidadPixeles.setVisible(false);
 				botonPromedio.setVisible(false);
@@ -527,6 +552,7 @@ public class VentanaPrincipal extends JFrame {
 		menuItemDegradeColor.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
+				botonSeleccionar.setVisible(false);
 				cantidadPixeles.setVisible(false);
 				resultadoCantidadPixeles.setVisible(false);
 				botonPromedio.setVisible(false);
@@ -541,6 +567,9 @@ public class VentanaPrincipal extends JFrame {
 		JMenuItem menuItemPromedioGrises = new JMenuItem("Valores Promedio");
 		menuItemPromedioGrises.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+VentanaPrincipal.this.setExtendedState(VentanaPrincipal.this.getExtendedState() | JFrame.MAXIMIZED_BOTH);
+				
+				botonSeleccionar.setVisible(true);
 				cantidadPixeles.setVisible(true);
 				resultadoCantidadPixeles.setVisible(true);
 				botonPromedio.setVisible(true);
@@ -629,52 +658,109 @@ public class VentanaPrincipal extends JFrame {
 		resultadoCantidadPixeles.setText(String.valueOf(cantidadPixeles));
 	}
 	
-	public void obtenerMatrizResultanteDeSuma(Imagen imagen){
+	
+	public void mostrarImagenMarcada() {
+
+		Graphics g = super.getGraphics();
+		Graphics2D g2 = (Graphics2D) g;
+		g2.setColor(Color.GREEN);
 		
-		int[][] matriz2 = ProcesadorDeImagenes.obtenerInstancia().calcularMatrizDeLaImagen(imagen.getBufferedImage());
+		Integer[] coordenadas = ProcesadorDeImagenes.obtenerInstancia().getXEY();
+		int x1 = coordenadas[0];
+		int x2 = coordenadas[1];
+		int y1 = coordenadas[2];
+		int y2 = coordenadas[3];
+		g2.drawRect(x1, x1, x2-x1, y2-y1);
 		
-		BufferedImage bufferedImage = ProcesadorDeImagenes.obtenerInstancia().getImagenActual().getBufferedImage();
-		int[][] matriz1 = ProcesadorDeImagenes.obtenerInstancia().calcularMatrizDeLaImagen(bufferedImage);
-		
-		int[][] matrizResultante = MatricesManager.sumarMatrices(matriz1, matriz2);	    					
-		Imagen imagenAnterior = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
-		BufferedImage imagenResultante = MatricesManager.obtenerImagenDeMatriz(matrizResultante);
-		BufferedImage imagenResultanteTransformada = ProcesadorDeImagenes.obtenerInstancia().aplicarTransformacionLineal(imagenResultante);
-		Imagen nuevaImagenActual = new Imagen(imagenResultanteTransformada, imagenAnterior.getFormato(), imagenAnterior.getNombre());
-		ProcesadorDeImagenes.obtenerInstancia().setImagenActual(nuevaImagenActual);
-		VentanaPrincipal.this.refrescarImagen();
 	}
 	
-	public void obtenerMatrizResultanteDeResta(Imagen imagen){
+	public void obtenerMatrizResultanteDeSuma(Imagen primeraImagen, Imagen segundaImagen){
 		
-		int[][] matriz2 = ProcesadorDeImagenes.obtenerInstancia().calcularMatrizDeLaImagen(imagen.getBufferedImage());
+		int[][] matriz1 = ProcesadorDeImagenes.obtenerInstancia().calcularMatrizDeLaImagen(primeraImagen.getBufferedImage());
 		
-		BufferedImage bufferedImage = ProcesadorDeImagenes.obtenerInstancia().getImagenActual().getBufferedImage();
-		int[][] matriz1 = ProcesadorDeImagenes.obtenerInstancia().calcularMatrizDeLaImagen(bufferedImage);
+		int[][] matriz2 = ProcesadorDeImagenes.obtenerInstancia().calcularMatrizDeLaImagen(segundaImagen.getBufferedImage());
 		
-		int[][] matrizResultante = MatricesManager.restarMatrices(matriz1, matriz2);	    					
-		Imagen imagenAnterior = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
-		BufferedImage imagenResultante = MatricesManager.obtenerImagenDeMatriz(matrizResultante);
-		BufferedImage imagenResultanteTransformada = ProcesadorDeImagenes.obtenerInstancia().aplicarTransformacionLineal(imagenResultante);
-		Imagen nuevaImagenActual = new Imagen(imagenResultanteTransformada, imagenAnterior.getFormato(), imagenAnterior.getNombre());
-		ProcesadorDeImagenes.obtenerInstancia().setImagenActual(nuevaImagenActual);
-		VentanaPrincipal.this.refrescarImagen();
+		int matriz1CantidadFilas = matriz1.length;
+		int matriz1CantidadColumnas = matriz1[0].length;
+		int matriz2CantidadFilas = matriz2.length;
+		int matriz2CantidadColumnas = matriz2[0].length;
+		int[][] matrizResultante = new int[matriz1CantidadFilas][matriz2CantidadColumnas];
+		
+		if (matriz1CantidadFilas == matriz2CantidadFilas && matriz1CantidadColumnas == matriz2CantidadColumnas) {
+			
+			matrizResultante = MatricesManager.sumarMatrices(matriz1, matriz2);
+			Imagen imagenAnterior = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
+			BufferedImage imagenResultante = MatricesManager.obtenerImagenDeMatriz(matrizResultante);
+			BufferedImage imagenResultanteTransformada = ProcesadorDeImagenes.obtenerInstancia().aplicarTransformacionLineal(imagenResultante);
+			Imagen nuevaImagenActual = new Imagen(imagenResultanteTransformada, imagenAnterior.getFormato(), imagenAnterior.getNombre());
+			ProcesadorDeImagenes.obtenerInstancia().setImagenActual(nuevaImagenActual);
+			VentanaPrincipal.this.refrescarImagen();
+			
+		} else {
+			DialogsHelper.mostarMensaje(contentPane, "La suma no es posible si las matrices no coinciden en la cantidad de filas y columnas", NivelMensaje.ERROR);
+			matrizResultante = matriz1;
+			ProcesadorDeImagenes.obtenerInstancia().setImagenOriginal(primeraImagen);
+		}
+		
+		
+		
 	}
 	
-	public void obtenerMatrizResultanteDeMultiplicar(Imagen imagen){
+	public void obtenerMatrizResultanteDeResta(Imagen primeraImagen, Imagen segundaImagen){
 		
-		int[][] matriz2 = ProcesadorDeImagenes.obtenerInstancia().calcularMatrizDeLaImagen(imagen.getBufferedImage());
+		int[][] matriz1 = ProcesadorDeImagenes.obtenerInstancia().calcularMatrizDeLaImagen(primeraImagen.getBufferedImage());
 		
-		BufferedImage bufferedImage = ProcesadorDeImagenes.obtenerInstancia().getImagenActual().getBufferedImage();
-		int[][] matriz1 = ProcesadorDeImagenes.obtenerInstancia().calcularMatrizDeLaImagen(bufferedImage);
+		int[][] matriz2 = ProcesadorDeImagenes.obtenerInstancia().calcularMatrizDeLaImagen(segundaImagen.getBufferedImage());
 		
-		int[][] matrizResultante = MatricesManager.multiplicarMatrices(matriz1, matriz2);	    					
-		Imagen imagenAnterior = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
-		BufferedImage imagenResultante = MatricesManager.obtenerImagenDeMatriz(matrizResultante);
-		BufferedImage imagenResultanteTransformada = ProcesadorDeImagenes.obtenerInstancia().aplicarTransformacionLogaritmica(imagenResultante);
-		Imagen nuevaImagenActual = new Imagen(imagenResultanteTransformada, imagenAnterior.getFormato(), imagenAnterior.getNombre());
-		ProcesadorDeImagenes.obtenerInstancia().setImagenActual(nuevaImagenActual);
-		VentanaPrincipal.this.refrescarImagen();
+		int matriz1CantidadFilas = matriz1.length;
+		int matriz1CantidadColumnas = matriz1[0].length;
+		int matriz2CantidadFilas = matriz2.length;
+		int matriz2CantidadColumnas = matriz2[0].length;
+		int[][] matrizResultante = new int[matriz1CantidadFilas][matriz2CantidadColumnas];
+		
+		if (matriz1CantidadFilas == matriz2CantidadFilas && matriz1CantidadColumnas == matriz2CantidadColumnas) {
+			
+			matrizResultante = MatricesManager.restarMatrices(matriz1, matriz2);
+			Imagen imagenAnterior = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
+			BufferedImage imagenResultante = MatricesManager.obtenerImagenDeMatriz(matrizResultante);
+			BufferedImage imagenResultanteTransformada = ProcesadorDeImagenes.obtenerInstancia().aplicarTransformacionLineal(imagenResultante);
+			Imagen nuevaImagenActual = new Imagen(imagenResultanteTransformada, imagenAnterior.getFormato(), imagenAnterior.getNombre());
+			ProcesadorDeImagenes.obtenerInstancia().setImagenActual(nuevaImagenActual);
+			VentanaPrincipal.this.refrescarImagen();
+			
+		} else {
+			DialogsHelper.mostarMensaje(contentPane, "La resta no es posible si las matrices no coinciden en la cantidad de filas y columnas", NivelMensaje.ERROR);
+			matrizResultante = matriz1;
+			ProcesadorDeImagenes.obtenerInstancia().setImagenOriginal(primeraImagen);
+		}
+	}
+	
+	public void obtenerMatrizResultanteDeMultiplicar(Imagen primeraImagen, Imagen segundaImagen){
+		
+		int[][] matriz1 = ProcesadorDeImagenes.obtenerInstancia().calcularMatrizDeLaImagen(primeraImagen.getBufferedImage());
+		
+		int[][] matriz2 = ProcesadorDeImagenes.obtenerInstancia().calcularMatrizDeLaImagen(segundaImagen.getBufferedImage());
+		
+		int matriz1CantidadFilas = matriz1.length;
+		int matriz2CantidadColumnas = matriz2[0].length;
+		
+		int[][] matrizResultante = new int[matriz1CantidadFilas][matriz2CantidadColumnas];
+		
+		if (matriz1CantidadFilas == matriz2CantidadColumnas) {
+			
+			matrizResultante = MatricesManager.multiplicarMatrices(matriz1, matriz2);
+			Imagen imagenAnterior = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
+			BufferedImage imagenResultante = MatricesManager.obtenerImagenDeMatriz(matrizResultante);
+			BufferedImage imagenResultanteTransformada = ProcesadorDeImagenes.obtenerInstancia().aplicarTransformacionLineal(imagenResultante);
+			Imagen nuevaImagenActual = new Imagen(imagenResultanteTransformada, imagenAnterior.getFormato(), imagenAnterior.getNombre());
+			ProcesadorDeImagenes.obtenerInstancia().setImagenActual(nuevaImagenActual);
+			VentanaPrincipal.this.refrescarImagen();
+			
+		} else {
+			DialogsHelper.mostarMensaje(contentPane, "La multiplicación no es posible si la cantidad de columnas de una matriz no coincide con la cantidad de filas de la otra", NivelMensaje.ERROR);
+			matrizResultante = matriz1;
+			ProcesadorDeImagenes.obtenerInstancia().setImagenOriginal(primeraImagen);
+		}
 	}
 	
 	public void obtenerMatrizResultanteDeSumaEscalar(int escalar){
