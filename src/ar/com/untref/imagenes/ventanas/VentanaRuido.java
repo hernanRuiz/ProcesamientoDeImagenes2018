@@ -19,6 +19,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
+import ar.com.untref.imagenes.dialogs.EspereDialog;
 import ar.com.untref.imagenes.dialogs.MascaraDeLaMediaDialog;
 import ar.com.untref.imagenes.dialogs.MascaraGaussianaDialog;
 import ar.com.untref.imagenes.enums.NivelMensaje;
@@ -51,9 +52,11 @@ public class VentanaRuido extends JFrame {
 	private JComboBox<String> comboGauss;
 	private int cantidadDePixeles;
 	private static Imagen imagenSinCambios;
+	private EspereDialog dialogoEspera;
 	
 	public VentanaRuido(Imagen imagenSCambios) {
 		
+		dialogoEspera = new EspereDialog();
 		imagenSinCambios = imagenSCambios;
 		this.setTitle("Generador de Ruido y Filtros");
 		VentanaRuido.this.setExtendedState(VentanaRuido.this.getExtendedState() | JFrame.MAXIMIZED_BOTH);
@@ -492,6 +495,7 @@ public class VentanaRuido extends JFrame {
 
 	public void refrescarImagen() {
 
+		ocultarDialogoDeEspera();
 		Imagen imagen = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
 		labelPrincipal.setIcon(new ImageIcon(imagen.getBufferedImage()));
 		chequearGuardarComo(menuItemGuardarComo);
@@ -505,7 +509,7 @@ public class VentanaRuido extends JFrame {
 		
 		Imagen imagenFiltrada = FiltroGaussiano.aplicarFiltroGaussiano(ProcesadorDeImagenes.obtenerInstancia().getImagenActual(), sigmaElegido);
 		ProcesadorDeImagenes.obtenerInstancia().setImagenActual(imagenFiltrada);
-		
+
 		VentanaRuido.this.refrescarImagen();
 	}
 
@@ -515,6 +519,16 @@ public class VentanaRuido extends JFrame {
 		ProcesadorDeImagenes.obtenerInstancia().setImagenActual(imagenFiltrada);
 		
 		VentanaRuido.this.refrescarImagen();
+	}
+	
+	public void mostrarDialogoDeEspera(){
+		
+		this.dialogoEspera.mostrar();
+	}
+	
+	public void ocultarDialogoDeEspera(){
+		
+		this.dialogoEspera.ocultar();
 	}
 	
 }
