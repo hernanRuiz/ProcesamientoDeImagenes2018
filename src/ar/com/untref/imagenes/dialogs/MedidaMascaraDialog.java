@@ -14,10 +14,11 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 
+import ar.com.untref.imagenes.enums.Mascara;
 import ar.com.untref.imagenes.ventanas.VentanaRuido;
 
 @SuppressWarnings("serial")
-public class MascaraDeLaMediaDialog extends JDialog {
+public class MedidaMascaraDialog extends JDialog {
 
 	private VentanaRuido ventana;
 	private JButton botonConfirmar;
@@ -25,10 +26,13 @@ public class MascaraDeLaMediaDialog extends JDialog {
 	private JLabel labelInstrucciones;
 	private Integer longitudMascaraElegida;
 	private JScrollPane comboSigmas;
+	private Mascara mascara;
 	
-	public MascaraDeLaMediaDialog(VentanaRuido ventana) {
+	public MedidaMascaraDialog(VentanaRuido ventana, Mascara mascara) {
+		
 		super(ventana);
 		this.ventana = ventana;
+		this.mascara = mascara;
 		initUI();
 	}
 
@@ -45,7 +49,7 @@ public class MascaraDeLaMediaDialog extends JDialog {
 
 		setModalityType(ModalityType.APPLICATION_MODAL);
 
-		setTitle("Máscara de la media");
+		setTitle(mascara.getDescripcion());
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		setLocationRelativeTo(getParent());
 	}
@@ -66,8 +70,6 @@ public class MascaraDeLaMediaDialog extends JDialog {
 		gl.setVerticalGroup(gl.createSequentialGroup().addGap(30)
 				.addComponent(labelInstrucciones).addGap(20).addComponent(labelSigma).addGap(20).addComponent(comboSigmas)
 				.addGap(20).addComponent(botonConfirmar).addGap(30));
-		
-		
 
 		pack();
 	}
@@ -96,8 +98,15 @@ public class MascaraDeLaMediaDialog extends JDialog {
 	            
 	        	 if (combo.getSelectedIndex() != -1) {                     
 	               longitudMascaraElegida = (Integer)combo.getItemAt(combo.getSelectedIndex());
-	               ventana.aplicarFiltroDeLaMedia(longitudMascaraElegida);
-	               MascaraDeLaMediaDialog.this.dispose();
+	               
+	               if (mascara == Mascara.MEDIA){
+	            	   
+	            	   ventana.aplicarFiltroDeLaMedia(longitudMascaraElegida);
+	               } else {
+	            	   
+	            	   ventana.aplicarFiltroPasaAltos(longitudMascaraElegida);
+	               }
+	               MedidaMascaraDialog.this.dispose();
 	            }              
 	         }
 	      }); 

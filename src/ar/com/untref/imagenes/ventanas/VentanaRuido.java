@@ -21,11 +21,13 @@ import javax.swing.SwingWorker;
 import javax.swing.border.EmptyBorder;
 
 import ar.com.untref.imagenes.dialogs.EspereDialog;
-import ar.com.untref.imagenes.dialogs.MascaraDeLaMediaDialog;
 import ar.com.untref.imagenes.dialogs.MascaraGaussianaDialog;
+import ar.com.untref.imagenes.dialogs.MedidaMascaraDialog;
+import ar.com.untref.imagenes.enums.Mascara;
 import ar.com.untref.imagenes.enums.NivelMensaje;
 import ar.com.untref.imagenes.filtros.FiltroDeLaMedia;
 import ar.com.untref.imagenes.filtros.FiltroGaussiano;
+import ar.com.untref.imagenes.filtros.FiltroPasaAltos;
 import ar.com.untref.imagenes.helpers.DialogsHelper;
 import ar.com.untref.imagenes.listeners.GuardarComoListener;
 import ar.com.untref.imagenes.modelo.Imagen;
@@ -138,7 +140,7 @@ public class VentanaRuido extends JFrame {
 		});
 		
 		String[] opcionesGauss = {"Ruido de Gauss", "Ruido Blanco de Gauss"};
-		comboGauss = new JComboBox<String>(opcionesGauss);
+		comboGauss = new JComboBox(opcionesGauss);
 		comboGauss.setSelectedIndex(0);
 		panelRuido.add(comboGauss);
 		comboGauss.addActionListener(new ActionListener(){
@@ -460,14 +462,10 @@ public class VentanaRuido extends JFrame {
 		});
 		menuItemEditar.add(menuItemHistogramas);
 		
-		
-		
-		
-		
 		JMenu menuFiltros = new JMenu("Filtros");
 		menuItemEditar.add(menuFiltros);
 		
-		JMenuItem filtroGaussianoMenuItem = new JMenuItem("Filtro Gaussiano");
+		JMenuItem filtroGaussianoMenuItem = new JMenuItem("Filtro gaussiano");
 		filtroGaussianoMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
@@ -476,16 +474,26 @@ public class VentanaRuido extends JFrame {
 			}
 		});
 		
-		JMenuItem menuItemFiltroMedia = new JMenuItem("FiltroDeLaMedia");
+		JMenuItem menuItemFiltroMedia = new JMenuItem("Filtro de la media");
 		menuItemFiltroMedia.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
-				MascaraDeLaMediaDialog d = new MascaraDeLaMediaDialog(VentanaRuido.this);
+				MedidaMascaraDialog d = new MedidaMascaraDialog(VentanaRuido.this, Mascara.MEDIA);
 				d.setVisible(true);
 			}
 		});
 		menuFiltros.add(menuItemFiltroMedia);
 		menuFiltros.add(filtroGaussianoMenuItem);
+		
+		JMenuItem menuItemFiltroPasaAltos = new JMenuItem("Filtro pasa altos");
+		menuItemFiltroPasaAltos.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				MedidaMascaraDialog d = new MedidaMascaraDialog(VentanaRuido.this, Mascara.PASA_ALTOS);
+				d.setVisible(true);
+			}
+		});
+		menuFiltros.add(menuItemFiltroPasaAltos);
 	}
 		
 	private void cargarImagen(JLabel labelPrincipal,
@@ -582,6 +590,25 @@ public class VentanaRuido extends JFrame {
 	         protected Void doInBackground() throws Exception {
 
 	        	Imagen imagenFiltrada = FiltroDeLaMedia.aplicarFiltroDeLaMedia(ProcesadorDeImagenes.obtenerInstancia().getImagenActual(), longitudMascara);
+	     		ProcesadorDeImagenes.obtenerInstancia().setImagenActual(imagenFiltrada);
+	     		
+	     		VentanaRuido.this.refrescarImagen();
+	     		
+	            return null;
+	         }
+	      };
+
+	      mySwingWorker.execute();
+	      mostrarDialogoDeEspera();
+	}
+	
+	public void aplicarFiltroPasaAltos(final Integer longitudMascara) {
+
+		SwingWorker<Void, Void> mySwingWorker = new SwingWorker<Void, Void>(){
+	         @Override
+	         protected Void doInBackground() throws Exception {
+
+	        	Imagen imagenFiltrada = FiltroPasaAltos.aplicarFiltroPasaAltos(ProcesadorDeImagenes.obtenerInstancia().getImagenActual(), longitudMascara);
 	     		ProcesadorDeImagenes.obtenerInstancia().setImagenActual(imagenFiltrada);
 	     		
 	     		VentanaRuido.this.refrescarImagen();
