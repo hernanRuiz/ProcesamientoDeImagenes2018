@@ -165,11 +165,11 @@ public class VentanaPrincipal extends JFrame {
 		JButton volverALaImagenOriginal = new JButton("Imagen Original");
 		volverALaImagenOriginal.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+
 				Imagen imageOriginal = ProcesadorDeImagenes.obtenerInstancia().getImagenOriginal();
 				ProcesadorDeImagenes.obtenerInstancia().setImagenActual(imageOriginal);
 				VentanaPrincipal.this.refrescarImagen();
 				VentanaPrincipal.this.refrescarCantidadPixeles(ProcesadorDeImagenes.obtenerInstancia().getImagenOriginal().getBufferedImage().getWidth()*ProcesadorDeImagenes.obtenerInstancia().getImagenOriginal().getBufferedImage().getHeight());
-
 			}
 		});
 		imagenOriginal.add(volverALaImagenOriginal);
