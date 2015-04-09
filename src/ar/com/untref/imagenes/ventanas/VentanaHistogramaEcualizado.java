@@ -68,7 +68,7 @@ public class VentanaHistogramaEcualizado extends JFrame{
 		panelImagen.add(labelImagen);
 		
 		BufferedImage miImagen = imagen.getBufferedImage();
-		ArrayList<int[]> histogramaEQ = HistogramEQ.histogramEqualization(miImagen);
+		ArrayList<float[]> histogramaEQ = HistogramEQ.histogramEqualization(miImagen);
 		bufferedImage = HistogramEQ.getImagenEcualizada();
 		Image imagenEcualizada = bufferedImage.getScaledInstance(labelImagen.getWidth(), labelImagen.getHeight(), Image.SCALE_SMOOTH);
 		labelImagen.setIcon(new ImageIcon(imagenEcualizada));
@@ -126,7 +126,7 @@ public class VentanaHistogramaEcualizado extends JFrame{
 	
 	}
 	
-	private JFreeChart dibujarHistograma(int[] histograma, JPanel jPanel, Canal colorBarras) {
+	private JFreeChart dibujarHistograma(float[] histograma, JPanel jPanel, Canal colorBarras) {
 
 		DefaultCategoryDataset dataset = new DefaultCategoryDataset();
 
