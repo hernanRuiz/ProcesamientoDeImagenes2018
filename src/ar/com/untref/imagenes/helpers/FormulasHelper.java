@@ -5,7 +5,7 @@ public class FormulasHelper {
 
 	public static int potenciarColorPorSuCuadrado(int color){
 		
-		int colorResultante = (color*color / 255);
+		int colorResultante = ((color*color) / 255);
 		
 		return colorResultante;
 	}

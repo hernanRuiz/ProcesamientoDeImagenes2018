@@ -4,18 +4,11 @@ import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
  
-/**
- * Image histogram equalization
- *
- * Author: Bostjan Cigan (http://zerocool.is-a-geek.net)
- *
- */
- 
 public class HistogramEQ {
  
     private static BufferedImage equalized;
  
-    public static ArrayList<int[]> histogramEqualization(BufferedImage original) {
+    public static ArrayList<float[]> histogramEqualization(BufferedImage original) {
  
         int red;
         int green;
@@ -25,7 +18,9 @@ public class HistogramEQ {
  
         // Get the Lookup table for histogram equalization
         ArrayList<int[]> histLUT = histogramEqualizationLUT(original);
- 
+        
+        
+        
         BufferedImage histogramEQ = new BufferedImage(original.getWidth(), original.getHeight(), original.getType());
  
         for(int i=0; i<original.getWidth(); i++) {
@@ -42,6 +37,8 @@ public class HistogramEQ {
                 green = histLUT.get(1)[green];
                 blue = histLUT.get(2)[blue];
  
+               
+                
                 // Return back to original format
                 newPixel = colorToRGB(alpha, red, green, blue);
  
@@ -49,9 +46,20 @@ public class HistogramEQ {
                 histogramEQ.setRGB(i, j, newPixel);
  
             }
+            
         }
+        float[] rojoEQ = Histograma.calcularHistogramaRojo(histogramEQ);
+        float[] verdeEQ = Histograma.calcularHistogramaVerde(histogramEQ);
+        float[] azulEQ = Histograma.calcularHistogramaAzul(histogramEQ);
+        
+        ArrayList<float[]> ecualizados = new ArrayList<float[]>();
+        
+        ecualizados.add(0, rojoEQ);
+        ecualizados.add(1, verdeEQ);
+        ecualizados.add(2, azulEQ);
+        
         equalized = histogramEQ;
-        return histLUT;
+        return ecualizados;
     }
     
     public static BufferedImage getImagenEcualizada(){

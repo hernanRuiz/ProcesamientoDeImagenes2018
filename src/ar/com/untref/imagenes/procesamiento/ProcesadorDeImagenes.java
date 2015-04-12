@@ -289,11 +289,11 @@ public class ProcesadorDeImagenes {
 
 	public Imagen aplicarNegativo(Imagen imagen) {
 		
-		imagenOriginal = imagen;
 		Imagen imagenEnNegativo = null;
 		
 		if (imagen != null) {
 
+			this.imagenOriginal = imagen;
 			BufferedImage resultado = imagen.getBufferedImage();
 
 			for (int x = 0; x < resultado.getWidth(); x++) {
@@ -308,7 +308,6 @@ public class ProcesadorDeImagenes {
 			}
 
 			imagenEnNegativo = new Imagen(resultado, imagen.getFormato(), imagen.getNombre());
-			this.imagenActual = imagenEnNegativo;
 		}
 		
 		return imagenEnNegativo;
@@ -335,7 +334,7 @@ public class ProcesadorDeImagenes {
 	
 	public void aumentarContrastePorElCuadrado(Imagen imagen){
 		
-		imagenOriginal = imagen;
+		setImagenOriginal(imagen);
 		BufferedImage buffered = imagen.getBufferedImage();
 		
 		for (int x = 0; x < buffered.getWidth(); x++) {
@@ -352,13 +351,13 @@ public class ProcesadorDeImagenes {
 				buffered.setRGB(x, y, col.getRGB());
 			}
 		}
-		this.imagenActual.setBufferedImage(buffered);
+		this.imagenActual= new Imagen(buffered, imagenOriginal.getFormato(), imagenOriginal.getNombre());
 		
 	}
 	
 	public void aumentoContrasteAutomatico(Imagen imagen) {
 
-		imagenOriginal = imagen;
+		
 		BufferedImage buffered = imagen.getBufferedImage();
 		int minimoRojo = 255;
 		int maximoRojo = 0;
@@ -418,7 +417,7 @@ public class ProcesadorDeImagenes {
 				buffered.setRGB(x, y, col.getRGB());
 			}
 		}
-		this.imagenActual.setBufferedImage(buffered);
+		this.imagenActual= new Imagen(buffered, imagenOriginal.getFormato(), imagenOriginal.getNombre());
 		
 	}
 	

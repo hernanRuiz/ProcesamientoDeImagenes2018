@@ -180,7 +180,7 @@ public class GeneradorDeRuido {
 		while (x <= 0 | x > 1); // x no puede ser cero ni mayor a 1
 
 		// TODO: revisar division, floats
-		y = (float) ((Math.log(-x + 1)) / ((-1) * Float.valueOf(lambda)));
+		y = (float) ((Math.log10(-x + 1)) / ((-1) * Float.valueOf(lambda)));
 
 		return y;
 	}
@@ -262,9 +262,9 @@ public class GeneradorDeRuido {
 		for (int i = 0; i < nrows; i++) {
 			for (int j = 0; j < ncols; j++) {
 
-				int rojoTransformado = (int) ((255f / (Math.log(rojoMax))) * Math.log(1 + matrizRojos[i][j]));
-				int verdeTransformado = (int) ((255f / (Math.log(verdeMax))) * Math.log(1 + matrizVerdes[i][j]));
-				int azulTransformado = (int) ((255f / (Math.log(azulMax))) * Math.log(1 + matrizAzules[i][j]));
+				int rojoTransformado = (int) ((255f / (Math.log10(rojoMax))) * Math.log10(1 + matrizRojos[i][j]));
+				int verdeTransformado = (int) ((255f / (Math.log10(verdeMax))) * Math.log10(1 + matrizVerdes[i][j]));
+				int azulTransformado = (int) ((255f / (Math.log10(azulMax))) * Math.log10(1 + matrizAzules[i][j]));
 
 				Color colorModificado = new Color(rojoTransformado, verdeTransformado, azulTransformado);
 				imagenConRuido.setRGB(i, j, colorModificado.getRGB()); // Add noise to pixel
@@ -285,7 +285,7 @@ public class GeneradorDeRuido {
 			x = (float) numero.nextGaussian();
 		while (x <= 0 | x > 1); // x no puede ser cero ni mayor a uno
 
-		y = (float) (Float.valueOf(phi) * (Math.sqrt((-2f) * Math.log(-x + 1f))));
+		y = (float) (Float.valueOf(phi) * (Math.sqrt((-2f) * Math.log(1-x))));
 		return y;
 	}
 
@@ -368,9 +368,9 @@ public class GeneradorDeRuido {
 		for (int i = 0; i < nrows; i++) {
 			for (int j = 0; j < ncols; j++) {
 
-				int rojoTransformado = (int) ((255f / (Math.log(rojoMax))) * Math.log(1 + matrizRojos[i][j]));
-				int verdeTransformado = (int) ((255f / (Math.log(verdeMax))) * Math.log(1 + matrizVerdes[i][j]));
-				int azulTransformado = (int) ((255f / (Math.log(azulMax))) * Math.log(1 + matrizAzules[i][j]));
+				int rojoTransformado = (int) ((255f / (Math.log10(rojoMax+1))) * Math.log10(1 + matrizRojos[i][j]));
+				int verdeTransformado = (int) ((255f / (Math.log10(verdeMax+1))) * Math.log10(1 + matrizVerdes[i][j]));
+				int azulTransformado = (int) ((255f / (Math.log10(azulMax+1))) * Math.log10(1 + matrizAzules[i][j]));
 
 				Color colorModificado = new Color(rojoTransformado, verdeTransformado, azulTransformado);
 				imagenConRuido.setRGB(i, j, colorModificado.getRGB()); // Add noise to pixel

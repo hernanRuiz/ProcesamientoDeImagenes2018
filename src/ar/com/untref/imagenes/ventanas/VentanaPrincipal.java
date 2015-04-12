@@ -26,6 +26,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
+import ar.com.untref.imagenes.bordes.DetectorDeBordes;
 import ar.com.untref.imagenes.dialogs.OperacionesMatricesDialog;
 import ar.com.untref.imagenes.enums.FormatoDeImagen;
 import ar.com.untref.imagenes.enums.NivelMensaje;
@@ -375,6 +376,8 @@ public class VentanaPrincipal extends JFrame {
 		});
 		menuItemEditar.add(menuItemRecortarImagen);
 		
+		
+		
 		JMenuItem menuItemHistogramas = new JMenuItem("Histogramas");
 		menuItemHistogramas.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -588,6 +591,23 @@ VentanaPrincipal.this.setExtendedState(VentanaPrincipal.this.getExtendedState() 
 			
 		});
 		menuItemEditar.add(menuItemOperacionesMatrices);
+		
+		
+		JMenuItem menuItemDeteccionDeBordes = new JMenuItem("Deteccion de Bordes");
+		menuItemDeteccionDeBordes.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				Imagen imagenAnterior = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
+				BufferedImage bufferedImage = DetectorDeBordes.aplicarDetectorDePrewitt(imagenAnterior);
+				Imagen nuevaImagenActual = new Imagen(bufferedImage, imagenAnterior.getFormato(), imagenAnterior.getNombre());
+				ProcesadorDeImagenes.obtenerInstancia().setImagenActual(nuevaImagenActual);
+				
+				VentanaPrincipal.this.refrescarImagen();
+			}
+			
+		});
+		menuItemEditar.add(menuItemDeteccionDeBordes);
+		
 		
 	}
 	
