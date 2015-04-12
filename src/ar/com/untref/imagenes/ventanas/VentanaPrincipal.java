@@ -82,7 +82,7 @@ public class VentanaPrincipal extends JFrame {
 		JScrollPane scrollPane = new JScrollPane();
 		contentPane.add(scrollPane, BorderLayout.CENTER);
 		
-		ImageIcon iconoSubirArchivo = new ImageIcon("resources/upload.png");
+		ImageIcon iconoSubirArchivo = new ImageIcon(VentanaPrincipal.class.getResource("/resources/upload.png"));
 		labelPrincipal = new JLabel(iconoSubirArchivo, JLabel.CENTER);
 		scrollPane.setViewportView(labelPrincipal);
 		

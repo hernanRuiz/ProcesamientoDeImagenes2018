@@ -32,10 +32,10 @@ public class EspereDialog extends JDialog {
 		Random random = new Random();
 		if(random.nextBoolean()){
 
-			labelImagen.setIcon( new ImageIcon("resources/emc.gif") );
+			labelImagen.setIcon( new ImageIcon(EspereDialog.class.getResource("/resources/emc.gif")) );
 		} else {
 			
-			labelImagen.setIcon( new ImageIcon("resources/pensador.gif") );
+			labelImagen.setIcon( new ImageIcon(EspereDialog.class.getResource("/resources/pensador.gif")) );
 		}
 		
 		setVisible(true);
@@ -84,7 +84,7 @@ public class EspereDialog extends JDialog {
 		
 		labelImagen = new JLabel();
 		labelImagen.setHorizontalTextPosition( JLabel.LEADING );
-		labelImagen.setIcon( new ImageIcon("resources/pensador.gif") );
+		labelImagen.setIcon( new ImageIcon(EspereDialog.class.getResource("/resources/pensador.gif")) );
 
 		panel.add(labelEspera);
 		createLayout();

@@ -36,7 +36,7 @@ public class MascaraGaussianaDialog extends JDialog {
 
 	private void initUI() {
 
-		ImageIcon icon = new ImageIcon("resources/piramideGauss.png");
+		ImageIcon icon = new ImageIcon(MascaraGaussianaDialog.class.getResource("/resources/piramideGauss.png"));
 		labelImagen = new JLabel(icon);
 
 		labelInstrucciones = new JLabel("Para poder crear una máscara de filtrado, debe definir primero un valor de Sigma");
