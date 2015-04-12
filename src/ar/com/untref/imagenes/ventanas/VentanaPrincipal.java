@@ -598,7 +598,7 @@ VentanaPrincipal.this.setExtendedState(VentanaPrincipal.this.getExtendedState() 
 			public void actionPerformed(ActionEvent e) {
 				
 				Imagen imagenAnterior = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
-				BufferedImage bufferedImage = DetectorDeBordes.aplicarDetectorDeRoberts(imagenAnterior);
+				BufferedImage bufferedImage = DetectorDeBordes.aplicarDetectorDePrewitt(imagenAnterior);
 				Imagen nuevaImagenActual = new Imagen(bufferedImage, imagenAnterior.getFormato(), imagenAnterior.getNombre());
 				ProcesadorDeImagenes.obtenerInstancia().setImagenActual(nuevaImagenActual);
 				

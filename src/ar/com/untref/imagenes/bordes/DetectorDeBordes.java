@@ -5,7 +5,6 @@ import java.awt.image.Kernel;
 
 import ar.com.untref.imagenes.filtros.Filtro;
 import ar.com.untref.imagenes.modelo.Imagen;
-import ar.com.untref.imagenes.procesamiento.ProcesadorDeImagenes;
 
 public class DetectorDeBordes {
 
@@ -79,7 +78,7 @@ public class DetectorDeBordes {
 		
 	}
 	
-	public  void aplicarDetectorDePrewitt(BufferedImage bufferedImage){
+	public static BufferedImage aplicarDetectorDePrewitt(Imagen imagenOriginal){
 		
 		float[][] mascaraDePrewittEnX = new float [3][3];
 		mascaraDePrewittEnX[0][0]= -1;
@@ -102,6 +101,60 @@ public class DetectorDeBordes {
 		mascaraDePrewittEnY[2][0]= -1;
 		mascaraDePrewittEnY[2][1]= 0;
 		mascaraDePrewittEnY[2][2]= 1;
+		
+		int ancho2 = mascaraDePrewittEnY.length;
+        int alto2 = mascaraDePrewittEnY[0].length;
+        int tam2 = ancho2 * alto2;
+        float filtroK2[] = new float[tam2];
+        
+        BufferedImage im = new BufferedImage(imagenOriginal.getBufferedImage().getWidth(), imagenOriginal.getBufferedImage().getHeight(), imagenOriginal.getBufferedImage().getType());
+		Imagen imagenFiltradaEnX = new Imagen(im, imagenOriginal.getFormato(), imagenOriginal.getNombre());
+		Imagen imagenFiltradaEnY = new Imagen(im, imagenOriginal.getFormato(), imagenOriginal.getNombre());
+		Imagen imagenResultante = new Imagen(im, imagenOriginal.getFormato(), imagenOriginal.getNombre());
+		
+        int xPixel = 0;
+		int yPixel = 0;
+		int ancho1 = mascaraDePrewittEnX.length;
+        int alto1 = mascaraDePrewittEnX[0].length;
+        int tam1 = ancho1 * alto1;
+        float filtroK1[] = new float[tam1];
+        
+        
+      //Creamos el filtro - Se pasa de una matriz cuadrada (vector de 2 dimensiones) a un vector lineal
+        for(int i=0; i < ancho1; i++){
+            for(int j=0; j < alto1; j++){
+                filtroK1[i*ancho1 + j] = mascaraDePrewittEnX[i][j];
+            }
+        }
+        
+      //Creamos el filtro - Se pasa de una matriz cuadrada (vector de 2 dimensiones) a un vector lineal
+        for(int i=0; i < ancho2; i++){
+            for(int j=0; j < alto2; j++){
+                filtroK2[i*ancho2 + j] = mascaraDePrewittEnY[i][j];
+            }
+        }
+        
+        Kernel kernelX = new Kernel(ancho1, alto1, filtroK1);
+        Filtro filtroX = new Filtro(kernelX);
+        
+        Kernel kernelY = new Kernel(ancho2, alto2, filtroK2);
+        Filtro filtroY = new Filtro(kernelY);
+        
+        //Aplicamos filtros
+        filtroX.filter(imagenOriginal.getBufferedImage(), imagenFiltradaEnX.getBufferedImage());
+        filtroY.filter(imagenOriginal.getBufferedImage(), imagenFiltradaEnY.getBufferedImage());
+        		
+        		
+        //Creamos la imagen resultante
+        for (int i = 0; i < ancho1; i++) {
+            for (int j = 0; j < alto1; j++) {
+                xPixel = imagenFiltradaEnX.getBufferedImage().getRGB(i, j);
+                yPixel = imagenFiltradaEnY.getBufferedImage().getRGB(i, j);
+                imagenResultante.getBufferedImage().setRGB(i, j, (int)Math.hypot(xPixel, yPixel));
+            }
+        }
+        
+        return imagenResultante.getBufferedImage();
 		
 	}
 	
