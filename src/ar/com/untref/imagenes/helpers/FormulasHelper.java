@@ -17,7 +17,7 @@ public class FormulasHelper {
 	 * @param color
 	 * @return
 	 */
-	public static int aumentoContrasteConFactor(int color, int factor){
+	public static int aumentoContrasteConFactor(int color, float factor){
 		
 		float colorResultante = ((color - 127) * factor ) + 127;
 		

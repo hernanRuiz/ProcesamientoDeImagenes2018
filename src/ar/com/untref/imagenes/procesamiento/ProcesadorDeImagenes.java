@@ -2,7 +2,6 @@ package ar.com.untref.imagenes.procesamiento;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferByte;
 import java.io.IOException;
 import java.nio.file.Files;
 
@@ -140,17 +139,20 @@ public class ProcesadorDeImagenes {
 		try {
 			bytes = Files.readAllBytes(archivoActual.getFile().toPath());
 			imagen = new BufferedImage(width, height,
-					BufferedImage.TYPE_INT_RGB);
+					BufferedImage.TYPE_3BYTE_BGR);
 			double[][] matrizDeImagen = new double[width][height];
 			int contador = 0;
 			for (int i = 0; i < height; i++) {
 				for (int j = 0; j < width; j++) {
+					
 					matrizDeImagen[j][i] = bytes[contador];
-					int alpha = 0 << 24;
-		            int red = bytes[contador] << 16;
-		            int green = bytes[contador] << 8;
-		            int blue = bytes[contador];
-		            int color = alpha + red + green + blue;
+					
+					int argb = 0;
+					argb += -16777216; // 255 alpha
+					int blue = ( (int)bytes[contador] & 0xff);
+		            int green = ((int)bytes[contador] & 0xff) << 8;
+		            int red = ((int)bytes[contador] & 0xff) << 16;
+		            int color = argb + red + green + blue;
 					imagen.setRGB(j, i, color);
 					contador++;
 				}
@@ -171,55 +173,11 @@ public class ProcesadorDeImagenes {
 		return imagenActual;
 	}
 
-	public int[][] calcularMatrizDeLaImagen(BufferedImage image) {
-
-		final byte[] pixels = ((DataBufferByte) image.getRaster()
-				.getDataBuffer()).getData();
-		final int width = image.getWidth();
-		final int height = image.getHeight();
-		final boolean hasAlphaChannel = image.getAlphaRaster() != null;
-
-		int[][] matriz = new int[height][width];
-		if (hasAlphaChannel) {
-			final int pixelLength = 4;
-			for (int pixel = 0, row = 0, col = 0; pixel < pixels.length; pixel += pixelLength) {
-				int argb = 0;
-				argb += (((int) pixels[pixel] & 0xff) << 24); // alpha
-				argb += ((int) pixels[pixel + 1] & 0xff); // blue
-				argb += (((int) pixels[pixel + 2] & 0xff) << 8); // green
-				argb += (((int) pixels[pixel + 3] & 0xff) << 16); // red
-				matriz[row][col] = argb;
-				col++;
-				if (col == width) {
-					col = 0;
-					row++;
-				}
-			}
-		} else {
-			final int pixelLength = 3;
-			for (int pixel = 0, row = 0, col = 0; pixel < pixels.length; pixel += pixelLength) {
-				int argb = 0;
-				argb += -16777216; // 255 alpha
-				argb += ((int) pixels[pixel] & 0xff); // blue
-				argb += (((int) pixels[pixel + 1] & 0xff) << 8); // green
-				argb += (((int) pixels[pixel + 2] & 0xff) << 16); // red
-				matriz[row][col] = argb;
-				col++;
-				if (col == width) {
-					col = 0;
-					row++;
-				}
-			}
-		}
-
-		return matriz;
-	}
-
 	public BufferedImage getBufferedImageDeMatriz(int[][] matriz, int ancho,
 			int alto) {
 
 		BufferedImage bufferedImage = new BufferedImage(ancho, alto,
-				BufferedImage.TYPE_INT_RGB);
+				BufferedImage.TYPE_3BYTE_BGR);
 		for (int i = 0; i < matriz.length; i++) {
 			for (int j = 0; j < matriz[0].length; j++) {
 				int pixel = matriz[i][j];
@@ -355,9 +313,44 @@ public class ProcesadorDeImagenes {
 		
 	}
 	
-	public void aumentoContrasteAutomatico(Imagen imagen) {
+	public void aumentarContrastePorFactor(Imagen imagen){
+		
+		setImagenOriginal(imagen);
+		BufferedImage buffered = imagen.getBufferedImage();
+		
+		int[][] matrizRojos = new int[imagen.getBufferedImage().getWidth()][imagen.getBufferedImage().getHeight()];
+		int[][] matrizVerdes = new int[imagen.getBufferedImage().getWidth()][imagen.getBufferedImage().getHeight()];
+		int[][] matrizAzules = new int[imagen.getBufferedImage().getWidth()][imagen.getBufferedImage().getHeight()];
 
 		
+		for (int x = 0; x < buffered.getWidth(); x++) {
+			for (int y = 0; y < buffered.getHeight(); y++) {
+
+				int rgba = buffered.getRGB(x, y);
+				
+				Color col = new Color(rgba, true);
+				
+				matrizRojos[x][y] = FormulasHelper.aumentoContrasteConFactor(col.getRed(), 2f);
+				
+				matrizVerdes[x][y] =  FormulasHelper.aumentoContrasteConFactor(col.getGreen(), 2f);
+				
+				matrizAzules[x][y] = FormulasHelper.aumentoContrasteConFactor(col.getBlue(), 2f);
+			}
+		}
+		
+		matrizRojos = aplicarTransformacionLineal(matrizRojos);
+		matrizVerdes = aplicarTransformacionLineal(matrizVerdes);
+		matrizAzules = aplicarTransformacionLineal(matrizAzules);
+		
+		buffered = MatricesManager.generarImagenRGB(matrizRojos, matrizVerdes, matrizAzules);
+		
+		this.imagenActual= new Imagen(buffered, imagenOriginal.getFormato(), imagenOriginal.getNombre());
+	}
+	
+	public void aumentoContrasteAutomatico(Imagen imagen) {
+
+		setImagenOriginal(imagen);
+
 		BufferedImage buffered = imagen.getBufferedImage();
 		int minimoRojo = 255;
 		int maximoRojo = 0;
@@ -458,7 +451,7 @@ public class ProcesadorDeImagenes {
 		BufferedImage imagenTransformada;
 		int nrows = bufferedImage.getWidth();
 		int ncols = bufferedImage.getHeight();
-		imagenTransformada = new BufferedImage(nrows, ncols, BufferedImage.TYPE_INT_RGB);
+		imagenTransformada = new BufferedImage(nrows, ncols, BufferedImage.TYPE_3BYTE_BGR);
 		
 		Color color = new Color(bufferedImage.getRGB(0, 0));
 		rojoMax = color.getRed();
@@ -526,7 +519,7 @@ public class ProcesadorDeImagenes {
 		BufferedImage imagenTransformada;
 		int nrows = bufferedImage.getWidth();
 		int ncols = bufferedImage.getHeight();
-		imagenTransformada = new BufferedImage(nrows, ncols, BufferedImage.TYPE_INT_RGB);
+		imagenTransformada = new BufferedImage(nrows, ncols, BufferedImage.TYPE_3BYTE_BGR);
 		
 		Color color = new Color(bufferedImage.getRGB(0, 0));
 		rojoMin = color.getRed();
@@ -647,5 +640,53 @@ public class ProcesadorDeImagenes {
 		return valoresXEY;
 	}
 
+	public int[][] aplicarTransformacionLineal(int[][] matrizDesfasada) {
+
+		float minimo;
+		float maximo;
+
+		int[][] matrizTransformada;
+		
+		int filas = matrizDesfasada.length;
+		int columnas = matrizDesfasada[0].length;
+		
+		matrizTransformada = new int[filas][columnas];
+		
+		minimo = 0;
+		maximo = 255;
+
+		for (int f = 0; f < filas; f++) {
+			for (int g = 0; g < columnas; g++) {
+		
+				int valorActual = matrizDesfasada[f][g];
+				
+				if (minimo > valorActual) {
+					minimo = valorActual;
+				}
+
+				if (maximo < valorActual) {
+					maximo = valorActual;
+				}
+
+			}
+
+		}
+
+		float[] maximosYMinimos = new float[2];
+		maximosYMinimos[0] = minimo;
+		maximosYMinimos[1] = maximo;
+		
+		for (int i = 0; i < filas; i++) {
+			for (int j = 0; j < columnas; j++) {
+
+				int valorActual = matrizDesfasada[i][j];
+				int valorTransformado = (int) ((((255f) / (maximo - minimo)) * valorActual) - ((minimo * 255f) / (maximo - minimo)));
+
+				matrizTransformada[i][j] = valorTransformado;
+			}
+		}
+		
+		return matrizTransformada;
+	}
 	
 }

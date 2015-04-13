@@ -68,7 +68,7 @@ public class VentanaHistogramas extends JFrame{
 		labelImagen.setPreferredSize(new Dimension(380, 250));
 		labelImagen.setSize(new Dimension(380, 250));
 		panelImagen.add(labelImagen);
-		Image dimg = imagen.getBufferedImage().getScaledInstance(labelImagen.getWidth(), labelImagen.getHeight(), Image.SCALE_SMOOTH);
+		Image dimg = imagen.getBufferedImage().getScaledInstance(labelImagen.getWidth(), labelImagen.getHeight(), Image.SCALE_REPLICATE);
 		labelImagen.setIcon(new ImageIcon(dimg));
 		
 		JPanel panelHistoRojo = new JPanel();

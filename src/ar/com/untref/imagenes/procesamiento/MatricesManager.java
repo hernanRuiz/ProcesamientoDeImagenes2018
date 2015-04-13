@@ -1,6 +1,10 @@
 package ar.com.untref.imagenes.procesamiento;
 
+import java.awt.Color;
 import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferByte;
+
+import ar.com.untref.imagenes.enums.Canal;
 
 public class MatricesManager {
 
@@ -90,6 +94,7 @@ public class MatricesManager {
 
 	
 	public static int[][] restarMatrices(int[][] matriz1, int[][] matriz2) {
+		
 		int filasMatrizResultante = matriz1.length;
 		int columnasMatrizResultante = matriz1[0].length;
 		int[][] matrizResultante = new int[filasMatrizResultante][columnasMatrizResultante];
@@ -97,6 +102,7 @@ public class MatricesManager {
 		
 			for (int i = 0; i < filasMatrizResultante; i++) {
 				for (int j = 0; j < columnasMatrizResultante; j++) {
+					
 					matrizResultante[i][j] += matriz1[i][j] - matriz2[i][j];
 				}
 			}
@@ -126,20 +132,107 @@ public class MatricesManager {
 		
 		BufferedImage imagenResultante = null;
 		imagenResultante = new BufferedImage(width, height,
-				BufferedImage.TYPE_INT_RGB);
+				BufferedImage.TYPE_3BYTE_BGR);
 		
 		for (int i = 0; i < height; i++) {
 			for (int j = 0; j < width; j++) {
-				int alpha = 0;
-		        int red = matriz[i][j];
-		        int green = matriz[i][j];
-		        int blue = matriz[i][j];
-		        int color = alpha + red + green + blue;
-				imagenResultante.setRGB(j, i, color);
+
+				Color color = new Color(matriz[i][j]);
+				imagenResultante.setRGB(j, i, color.getRGB());
 			}
 		}
 		
 		return imagenResultante;
-	}	
+	}
+	
+	public static int[][] calcularMatrizDeLaImagen(BufferedImage image, Canal canal) {
+
+		final byte[] pixels = ((DataBufferByte) image.getRaster().getDataBuffer()).getData();
+		final int width = image.getWidth();
+		final int height = image.getHeight();
+		final boolean hasAlphaChannel = image.getAlphaRaster() != null;
+
+		int[][] matriz = new int[height][width];
+		if (hasAlphaChannel) {
+			final int pixelLength = 4;
+			for (int pixel = 0, row = 0, col = 0; pixel < pixels.length; pixel += pixelLength) {
+				
+				int argb = 0;
+				argb += (((int) pixels[pixel] & 0xff) << 24); // alpha
+				argb += ((int) pixels[pixel + 1] & 0xff); // blue
+				argb += (((int) pixels[pixel + 2] & 0xff) << 8); // green
+				argb += (((int) pixels[pixel + 3] & 0xff) << 16); // red
+				
+				Color color = new Color(argb, true);
+				switch (canal){
+				
+					case VERDE:
+						matriz[row][col] = color.getGreen();
+						break;
+					case AZUL:
+						matriz[row][col] = color.getBlue();
+						break;
+					default:
+						matriz[row][col] = color.getRed();
+						break;
+				}
+				
+				col++;
+				if (col == width) {
+					col = 0;
+					row++;
+				}
+			}
+		} else {
+			final int pixelLength = 3;
+			for (int pixel = 0, row = 0, col = 0; pixel < pixels.length; pixel += pixelLength) {
+				int argb = 0;
+				argb += -16777216; // 255 alpha
+				argb += ((int) pixels[pixel] & 0xff); // blue
+				argb += (((int) pixels[pixel + 1] & 0xff) << 8); // green
+				argb += (((int) pixels[pixel + 2] & 0xff) << 16); // red
+				
+				Color color = new Color(argb);
+				switch (canal){
+				
+					case VERDE:
+						matriz[row][col] = color.getGreen();
+						break;
+					case AZUL:
+						matriz[row][col] = color.getBlue();
+						break;
+					default:
+						matriz[row][col] = color.getRed();
+						break;
+				}
+				
+				col++;
+				if (col == width) {
+					col = 0;
+					row++;
+				}
+			}
+		}
+
+		return matriz;
+	}
+	
+	public static BufferedImage generarImagenRGB(int[][] matrizRojos, int[][] matrizVerdes, int[][] matrizAzules) {
+
+		int ancho = matrizRojos[0].length;
+		int alto = matrizRojos.length;
+		
+		BufferedImage imagenResultante = new BufferedImage(ancho, alto, BufferedImage.TYPE_3BYTE_BGR);
+		
+		for (int i = 0; i < alto; i++) {
+			for (int j = 0; j < ancho; j++) {
+
+				Color color = new Color(matrizRojos[i][j], matrizVerdes[i][j], matrizAzules[i][j]);
+				imagenResultante.setRGB(j, i, color.getRGB());
+			}
+		}
+		
+		return imagenResultante;
+	}
 }
 
