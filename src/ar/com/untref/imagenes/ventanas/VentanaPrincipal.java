@@ -603,8 +603,26 @@ VentanaPrincipal.this.setExtendedState(VentanaPrincipal.this.getExtendedState() 
 		menuItemEditar.add(menuItemOperacionesMatrices);
 		
 		
-		JMenuItem menuItemDeteccionDeBordes = new JMenuItem("Deteccion de Bordes");
-		menuItemDeteccionDeBordes.addActionListener(new ActionListener() {
+		JMenu menuDeteccionDeBordes = new JMenu("Deteccion de Bordes");
+		menuItemEditar.add(menuDeteccionDeBordes);
+		
+		JMenuItem menuItemDetectorDeRoberts = new JMenuItem("Detector de Roberts");
+		menuItemDetectorDeRoberts.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				Imagen imagenAnterior = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
+				BufferedImage bufferedImage = DetectorDeBordes.aplicarDetectorDeRoberts(imagenAnterior);
+				Imagen nuevaImagenActual = new Imagen(bufferedImage, imagenAnterior.getFormato(), imagenAnterior.getNombre());
+				ProcesadorDeImagenes.obtenerInstancia().setImagenActual(nuevaImagenActual);
+				
+				VentanaPrincipal.this.refrescarImagen();
+			}
+			
+		});
+		menuDeteccionDeBordes.add(menuItemDetectorDeRoberts);
+		
+		JMenuItem menuItemDetectorDePrewitt = new JMenuItem("Detector de Prewitt");
+		menuItemDetectorDePrewitt.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
 				Imagen imagenAnterior = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
@@ -616,7 +634,37 @@ VentanaPrincipal.this.setExtendedState(VentanaPrincipal.this.getExtendedState() 
 			}
 			
 		});
-		menuItemEditar.add(menuItemDeteccionDeBordes);
+		menuDeteccionDeBordes.add(menuItemDetectorDePrewitt);
+		
+		JMenuItem menuItemDetectorDeSobel = new JMenuItem("Detector de Sobel");
+		menuItemDetectorDeSobel.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				Imagen imagenAnterior = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
+				BufferedImage bufferedImage = DetectorDeBordes.aplicarDetectorDeSobel(imagenAnterior);
+				Imagen nuevaImagenActual = new Imagen(bufferedImage, imagenAnterior.getFormato(), imagenAnterior.getNombre());
+				ProcesadorDeImagenes.obtenerInstancia().setImagenActual(nuevaImagenActual);
+				
+				VentanaPrincipal.this.refrescarImagen();
+			}
+			
+		});
+		menuDeteccionDeBordes.add(menuItemDetectorDeSobel);
+		
+		JMenuItem menuItemDetectorLaplaciano = new JMenuItem("Detector Laplaciano");
+		menuItemDetectorLaplaciano.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				Imagen imagenAnterior = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
+				BufferedImage bufferedImage = DetectorDeBordes.aplicarDetectorLaplaciano(imagenAnterior);
+				Imagen nuevaImagenActual = new Imagen(bufferedImage, imagenAnterior.getFormato(), imagenAnterior.getNombre());
+				ProcesadorDeImagenes.obtenerInstancia().setImagenActual(nuevaImagenActual);
+				
+				VentanaPrincipal.this.refrescarImagen();
+			}
+			
+		});
+		menuDeteccionDeBordes.add(menuItemDetectorLaplaciano);
 		
 		
 	}

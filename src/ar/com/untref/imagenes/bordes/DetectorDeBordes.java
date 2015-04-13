@@ -158,7 +158,7 @@ public class DetectorDeBordes {
 		
 	}
 	
-	public  void aplicarDetectorDeSobel(BufferedImage bufferedImage){
+	public static BufferedImage aplicarDetectorDeSobel(Imagen imagenOriginal){
 		
 		float[][] mascaraDeSobelEnX = new float [3][3];
 		mascaraDeSobelEnX[0][0]= -1;
@@ -182,9 +182,63 @@ public class DetectorDeBordes {
 		mascaraDeSobelEnY[2][1]= 0;
 		mascaraDeSobelEnY[2][2]= 1;
 		
+		int ancho2 = mascaraDeSobelEnY.length;
+        int alto2 = mascaraDeSobelEnY[0].length;
+        int tam2 = ancho2 * alto2;
+        float filtroK2[] = new float[tam2];
+        
+        BufferedImage im = new BufferedImage(imagenOriginal.getBufferedImage().getWidth(), imagenOriginal.getBufferedImage().getHeight(), imagenOriginal.getBufferedImage().getType());
+		Imagen imagenFiltradaEnX = new Imagen(im, imagenOriginal.getFormato(), imagenOriginal.getNombre());
+		Imagen imagenFiltradaEnY = new Imagen(im, imagenOriginal.getFormato(), imagenOriginal.getNombre());
+		Imagen imagenResultante = new Imagen(im, imagenOriginal.getFormato(), imagenOriginal.getNombre());
+		
+        int xPixel = 0;
+		int yPixel = 0;
+		int ancho1 = mascaraDeSobelEnX.length;
+        int alto1 = mascaraDeSobelEnX[0].length;
+        int tam1 = ancho1 * alto1;
+        float filtroK1[] = new float[tam1];
+        
+        
+      //Creamos el filtro - Se pasa de una matriz cuadrada (vector de 2 dimensiones) a un vector lineal
+        for(int i=0; i < ancho1; i++){
+            for(int j=0; j < alto1; j++){
+                filtroK1[i*ancho1 + j] = mascaraDeSobelEnX[i][j];
+            }
+        }
+        
+      //Creamos el filtro - Se pasa de una matriz cuadrada (vector de 2 dimensiones) a un vector lineal
+        for(int i=0; i < ancho2; i++){
+            for(int j=0; j < alto2; j++){
+                filtroK2[i*ancho2 + j] = mascaraDeSobelEnY[i][j];
+            }
+        }
+        
+        Kernel kernelX = new Kernel(ancho1, alto1, filtroK1);
+        Filtro filtroX = new Filtro(kernelX);
+        
+        Kernel kernelY = new Kernel(ancho2, alto2, filtroK2);
+        Filtro filtroY = new Filtro(kernelY);
+        
+        //Aplicamos filtros
+        filtroX.filter(imagenOriginal.getBufferedImage(), imagenFiltradaEnX.getBufferedImage());
+        filtroY.filter(imagenOriginal.getBufferedImage(), imagenFiltradaEnY.getBufferedImage());
+        		
+        		
+        //Creamos la imagen resultante
+        for (int i = 0; i < ancho1; i++) {
+            for (int j = 0; j < alto1; j++) {
+                xPixel = imagenFiltradaEnX.getBufferedImage().getRGB(i, j);
+                yPixel = imagenFiltradaEnY.getBufferedImage().getRGB(i, j);
+                imagenResultante.getBufferedImage().setRGB(i, j, (int)Math.hypot(xPixel, yPixel));
+            }
+        }
+        
+        return imagenResultante.getBufferedImage();
+		
 	}
 	
-	public  void aplicarDetectorLaplaciano(BufferedImage bufferedImage){
+	public static BufferedImage aplicarDetectorLaplaciano(Imagen imagenOriginal){
 		
 		float[][] mascaraDeLaplaciano = new float [3][3];
 		mascaraDeLaplaciano[0][0]= 0;
@@ -196,6 +250,41 @@ public class DetectorDeBordes {
 		mascaraDeLaplaciano[2][0]= 0;
 		mascaraDeLaplaciano[2][1]= 1;
 		mascaraDeLaplaciano[2][2]= 0;
+		
+		int ancho = mascaraDeLaplaciano.length;
+        int alto = mascaraDeLaplaciano[0].length;
+        int tam = ancho * alto;
+        float filtroK[] = new float[tam];
+        
+        BufferedImage im = new BufferedImage(imagenOriginal.getBufferedImage().getWidth(), imagenOriginal.getBufferedImage().getHeight(), imagenOriginal.getBufferedImage().getType());
+		Imagen imagenFiltrada = new Imagen(im, imagenOriginal.getFormato(), imagenOriginal.getNombre());
+		Imagen imagenResultante = new Imagen(im, imagenOriginal.getFormato(), imagenOriginal.getNombre());
+        
+        
+      //Creamos el filtro - Se pasa de una matriz cuadrada (vector de 2 dimensiones) a un vector lineal
+        for(int i=0; i < ancho; i++){
+            for(int j=0; j < alto; j++){
+                filtroK[i*ancho + j] = mascaraDeLaplaciano[i][j];
+            }
+        }
+        
+        Kernel kernel = new Kernel(ancho, alto, filtroK);
+        Filtro filtro = new Filtro(kernel);
+        
+        //Aplicamos filtros
+        filtro.filter(imagenOriginal.getBufferedImage(), imagenFiltrada.getBufferedImage());
+        		
+        		
+        //Creamos la imagen resultante
+        for (int i = 0; i < ancho; i++) {
+            for (int j = 0; j < alto; j++) {
+                int pixel = imagenFiltrada.getBufferedImage().getRGB(i, j);
+                imagenResultante.getBufferedImage().setRGB(i, j, pixel);
+            }
+        }
+        
+        return imagenResultante.getBufferedImage();
+		
 		
 	}
 	

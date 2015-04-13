@@ -62,13 +62,13 @@ public class GeneradorDeRuido {
 		matrizVerdes = new float[nrows][ncols];
 		matrizAzules = new float[nrows][ncols];
 
-		Color color = new Color(bufferedImage.getRGB(0, 0));
-		rojoMin = color.getRed();
-		rojoMax = color.getRed();
-		verdeMin = color.getRed();
-		verdeMax = color.getGreen();
-		azulMin = color.getRed();
-		azulMax = color.getBlue();
+		//Color color = new Color(bufferedImage.getRGB(0, 0)); 
+		rojoMin = 0; 
+		rojoMax = 255;
+		verdeMin = 0; 
+		verdeMax = 255;
+		azulMin = 0;
+		azulMax = 255;
 
 		for (int f = 0; f < nrows; f++) {
 			for (int g = 0; g < ncols; g++) {
@@ -179,7 +179,7 @@ public class GeneradorDeRuido {
 			x = (float) numero.nextGaussian();
 		while (x <= 0 | x > 1); // x no puede ser cero ni mayor a 1
 
-		// TODO: revisar division, floats
+		
 		y = (float) ((Math.log10(-x + 1)) / ((-1) * Float.valueOf(lambda)));
 
 		return y;
@@ -202,10 +202,10 @@ public class GeneradorDeRuido {
 		matrizVerdes = new float[nrows][ncols];
 		matrizAzules = new float[nrows][ncols];
 		
-		Color color = new Color(bufferedImage.getRGB(0, 0)); 
-		rojoMax = color.getRed(); 
-		verdeMax = color.getGreen(); 
-		azulMax = color.getBlue();
+		//Color color = new Color(bufferedImage.getRGB(0, 0)); 
+		rojoMax = 255; 
+		verdeMax = 255; 
+		azulMax = 255;
 		
 		for (int f = 0; f < nrows; f++) {
 			for (int g = 0; g < ncols; g++) {
@@ -307,10 +307,10 @@ public class GeneradorDeRuido {
 		matrizVerdes = new float[nrows][ncols];
 		matrizAzules = new float[nrows][ncols];
 		
-		Color color = new Color(bufferedImage.getRGB(0, 0)); 
-		rojoMax = color.getRed(); 
-		verdeMax = color.getGreen(); 
-		azulMax = color.getBlue();
+		//Color color = new Color(bufferedImage.getRGB(0, 0)); 
+		rojoMax = 255; 
+		verdeMax = 255; 
+		azulMax = 255;
 		
 		for (int f = 0; f < nrows; f++) {
 			for (int g = 0; g < ncols; g++) {
@@ -416,8 +416,6 @@ public class GeneradorDeRuido {
 			Color color = new Color(imagen.getRGB(vector1[0], vector1[1]));
 			listaDeCoordenadas.remove(0);
 
-			// Color color = new Color(bufferedImage.getRGB(coordenadaFila,
-			// coordenadaColumna));
 			int rojo = color.getRed();
 			int verde = color.getGreen();
 			int azul = color.getBlue();
