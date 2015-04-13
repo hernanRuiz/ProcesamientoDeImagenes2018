@@ -31,12 +31,14 @@ import org.jfree.data.category.DefaultCategoryDataset;
 import ar.com.untref.imagenes.enums.Canal;
 import ar.com.untref.imagenes.listeners.GuardarImagenEcualizadaListener;
 import ar.com.untref.imagenes.modelo.Imagen;
+import ar.com.untref.imagenes.procesamiento.ProcesadorDeImagenes;
 
 @SuppressWarnings("serial")
 public class VentanaHistogramaEcualizado extends JFrame{
 
 	private JPanel contentPane;
 	private JMenuItem menuItemGuardarComo;
+	private JMenuItem menuItemEcualizar;
 	private BufferedImage bufferedImage;
 	
 	public VentanaHistogramaEcualizado(Imagen imagen) {
@@ -52,6 +54,20 @@ public class VentanaHistogramaEcualizado extends JFrame{
 		
 		JMenu menu = new JMenu("Archivo");
 		menuBar.add(menu);
+		
+		menuItemEcualizar = new JMenuItem("Ecualizar");
+		menuItemEcualizar.addActionListener(new ActionListener() {
+		public void actionPerformed(ActionEvent arg0) {
+				
+				Imagen imagenActual = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
+				if ( imagenActual!=null ){
+					
+					VentanaHistogramaEcualizado ventanaHistogramaEcualizado = new VentanaHistogramaEcualizado(imagenActual);
+					ventanaHistogramaEcualizado.setVisible(true);
+				}
+			}
+		});
+		menu.add(menuItemEcualizar);
 		
 		contentPane = new JPanel();
 		contentPane.setPreferredSize(new Dimension(800, 600));

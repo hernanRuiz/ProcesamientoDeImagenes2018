@@ -97,9 +97,8 @@ public class VentanaHistogramas extends JFrame{
 			}
 		});
 		menuItemGuardarComo = new JMenuItem("Guardar Como...");
-		menu.add(menuItemGuardarComo);
 		
-		menuItemEcualizar = new JMenuItem("Equalizar");
+		menuItemEcualizar = new JMenuItem("Ecualizar");
 		menuItemEcualizar.addActionListener(new ActionListener() {
 		public void actionPerformed(ActionEvent arg0) {
 				
@@ -112,6 +111,8 @@ public class VentanaHistogramas extends JFrame{
 			}
 		});
 		menu.add(menuItemEcualizar);
+		
+		menu.add(menuItemGuardarComo);
 		
 		menu.add(menuItem);
 		
