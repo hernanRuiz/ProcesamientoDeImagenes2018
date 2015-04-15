@@ -338,9 +338,9 @@ public class ProcesadorDeImagenes {
 			}
 		}
 		
-		matrizRojos = MatricesManager.aplicarTransformacionLineal(matrizRojos);
-		matrizVerdes = MatricesManager.aplicarTransformacionLineal(matrizVerdes);
-		matrizAzules = MatricesManager.aplicarTransformacionLineal(matrizAzules);
+		matrizRojos = MatricesManager.aplicarTransformacionLogaritmica(matrizRojos);
+		matrizVerdes = MatricesManager.aplicarTransformacionLogaritmica(matrizVerdes);
+		matrizAzules = MatricesManager.aplicarTransformacionLogaritmica(matrizAzules);
 		
 		buffered = MatricesManager.generarImagenRGB(matrizRojos, matrizVerdes, matrizAzules);
 		
