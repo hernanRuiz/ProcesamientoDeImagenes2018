@@ -19,7 +19,7 @@ public class FormulasHelper {
 	 */
 	public static int aumentoContrasteConFactor(int color, float factor){
 		
-		float colorResultante = ((((color/255f) - 0.5f) * factor ) + 0.5f) * 255f;
+		float colorResultante = ((((color) - 127f) * factor) + 127f);
 		
 		return (int) colorResultante;
 	}
