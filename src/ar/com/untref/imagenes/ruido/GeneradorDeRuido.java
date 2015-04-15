@@ -285,7 +285,7 @@ public class GeneradorDeRuido {
 			x = (float) numero.nextGaussian();
 		while (x <= 0 | x > 1); // x no puede ser cero ni mayor a uno
 
-		y = (float) (Float.valueOf(phi) * (Math.sqrt((-2f) * Math.log(1-x))));
+		y = (float) (Float.valueOf(phi) * (Math.sqrt((-2f) * Math.log10(1-x))));
 		return y;
 	}
 

@@ -216,7 +216,7 @@ public class MatricesManager {
 		return matriz;
 	}
 	
-	public static BufferedImage generarImagenRGB(int[][] matrizRojos, int[][] matrizVerdes, int[][] matrizAzules) {
+	public static BufferedImage generarImagenRGBconContraste(int[][] matrizRojos, int[][] matrizVerdes, int[][] matrizAzules) {
 
 		int ancho = matrizRojos[0].length;
 		int alto = matrizRojos.length;
@@ -245,6 +245,26 @@ public class MatricesManager {
 		}
 			
 		return imagenResultante2;
+	}
+	
+	
+	public static BufferedImage generarImagenRGB(int[][] matrizRojos, int[][] matrizVerdes, int[][] matrizAzules) {
+
+		int ancho = matrizRojos[0].length;
+		int alto = matrizRojos.length;
+		
+		BufferedImage imagenResultante = new BufferedImage(ancho, alto, BufferedImage.TYPE_3BYTE_BGR);
+		
+			for (int i = 0; i < alto; i++) {
+				for (int j = 0; j < ancho; j++) {
+
+					Color color = new Color(matrizRojos[i][j], matrizVerdes[i][j], matrizAzules[i][j]);
+					imagenResultante.setRGB(j, i, color.getRGB());
+				}
+			}
+		
+			
+		return imagenResultante;
 	}
 	
 	public static int[][] aplicarTransformacionLogaritmica(int[][] matrizDesfasada) {

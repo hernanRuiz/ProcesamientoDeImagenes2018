@@ -342,7 +342,7 @@ public class ProcesadorDeImagenes {
 		matrizVerdes = MatricesManager.aplicarTransformacionLogaritmica(matrizVerdes);
 		matrizAzules = MatricesManager.aplicarTransformacionLogaritmica(matrizAzules);
 		
-		buffered = MatricesManager.generarImagenRGB(matrizRojos, matrizVerdes, matrizAzules);
+		buffered = MatricesManager.generarImagenRGBconContraste(matrizRojos, matrizVerdes, matrizAzules);
 		
 		this.imagenActual= new Imagen(buffered, imagenOriginal.getFormato(), imagenOriginal.getNombre());
 	}
