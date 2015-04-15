@@ -19,8 +19,6 @@ public class HistogramEQ {
         // Get the Lookup table for histogram equalization
         ArrayList<int[]> histLUT = histogramEqualizationLUT(original);
         
-        
-        
         BufferedImage histogramEQ = new BufferedImage(original.getWidth(), original.getHeight(), original.getType());
  
         for(int i=0; i<original.getWidth(); i++) {
@@ -36,8 +34,6 @@ public class HistogramEQ {
                 red = histLUT.get(0)[red];
                 green = histLUT.get(1)[green];
                 blue = histLUT.get(2)[blue];
- 
-               
                 
                 // Return back to original format
                 newPixel = colorToRGB(alpha, red, green, blue);

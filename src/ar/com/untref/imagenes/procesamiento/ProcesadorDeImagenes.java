@@ -290,29 +290,6 @@ public class ProcesadorDeImagenes {
 		this.imagenOriginal = imagen;
 	}
 	
-	public void aumentarContrastePorElCuadrado(Imagen imagen){
-		
-		setImagenOriginal(imagen);
-		BufferedImage buffered = imagen.getBufferedImage();
-		
-		for (int x = 0; x < buffered.getWidth(); x++) {
-			for (int y = 0; y < buffered.getHeight(); y++) {
-
-				int rgba = buffered.getRGB(x, y);
-				Color col = new Color(rgba, true);
-				col = new Color(FormulasHelper.potenciarColorPorSuCuadrado(col
-						.getRed()),
-						FormulasHelper.potenciarColorPorSuCuadrado(col
-								.getGreen()),
-						FormulasHelper.potenciarColorPorSuCuadrado(col
-								.getBlue()));
-				buffered.setRGB(x, y, col.getRGB());
-			}
-		}
-		this.imagenActual= new Imagen(buffered, imagenOriginal.getFormato(), imagenOriginal.getNombre());
-		
-	}
-	
 	public void aumentarContrastePorFactor(Imagen imagen){
 		
 		setImagenOriginal(imagen);
@@ -345,73 +322,6 @@ public class ProcesadorDeImagenes {
 		buffered = MatricesManager.generarImagenRGBconContraste(matrizRojos, matrizVerdes, matrizAzules);
 		
 		this.imagenActual= new Imagen(buffered, imagenOriginal.getFormato(), imagenOriginal.getNombre());
-	}
-	
-	public void aumentoContrasteAutomatico(Imagen imagen) {
-
-		setImagenOriginal(imagen);
-
-		BufferedImage buffered = imagen.getBufferedImage();
-		int minimoRojo = 255;
-		int maximoRojo = 0;
-		int minimoVerde = 255;
-		int maximoVerde = 0;
-		int minimoAzul = 255;
-		int maximoAzul = 0;
-
-		//Busco valores maximos y minimos por banda
-		for (int x = 0; x < buffered.getWidth(); x++) {
-			for (int y = 0; y < buffered.getHeight(); y++) {
-
-				int rgba = buffered.getRGB(x, y);
-				Color col = new Color(rgba, true);
-
-				if (col.getRed() < minimoRojo) {
-
-					minimoRojo = col.getRed();
-				} else if (col.getRed() > maximoRojo) {
-
-					maximoRojo = col.getRed();
-				}
-
-				if (col.getGreen() < minimoVerde) {
-
-					minimoVerde = col.getGreen();
-				} else if (col.getGreen() > maximoVerde) {
-
-					maximoVerde = col.getGreen();
-				}
-
-				if (col.getBlue() < minimoAzul) {
-
-					minimoAzul = col.getBlue();
-				} else if (col.getBlue() > maximoAzul) {
-
-					maximoAzul = col.getBlue();
-				}
-			}
-		}
-
-		for (int x = 0; x < buffered.getWidth(); x++) {
-			for (int y = 0; y < buffered.getHeight(); y++) {
-
-				int rgba = buffered.getRGB(x, y);
-				Color col = new Color(rgba, true);
-				col = new Color(
-						FormulasHelper.aplicarFormulaVariacionContrasteAutomatico(
-								col.getRed(), minimoRojo, maximoRojo),
-						FormulasHelper
-								.aplicarFormulaVariacionContrasteAutomatico(
-										col.getGreen(), minimoVerde,
-										maximoVerde),
-						FormulasHelper
-								.aplicarFormulaVariacionContrasteAutomatico(
-										col.getBlue(), minimoAzul, maximoAzul));
-				buffered.setRGB(x, y, col.getRGB());
-			}
-		}
-		this.imagenActual= new Imagen(buffered, imagenOriginal.getFormato(), imagenOriginal.getNombre());
-		
 	}
 	
 	/**

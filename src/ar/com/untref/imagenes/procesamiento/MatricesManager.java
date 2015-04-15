@@ -221,30 +221,29 @@ public class MatricesManager {
 		int ancho = matrizRojos[0].length;
 		int alto = matrizRojos.length;
 		
-		BufferedImage imagenResultante = new BufferedImage(ancho, alto, BufferedImage.TYPE_3BYTE_BGR);
-		BufferedImage imagenResultante2 = new BufferedImage(alto, ancho, BufferedImage.TYPE_3BYTE_BGR);
+		BufferedImage imagenResultante = new BufferedImage(alto, ancho, BufferedImage.TYPE_3BYTE_BGR);
 		
 		if (ancho == alto){
 			for (int i = 0; i < ancho; i++) {
 				for (int j = 0; j < alto; j++) {
 
 					Color color = new Color(matrizRojos[i][j], matrizVerdes[i][j], matrizAzules[i][j]);
-					imagenResultante2.setRGB(i, j, color.getRGB());
+					imagenResultante.setRGB(i, j, color.getRGB());
 				}
 			}
-		}else{
+		//fix para el caso que la imagen se espeja y da vuelta si no es cuadrada
+		} else {
 			
 			for (int i = 0; i < alto; i++) {
 				for (int j = 0; j < ancho; j++) {
 
 					Color color = new Color(matrizRojos[i][j], matrizVerdes[i][j], matrizAzules[i][j]);
-					imagenResultante.setRGB(j, i, color.getRGB());
-					imagenResultante2.setRGB(i, j, imagenResultante.getRGB(j, i));
+					imagenResultante.setRGB(i, j, color.getRGB());
 				}
 			}
 		}
 			
-		return imagenResultante2;
+		return imagenResultante;
 	}
 	
 	
