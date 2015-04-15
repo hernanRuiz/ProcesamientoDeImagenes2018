@@ -25,8 +25,6 @@ public class GeneradorDeRuido {
 			x1 = numero1.nextGaussian();
 		while (x1 <= 0 | x1 > 1); // x1 no puede ser cero ni mayor a 1
 
-		// x2 = numero2.nextGaussian();
-
 		do
 			x2 = numero2.nextGaussian();
 		while (x2 <= 0 | x2 > 1); // x2 no puede ser cero ni mayor a 1
@@ -62,7 +60,6 @@ public class GeneradorDeRuido {
 		matrizVerdes = new float[nrows][ncols];
 		matrizAzules = new float[nrows][ncols];
 
-		//Color color = new Color(bufferedImage.getRGB(0, 0)); 
 		rojoMin = 0; 
 		rojoMax = 255;
 		verdeMin = 0; 
@@ -141,7 +138,7 @@ public class GeneradorDeRuido {
 
 		nrows = bufferedImage.getWidth();
 		ncols = bufferedImage.getHeight();
-		imagenConRuido = new BufferedImage(nrows, ncols, BufferedImage.TYPE_INT_RGB);
+		imagenConRuido = new BufferedImage(nrows, ncols, BufferedImage.TYPE_3BYTE_BGR);
 
 		float[] maximosYMinimos = obtenerMaximosYMinimos(bufferedImage, sigma, mu);
 		rojoMin = maximosYMinimos[0];
@@ -202,7 +199,6 @@ public class GeneradorDeRuido {
 		matrizVerdes = new float[nrows][ncols];
 		matrizAzules = new float[nrows][ncols];
 		
-		//Color color = new Color(bufferedImage.getRGB(0, 0)); 
 		rojoMax = 255; 
 		verdeMax = 255; 
 		azulMax = 255;
@@ -248,7 +244,7 @@ public class GeneradorDeRuido {
 		BufferedImage imagenConRuido;
 		nrows = bufferedImage.getWidth();
 		ncols = bufferedImage.getHeight();
-		imagenConRuido = new BufferedImage(nrows, ncols, BufferedImage.TYPE_INT_RGB);
+		imagenConRuido = new BufferedImage(nrows, ncols, BufferedImage.TYPE_3BYTE_BGR);
 
 		float rojoMax;
 		float verdeMax;
@@ -283,9 +279,9 @@ public class GeneradorDeRuido {
 		x = 0;
 		do
 			x = (float) numero.nextGaussian();
-		while (x <= 0 | x > 1); // x no puede ser cero ni mayor a uno
+		while (x <= 0 | x >= 1); // x no puede ser cero ni mayor a uno
 
-		y = (float) (Float.valueOf(phi) * (Math.sqrt((-2f) * Math.log10(1-x))));
+		y = (float) (Float.valueOf(phi) * (Math.sqrt((-2) * Math.log(1-x))));
 		return y;
 	}
 
@@ -307,7 +303,6 @@ public class GeneradorDeRuido {
 		matrizVerdes = new float[nrows][ncols];
 		matrizAzules = new float[nrows][ncols];
 		
-		//Color color = new Color(bufferedImage.getRGB(0, 0)); 
 		rojoMax = 255; 
 		verdeMax = 255; 
 		azulMax = 255;
@@ -354,7 +349,7 @@ public class GeneradorDeRuido {
 		BufferedImage imagenConRuido;
 		nrows = bufferedImage.getWidth();
 		ncols = bufferedImage.getHeight();
-		imagenConRuido = new BufferedImage(nrows, ncols, BufferedImage.TYPE_INT_RGB);
+		imagenConRuido = new BufferedImage(nrows, ncols, BufferedImage.TYPE_3BYTE_BGR);
 
 		float rojoMax;
 		float verdeMax;
@@ -387,7 +382,7 @@ public class GeneradorDeRuido {
 		BufferedImage imagenConRuido;
 		nrows = imagen.getWidth();
 		ncols = imagen.getHeight();
-		imagenConRuido = new BufferedImage(nrows, ncols, BufferedImage.TYPE_INT_RGB);
+		imagenConRuido = new BufferedImage(nrows, ncols, BufferedImage.TYPE_3BYTE_BGR);
 		double densidad = ((nrows * ncols) * porcentajeDePixelesAContaminar) / 100;
 
 		double p0 = 0.2;
