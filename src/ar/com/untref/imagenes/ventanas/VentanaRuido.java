@@ -49,6 +49,8 @@ public class VentanaRuido extends JFrame {
 	private JTextField textFieldSigma;
 	private JTextField textFieldLambda;
 	private JTextField textFieldPhi;
+	private JTextField textFieldAnchoRAW;
+	private JTextField textFieldAltoRAW;
 	private JTextField textFieldPorcentaje;
 	private JMenuItem menuItemGuardarComo;
 	private JLabel resultadoCantidadPixeles;
@@ -120,6 +122,17 @@ public class VentanaRuido extends JFrame {
 		panelPromedios.add(labelResultadoPromedioRojo, BorderLayout.PAGE_END);
 		panelPromedios.add(labelResultadoPromedioVerde, BorderLayout.PAGE_END);
 		panelPromedios.add(labelResultadoPromedioAzul, BorderLayout.PAGE_END);
+		JButton volverALaImagenOriginal = new JButton("Imagen Original");
+		
+		volverALaImagenOriginal.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				ProcesadorDeImagenes.obtenerInstancia().setImagenActual(VentanaRuido.imagenSinCambios);
+				VentanaRuido.this.refrescarImagen();
+				VentanaRuido.this.refrescarCantidadPixeles(VentanaRuido.imagenSinCambios.getBufferedImage().getWidth()*VentanaRuido.imagenSinCambios.getBufferedImage().getHeight());
+			}
+		});
+		
+		panelPromedios.add(volverALaImagenOriginal);
 		
 		contentPane.add(panelPromedios, BorderLayout.PAGE_END);
 		panelPromedios.setVisible(true);
@@ -140,6 +153,31 @@ public class VentanaRuido extends JFrame {
 			
 		});
 		
+		//Panel RAW
+		JPanel panelRaw = new JPanel();
+		panelRuido.add(panelRaw);
+		
+		JLabel labelTama√±oRAW = new JLabel("RAW");
+		panelRaw.add(labelTama√±oRAW);
+		
+		JLabel labelAltoRAW = new JLabel("Alto:");
+		panelRaw.add(labelAltoRAW);
+		
+		textFieldAltoRAW = new JTextField();
+		panelRaw.add(textFieldAltoRAW);
+		textFieldAltoRAW.setMinimumSize(new Dimension(3, 20));
+		textFieldAltoRAW.setPreferredSize(new Dimension(1, 20));
+		textFieldAltoRAW.setText("256");
+		textFieldAltoRAW.setColumns(3);
+		
+		JLabel labelAnchoRAW = new JLabel("Ancho:");
+		panelRaw.add(labelAnchoRAW);
+		
+		textFieldAnchoRAW = new JTextField();
+		panelRaw.add(textFieldAnchoRAW);
+		textFieldAnchoRAW.setText("256");
+		textFieldAnchoRAW.setColumns(3);
+		
 		String[] opcionesGauss = {"Ruido de Gauss", "Ruido Blanco de Gauss"};
 		comboGauss = new JComboBox(opcionesGauss);
 		comboGauss.setSelectedIndex(0);
@@ -148,32 +186,23 @@ public class VentanaRuido extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
 
-                int opcionSeleccionada = comboGauss.getSelectedIndex();
-                
-                switch (opcionSeleccionada) {//check for a match
-                	
-                case 1:
-                    	
-        				Integer sigma = 1;
-                    	//textFieldSigma.setText(String.valueOf(sigma));
-    					Integer mu = 0;
-    					//textFieldMu.setText(String.valueOf(mu));
-    					
-    					BufferedImage bufferedImage = GeneradorDeRuido.generarRuidoGauss(ProcesadorDeImagenes.obtenerInstancia().getImagenActual().getBufferedImage(), sigma, mu);
-    					Imagen imagenAnterior = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
-    					Imagen nuevaImagenActual = new Imagen(bufferedImage, imagenAnterior.getFormato(), imagenAnterior.getNombre());
-    					ProcesadorDeImagenes.obtenerInstancia().setImagenActual(nuevaImagenActual);
-    					
-    					VentanaRuido.this.refrescarImagen();
+               if (comboGauss.getSelectedIndex()==1){
+            	   
+					Integer sigma = 1;
+					Integer mu = 0;
+					
+					BufferedImage bufferedImage = GeneradorDeRuido.generarRuidoGauss(ProcesadorDeImagenes.obtenerInstancia().getImagenActual().getBufferedImage(), sigma, mu);
+					Imagen imagenAnterior = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
+					Imagen nuevaImagenActual = new Imagen(bufferedImage, imagenAnterior.getFormato(), imagenAnterior.getNombre());
+					ProcesadorDeImagenes.obtenerInstancia().setImagenActual(nuevaImagenActual);
+					
+					VentanaRuido.this.refrescarImagen();
                 }
             }
             
 		});
 	 
-		//JLabel labelRuidoGauss = new JLabel("Ruido Gaussiano:");
-		//panelRuido.add(labelRuidoGauss);
-		
-		labelSigma = new JLabel("Sigma:");
+		labelSigma = new JLabel("œÉ:");
 		panelRuido.add(labelSigma);
 		
 		textFieldSigma = new JTextField();
@@ -182,7 +211,7 @@ public class VentanaRuido extends JFrame {
 		textFieldSigma.setPreferredSize(new Dimension(1, 20));
 		textFieldSigma.setColumns(3);
 		
-		labelMu = new JLabel("Mu:");
+		labelMu = new JLabel("Œº:");
 		panelRuido.add(labelMu);
 		
 		textFieldMu = new JTextField();
@@ -225,7 +254,7 @@ public class VentanaRuido extends JFrame {
 					
 					} catch (Exception e) {
 						
-						DialogsHelper.mostarMensaje(contentPane, "Por favor ingrese par·metros numÈricos", NivelMensaje.ERROR);
+						DialogsHelper.mostarMensaje(contentPane, "Por favor ingrese par√°metros num√©ricos", NivelMensaje.ERROR);
 					}
 				} else {
 					
@@ -238,7 +267,7 @@ public class VentanaRuido extends JFrame {
 		JLabel labelRuidoExponencial = new JLabel("Ruido Exponencial:");
 		panelRuido.add(labelRuidoExponencial);
 		
-		JLabel labelLambda = new JLabel("Lambda:");
+		JLabel labelLambda = new JLabel("Œª:");
 		panelRuido.add(labelLambda);
 		
 		textFieldLambda = new JTextField();
@@ -280,7 +309,7 @@ public class VentanaRuido extends JFrame {
 					
 					} catch (Exception e) {
 						
-						DialogsHelper.mostarMensaje(contentPane, "Por favor ingrese par·metro numÈrico", NivelMensaje.ERROR);
+						DialogsHelper.mostarMensaje(contentPane, "Por favor ingrese par√°metro num√©rico", NivelMensaje.ERROR);
 					}
 				} else {
 					
@@ -294,7 +323,7 @@ public class VentanaRuido extends JFrame {
 		JLabel labelRuidoRayleigh = new JLabel("Ruido Rayleigh:");
 		panelRuido.add(labelRuidoRayleigh);
 		
-		JLabel labelPhi = new JLabel("Phi:");
+		JLabel labelPhi = new JLabel("œÜ:");
 		panelRuido.add(labelPhi);
 		
 		textFieldPhi = new JTextField();
@@ -337,7 +366,7 @@ public class VentanaRuido extends JFrame {
 					
 					} catch (Exception e) {
 						
-						DialogsHelper.mostarMensaje(contentPane, "Por favor ingrese par·metro numÈrico", NivelMensaje.ERROR);
+						DialogsHelper.mostarMensaje(contentPane, "Por favor ingrese par√°metro num√©rico", NivelMensaje.ERROR);
 					}
 				} else {
 					
@@ -350,7 +379,7 @@ public class VentanaRuido extends JFrame {
 		JLabel labelRuidoSaltAndPepper = new JLabel("Ruido SyP");
 		panelRuido.add(labelRuidoSaltAndPepper);
 		
-		JLabel labelPorcentaje = new JLabel("Porcentaje:");
+		JLabel labelPorcentaje = new JLabel("(%):");
 		panelRuido.add(labelPorcentaje);
 		
 		textFieldPorcentaje = new JTextField();
@@ -393,7 +422,7 @@ public class VentanaRuido extends JFrame {
 					
 					} catch (Exception e) {
 						
-						DialogsHelper.mostarMensaje(contentPane, "Por favor ingrese par·metro numÈrico", NivelMensaje.ERROR);
+						DialogsHelper.mostarMensaje(contentPane, "Por favor ingrese par√°metro num√©rico", NivelMensaje.ERROR);
 					}
 				} else {
 					
@@ -402,17 +431,6 @@ public class VentanaRuido extends JFrame {
 			}
 		
 		});
-		
-		JButton volverALaImagenOriginal = new JButton("Imagen Original");
-		volverALaImagenOriginal.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				ProcesadorDeImagenes.obtenerInstancia().setImagenActual(VentanaRuido.imagenSinCambios);
-				VentanaRuido.this.refrescarImagen();
-				VentanaRuido.this.refrescarCantidadPixeles(VentanaRuido.imagenSinCambios.getBufferedImage().getWidth()*VentanaRuido.imagenSinCambios.getBufferedImage().getHeight());
-			}
-		});
-		panelRuido.add(volverALaImagenOriginal);
-		
 		
 		JMenuItem menuItem = new JMenuItem("Cerrar");
 		menuItem.addActionListener(new ActionListener() {
@@ -437,6 +455,33 @@ public class VentanaRuido extends JFrame {
 		});
 		
 		menu.add(menuItemAbrirImagen);
+		
+		JMenuItem menuItemAbrirRaw = new JMenuItem("Abrir RAW");
+		menuItemAbrirRaw.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				try {
+					
+					Integer alto = Integer.valueOf(textFieldAltoRAW.getText().trim());
+					Integer ancho = Integer.valueOf(textFieldAnchoRAW.getText().trim());
+					Imagen imagenElegida = ProcesadorDeImagenes.obtenerInstancia().cargarUnaImagenRawDesdeArchivo(alto, ancho);
+					int cantidadPixeles = alto*ancho;
+					refrescarCantidadPixeles(cantidadPixeles);
+					
+					actualizarPanelDeImagen(menuItemGuardarComo, imagenElegida);
+					
+					imagenSinCambios = imagenElegida;
+				} catch (Exception e){
+					
+					e.printStackTrace();
+					DialogsHelper.mostarMensaje(contentPane, "Por favor completa correctamente las dimensiones de la imagen RAW y vuelve a intentar"
+							, NivelMensaje.ERROR);
+				}
+				
+			}
+		});
+		
+		menu.add(menuItemAbrirRaw);
 			
 		
 		
