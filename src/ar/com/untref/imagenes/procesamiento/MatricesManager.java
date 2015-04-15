@@ -14,7 +14,6 @@ public class MatricesManager {
 	
 	public static int[][] multiplicarMatrices(int[][] matriz1, int[][] matriz2) {
 
-		int matriz1CantidadColumnas = matriz1[0].length;
 		int filasMatrizResultante = matriz1.length;
 		int columnasMatrizResultante = matriz2[0].length;
 		int[][] matrizResultante = new int[filasMatrizResultante][columnasMatrizResultante];
