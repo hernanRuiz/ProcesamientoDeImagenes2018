@@ -21,7 +21,7 @@ public class MatricesManager {
 
 			for (int i = 0; i < filasMatrizResultante; i++) {
 				for (int j = 0; j < columnasMatrizResultante; j++) {
-					for (int k = 0; k < matriz1CantidadColumnas; k++) {
+					for (int k = 0; k < filasMatrizResultante; k++) {
 						matrizResultante[i][j] += matriz1[i][k] * matriz2[k][j];
 					}
 				}
@@ -233,6 +233,93 @@ public class MatricesManager {
 		}
 		
 		return imagenResultante;
+	}
+	
+	public static int[][] aplicarTransformacionLogaritmica(int[][] matrizDesfasada) {
+
+		float maximo;
+
+		int[][] matrizTransformada;
+		
+		int filas = matrizDesfasada.length;
+		int columnas = matrizDesfasada[0].length;
+		
+		matrizTransformada = new int[filas][columnas];
+		
+		maximo = 255;
+
+		for (int f = 0; f < filas; f++) {
+			for (int g = 0; g < columnas; g++) {
+		
+				int valorActual = matrizDesfasada[f][g];
+				
+				if (maximo < valorActual) {
+					maximo = valorActual;
+				}
+			}
+		}
+
+		for (int i = 0; i < filas; i++) {
+			for (int j = 0; j < columnas; j++) {
+
+				int valorActual = matrizDesfasada[i][j];
+				
+				int valorTransformado = (int) ((255f / (Math.log(maximo))) * Math.log(1 + valorActual));;
+
+				matrizTransformada[i][j] = valorTransformado;
+			}
+		}
+		
+		return matrizTransformada;
+	}
+	
+	public static int[][] aplicarTransformacionLineal(int[][] matrizDesfasada) {
+
+		float minimo;
+		float maximo;
+
+		int[][] matrizTransformada;
+		
+		int filas = matrizDesfasada.length;
+		int columnas = matrizDesfasada[0].length;
+		
+		matrizTransformada = new int[filas][columnas];
+		
+		minimo = 0;
+		maximo = 255;
+
+		for (int f = 0; f < filas; f++) {
+			for (int g = 0; g < columnas; g++) {
+		
+				int valorActual = matrizDesfasada[f][g];
+				
+				if (minimo > valorActual) {
+					minimo = valorActual;
+				}
+
+				if (maximo < valorActual) {
+					maximo = valorActual;
+				}
+
+			}
+
+		}
+
+		float[] maximosYMinimos = new float[2];
+		maximosYMinimos[0] = minimo;
+		maximosYMinimos[1] = maximo;
+		
+		for (int i = 0; i < filas; i++) {
+			for (int j = 0; j < columnas; j++) {
+
+				int valorActual = matrizDesfasada[i][j];
+				int valorTransformado = (int) ((((255f) / (maximo - minimo)) * valorActual) - ((minimo * 255f) / (maximo - minimo)));
+
+				matrizTransformada[i][j] = valorTransformado;
+			}
+		}
+		
+		return matrizTransformada;
 	}
 }
 

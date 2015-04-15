@@ -28,7 +28,6 @@ import javax.swing.border.EmptyBorder;
 
 import ar.com.untref.imagenes.bordes.DetectorDeBordes;
 import ar.com.untref.imagenes.dialogs.OperacionesMatricesDialog;
-import ar.com.untref.imagenes.enums.Canal;
 import ar.com.untref.imagenes.enums.FormatoDeImagen;
 import ar.com.untref.imagenes.enums.NivelMensaje;
 import ar.com.untref.imagenes.helpers.DialogsHelper;
@@ -38,9 +37,10 @@ import ar.com.untref.imagenes.listeners.MostrarTablaDeColoresListener;
 import ar.com.untref.imagenes.listeners.RecortarImagenListener;
 import ar.com.untref.imagenes.listeners.UmbralListener;
 import ar.com.untref.imagenes.modelo.Imagen;
+import ar.com.untref.imagenes.modelo.OperacionMatematica;
 import ar.com.untref.imagenes.procesamiento.ColorManager;
 import ar.com.untref.imagenes.procesamiento.Graficador;
-import ar.com.untref.imagenes.procesamiento.MatricesManager;
+import ar.com.untref.imagenes.procesamiento.OperacionesManager;
 import ar.com.untref.imagenes.procesamiento.ProcesadorDeImagenes;
 
 @SuppressWarnings("serial")
@@ -754,143 +754,31 @@ VentanaPrincipal.this.setExtendedState(VentanaPrincipal.this.getExtendedState() 
 	
 	public void obtenerMatrizResultanteDeSuma(Imagen primeraImagen, Imagen segundaImagen){
 		
-//		int[][] matriz1 = ProcesadorDeImagenes.obtenerInstancia().calcularMatrizDeLaImagen(primeraImagen.getBufferedImage());
-//		
-//		int[][] matriz2 = ProcesadorDeImagenes.obtenerInstancia().calcularMatrizDeLaImagen(segundaImagen.getBufferedImage());
-//		
-//		int matriz1CantidadFilas = matriz1.length;
-//		int matriz1CantidadColumnas = matriz1[0].length;
-//		int matriz2CantidadFilas = matriz2.length;
-//		int matriz2CantidadColumnas = matriz2[0].length;
-//		int[][] matrizResultante = new int[matriz1CantidadFilas][matriz2CantidadColumnas];
-//		
-//		if (matriz1CantidadFilas == matriz2CantidadFilas && matriz1CantidadColumnas == matriz2CantidadColumnas) {
-//			
-//			matrizResultante = MatricesManager.sumarMatrices(matriz1, matriz2);
-//			
-//			Imagen imagenAnterior = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
-//			BufferedImage imagenResultante = MatricesManager.obtenerImagenDeMatriz(matrizResultante);
-//			BufferedImage imagenResultanteTransformada = ProcesadorDeImagenes.obtenerInstancia().aplicarTransformacionLineal(imagenResultante);
-//			Imagen nuevaImagenActual = new Imagen(imagenResultanteTransformada, imagenAnterior.getFormato(), imagenAnterior.getNombre());
-//			ProcesadorDeImagenes.obtenerInstancia().setImagenActual(nuevaImagenActual);
-//			VentanaPrincipal.this.refrescarImagen();
-//			
-//		} else {
-//			DialogsHelper.mostarMensaje(contentPane, "La suma no es posible si las matrices no coinciden en la cantidad de filas y columnas", NivelMensaje.ERROR);
-//			matrizResultante = matriz1;
-//			ProcesadorDeImagenes.obtenerInstancia().setImagenOriginal(primeraImagen);
-//		}
-		
+		OperacionesManager.aplicarOperacionMatematica(VentanaPrincipal.this, contentPane, primeraImagen, segundaImagen, OperacionMatematica.SUMA);
 	}
 	
 	public void obtenerMatrizResultanteDeResta(Imagen primeraImagen, Imagen segundaImagen){
 		
-		int[][] matriz1Rojos = MatricesManager.calcularMatrizDeLaImagen(primeraImagen.getBufferedImage(), Canal.ROJO);
-		int[][] matriz1Verdes = MatricesManager.calcularMatrizDeLaImagen(primeraImagen.getBufferedImage(), Canal.VERDE);
-		int[][] matriz1Azules = MatricesManager.calcularMatrizDeLaImagen(primeraImagen.getBufferedImage(), Canal.AZUL);
-		
-		int[][] matriz2Rojos = MatricesManager.calcularMatrizDeLaImagen(segundaImagen.getBufferedImage(), Canal.ROJO);
-		int[][] matriz2Verdes = MatricesManager.calcularMatrizDeLaImagen(segundaImagen.getBufferedImage(), Canal.VERDE);
-		int[][] matriz2Azules = MatricesManager.calcularMatrizDeLaImagen(segundaImagen.getBufferedImage(), Canal.AZUL);
-		
-		int cantidadFilasMatriz1 = matriz1Rojos.length;
-		int cantidadColumnasMatriz1 = matriz1Rojos[0].length;
-		int cantidadFilasMatriz2 = matriz2Rojos.length;
-		int cantidadColumnasMatriz2 = matriz2Rojos[0].length;
-		
-		int[][] matrizResultanteRojos = new int[cantidadFilasMatriz1][cantidadColumnasMatriz2];
-		int[][] matrizResultanteVerdes = new int[cantidadFilasMatriz1][cantidadColumnasMatriz2];
-		int[][] matrizResultanteAzules = new int[cantidadFilasMatriz1][cantidadColumnasMatriz2];
-		
-		if (cantidadFilasMatriz1 == cantidadFilasMatriz2 && cantidadColumnasMatriz1 == cantidadColumnasMatriz2) {
-			
-			matrizResultanteRojos = ProcesadorDeImagenes.obtenerInstancia().aplicarTransformacionLineal(MatricesManager.restarMatrices(matriz1Rojos, matriz2Rojos));
-			matrizResultanteVerdes = ProcesadorDeImagenes.obtenerInstancia().aplicarTransformacionLineal(MatricesManager.restarMatrices(matriz1Verdes, matriz2Verdes));
-			matrizResultanteAzules = ProcesadorDeImagenes.obtenerInstancia().aplicarTransformacionLineal(MatricesManager.restarMatrices(matriz1Azules, matriz2Azules));
-			
-			Imagen imagenAnterior = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
-			
-			BufferedImage imagenResultante = MatricesManager.generarImagenRGB(matrizResultanteRojos, matrizResultanteVerdes, matrizResultanteAzules);
-			
-			Imagen nuevaImagenActual = new Imagen(imagenResultante, imagenAnterior.getFormato(), imagenAnterior.getNombre());
-			ProcesadorDeImagenes.obtenerInstancia().setImagenActual(nuevaImagenActual);
-			VentanaPrincipal.this.refrescarImagen();
-			
-		} else {
-			DialogsHelper.mostarMensaje(contentPane, "La resta no es posible si las matrices no coinciden en la cantidad de filas y columnas", NivelMensaje.ERROR);
-//			matrizResultante = matriz1;
-			ProcesadorDeImagenes.obtenerInstancia().setImagenOriginal(primeraImagen);
-		}
+		OperacionesManager.aplicarOperacionMatematica(VentanaPrincipal.this, contentPane, primeraImagen, segundaImagen, OperacionMatematica.RESTA);
 	}
-	
+
 	public void obtenerMatrizResultanteDeMultiplicar(Imagen primeraImagen, Imagen segundaImagen){
 		
-//		int[][] matriz1 = ProcesadorDeImagenes.obtenerInstancia().calcularMatrizDeLaImagen(primeraImagen.getBufferedImage());
-//		
-//		int[][] matriz2 = ProcesadorDeImagenes.obtenerInstancia().calcularMatrizDeLaImagen(segundaImagen.getBufferedImage());
-//		
-//		int matriz1CantidadFilas = matriz1.length;
-//		int matriz2CantidadColumnas = matriz2[0].length;
-//		
-//		int[][] matrizResultante = new int[matriz1CantidadFilas][matriz2CantidadColumnas];
-//		
-//		if (matriz1CantidadFilas == matriz2CantidadColumnas) {
-//			
-//			matrizResultante = MatricesManager.multiplicarMatrices(matriz1, matriz2);
-//			Imagen imagenAnterior = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
-//			BufferedImage imagenResultante = MatricesManager.obtenerImagenDeMatriz(matrizResultante);
-//			BufferedImage imagenResultanteTransformada = ProcesadorDeImagenes.obtenerInstancia().aplicarTransformacionLineal(imagenResultante);
-//			Imagen nuevaImagenActual = new Imagen(imagenResultanteTransformada, imagenAnterior.getFormato(), imagenAnterior.getNombre());
-//			ProcesadorDeImagenes.obtenerInstancia().setImagenActual(nuevaImagenActual);
-//			VentanaPrincipal.this.refrescarImagen();
-//			
-//		} else {
-//			DialogsHelper.mostarMensaje(contentPane, "La multiplicación no es posible si la cantidad de columnas de una matriz no coincide con la cantidad de filas de la otra", NivelMensaje.ERROR);
-//			matrizResultante = matriz1;
-//			ProcesadorDeImagenes.obtenerInstancia().setImagenOriginal(primeraImagen);
-//		}
+		OperacionesManager.aplicarOperacionMatematica(VentanaPrincipal.this, contentPane, primeraImagen, segundaImagen, OperacionMatematica.MULTIPLICACION);
 	}
 	
 	public void obtenerMatrizResultanteDeSumaEscalar(int escalar){
 		
-//		BufferedImage bufferedImage = ProcesadorDeImagenes.obtenerInstancia().getImagenActual().getBufferedImage();
-//		int[][] matriz = ProcesadorDeImagenes.obtenerInstancia().calcularMatrizDeLaImagen(bufferedImage);
-//		
-//		int[][] matrizResultante = MatricesManager.sumarMatrizYEscalar(matriz, escalar);	    					
-//		
-//		Imagen imagenAnterior = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
-//		BufferedImage imagenResultante = MatricesManager.obtenerImagenDeMatriz(matrizResultante);
-//		BufferedImage imagenResultanteTransformada = ProcesadorDeImagenes.obtenerInstancia().aplicarTransformacionLineal(imagenResultante);
-//		Imagen nuevaImagenActual = new Imagen(imagenResultanteTransformada, imagenAnterior.getFormato(), imagenAnterior.getNombre());
-//		ProcesadorDeImagenes.obtenerInstancia().setImagenActual(nuevaImagenActual);
-//		VentanaPrincipal.this.refrescarImagen();
+		OperacionesManager.operarConUnEscalar(VentanaPrincipal.this, contentPane, escalar, OperacionMatematica.SUMA);
 	}
 	
 	public void obtenerMatrizResultanteDeRestaEscalar(int escalar){
 		
-//		BufferedImage bufferedImage = ProcesadorDeImagenes.obtenerInstancia().getImagenActual().getBufferedImage();
-//		int[][] matriz = ProcesadorDeImagenes.obtenerInstancia().calcularMatrizDeLaImagen(bufferedImage);
-//		
-//		int[][] matrizResultante = MatricesManager.restarMatrizYEscalar(matriz, escalar);	    					
-//		Imagen imagenAnterior = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
-//		BufferedImage imagenResultante = MatricesManager.obtenerImagenDeMatriz(matrizResultante);
-//		BufferedImage imagenResultanteTransformada = ProcesadorDeImagenes.obtenerInstancia().aplicarTransformacionLineal(imagenResultante);
-//		Imagen nuevaImagenActual = new Imagen(imagenResultanteTransformada, imagenAnterior.getFormato(), imagenAnterior.getNombre());
-//		ProcesadorDeImagenes.obtenerInstancia().setImagenActual(nuevaImagenActual);
-//		VentanaPrincipal.this.refrescarImagen();
+		OperacionesManager.operarConUnEscalar(VentanaPrincipal.this, contentPane, escalar, OperacionMatematica.RESTA);
 	}
 	
 	public void obtenerMatrizResultanteDeMultiplicarPorEscalar(int escalar){
 		
-//		BufferedImage bufferedImage = ProcesadorDeImagenes.obtenerInstancia().getImagenActual().getBufferedImage();
-//		int[][] matriz = ProcesadorDeImagenes.obtenerInstancia().calcularMatrizDeLaImagen(bufferedImage);
-//		
-//		int[][] matrizResultante = MatricesManager.multiplicarMatrizPorEscalar(matriz, escalar);	    					
-//		Imagen imagenAnterior = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
-//		BufferedImage imagenResultante = MatricesManager.obtenerImagenDeMatriz(matrizResultante);
-//		BufferedImage imagenResultanteTransformada = ProcesadorDeImagenes.obtenerInstancia().aplicarTransformacionLogaritmica(imagenResultante);
-//		Imagen nuevaImagenActual = new Imagen(imagenResultanteTransformada, imagenAnterior.getFormato(), imagenAnterior.getNombre());
-//		ProcesadorDeImagenes.obtenerInstancia().setImagenActual(nuevaImagenActual);
-//		VentanaPrincipal.this.refrescarImagen();
+		OperacionesManager.operarConUnEscalar(VentanaPrincipal.this, contentPane, escalar, OperacionMatematica.MULTIPLICACION);
 	}
 }

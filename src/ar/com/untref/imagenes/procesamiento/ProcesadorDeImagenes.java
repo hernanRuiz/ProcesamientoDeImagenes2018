@@ -338,9 +338,9 @@ public class ProcesadorDeImagenes {
 			}
 		}
 		
-		matrizRojos = aplicarTransformacionLineal(matrizRojos);
-		matrizVerdes = aplicarTransformacionLineal(matrizVerdes);
-		matrizAzules = aplicarTransformacionLineal(matrizAzules);
+		matrizRojos = MatricesManager.aplicarTransformacionLineal(matrizRojos);
+		matrizVerdes = MatricesManager.aplicarTransformacionLineal(matrizVerdes);
+		matrizAzules = MatricesManager.aplicarTransformacionLineal(matrizAzules);
 		
 		buffered = MatricesManager.generarImagenRGB(matrizRojos, matrizVerdes, matrizAzules);
 		
@@ -506,7 +506,7 @@ public class ProcesadorDeImagenes {
 		
 		return imagenTransformada;
 	}
-
+	
 	public BufferedImage aplicarTransformacionLineal(BufferedImage bufferedImage){
 		
 		float rojoMin;
@@ -640,53 +640,4 @@ public class ProcesadorDeImagenes {
 		return valoresXEY;
 	}
 
-	public int[][] aplicarTransformacionLineal(int[][] matrizDesfasada) {
-
-		float minimo;
-		float maximo;
-
-		int[][] matrizTransformada;
-		
-		int filas = matrizDesfasada.length;
-		int columnas = matrizDesfasada[0].length;
-		
-		matrizTransformada = new int[filas][columnas];
-		
-		minimo = 0;
-		maximo = 255;
-
-		for (int f = 0; f < filas; f++) {
-			for (int g = 0; g < columnas; g++) {
-		
-				int valorActual = matrizDesfasada[f][g];
-				
-				if (minimo > valorActual) {
-					minimo = valorActual;
-				}
-
-				if (maximo < valorActual) {
-					maximo = valorActual;
-				}
-
-			}
-
-		}
-
-		float[] maximosYMinimos = new float[2];
-		maximosYMinimos[0] = minimo;
-		maximosYMinimos[1] = maximo;
-		
-		for (int i = 0; i < filas; i++) {
-			for (int j = 0; j < columnas; j++) {
-
-				int valorActual = matrizDesfasada[i][j];
-				int valorTransformado = (int) ((((255f) / (maximo - minimo)) * valorActual) - ((minimo * 255f) / (maximo - minimo)));
-
-				matrizTransformada[i][j] = valorTransformado;
-			}
-		}
-		
-		return matrizTransformada;
-	}
-	
 }
