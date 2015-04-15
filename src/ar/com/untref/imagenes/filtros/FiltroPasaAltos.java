@@ -49,7 +49,7 @@ public class FiltroPasaAltos {
 				
 				if (j == longMascara/2 && i == longMascara/2){
 					
-					mascara[i][j] = (longMascara * longMascara);
+					mascara[i][j] = (longMascara * longMascara)-1;
 				} else {
 					
 					mascara[i][j] = -1;

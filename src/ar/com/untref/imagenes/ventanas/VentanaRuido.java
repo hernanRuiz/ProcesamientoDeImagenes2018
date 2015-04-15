@@ -28,7 +28,6 @@ import ar.com.untref.imagenes.enums.NivelMensaje;
 import ar.com.untref.imagenes.filtros.FiltroDeLaMedia;
 import ar.com.untref.imagenes.filtros.FiltroGaussiano;
 import ar.com.untref.imagenes.filtros.FiltroPasaAltos;
-import ar.com.untref.imagenes.filtros.FiltroPasaBajos;
 import ar.com.untref.imagenes.helpers.DialogsHelper;
 import ar.com.untref.imagenes.listeners.GuardarComoListener;
 import ar.com.untref.imagenes.modelo.Imagen;
@@ -58,6 +57,7 @@ public class VentanaRuido extends JFrame {
 	private static Imagen imagenSinCambios;
 	private EspereDialog dialogoEspera;
 	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public VentanaRuido(Imagen imagenSCambios) {
 		
 		dialogoEspera = new EspereDialog();
@@ -141,7 +141,7 @@ public class VentanaRuido extends JFrame {
 		});
 		
 		String[] opcionesGauss = {"Ruido de Gauss", "Ruido Blanco de Gauss"};
-		comboGauss = new JComboBox<String>(opcionesGauss);
+		comboGauss = new JComboBox(opcionesGauss);
 		comboGauss.setSelectedIndex(0);
 		panelRuido.add(comboGauss);
 		comboGauss.addActionListener(new ActionListener(){
@@ -495,16 +495,6 @@ public class VentanaRuido extends JFrame {
 			}
 		});
 		menuFiltros.add(menuItemFiltroPasaAltos);
-		
-		JMenuItem menuItemPasaBajos = new JMenuItem("Filtro pasa bajos");
-		menuItemPasaBajos.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				
-				MedidaMascaraDialog d = new MedidaMascaraDialog(VentanaRuido.this, Mascara.PASA_BAJOS);
-				d.setVisible(true);
-			}
-		});
-		menuFiltros.add(menuItemPasaBajos);
 	}
 		
 	private void cargarImagen(JLabel labelPrincipal,
@@ -620,25 +610,6 @@ public class VentanaRuido extends JFrame {
 	         protected Void doInBackground() throws Exception {
 
 	        	Imagen imagenFiltrada = FiltroPasaAltos.aplicarFiltroPasaAltos(ProcesadorDeImagenes.obtenerInstancia().getImagenActual(), longitudMascara);
-	     		ProcesadorDeImagenes.obtenerInstancia().setImagenActual(imagenFiltrada);
-	     		
-	     		VentanaRuido.this.refrescarImagen();
-	     		
-	            return null;
-	         }
-	      };
-
-	      mySwingWorker.execute();
-	      mostrarDialogoDeEspera();
-	}
-	
-	public void aplicarFiltroPasaBajos(final Integer longitudMascara) {
-
-		SwingWorker<Void, Void> mySwingWorker = new SwingWorker<Void, Void>(){
-	         @Override
-	         protected Void doInBackground() throws Exception {
-
-	        	Imagen imagenFiltrada = FiltroPasaBajos.aplicarFiltroPasaBajos(ProcesadorDeImagenes.obtenerInstancia().getImagenActual(), longitudMascara);
 	     		ProcesadorDeImagenes.obtenerInstancia().setImagenActual(imagenFiltrada);
 	     		
 	     		VentanaRuido.this.refrescarImagen();
