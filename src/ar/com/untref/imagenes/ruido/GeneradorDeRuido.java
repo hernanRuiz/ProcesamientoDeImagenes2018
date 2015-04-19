@@ -39,8 +39,8 @@ public class GeneradorDeRuido {
 		return resultados;
 	}
 
-	// Máximos y mínimos para el ruido de Gauss
-	private static float[] obtenerMaximosYMinimos(BufferedImage bufferedImage, int sigma, int mu) {
+	// Aplica alguna de las 2 funciones aleatorias y a su vez calcula los Máximos y mínimos para poder generar el ruido Gaussiano
+	private static float[] aplicarFuncionAleatoriaYObtenerMaximosYMinimos(BufferedImage bufferedImage, int sigma, int mu) {
 
 		float rojoMin;
 		float rojoMax;
@@ -140,7 +140,7 @@ public class GeneradorDeRuido {
 		ncols = bufferedImage.getHeight();
 		imagenConRuido = new BufferedImage(nrows, ncols, BufferedImage.TYPE_3BYTE_BGR);
 
-		float[] maximosYMinimos = obtenerMaximosYMinimos(bufferedImage, sigma, mu);
+		float[] maximosYMinimos = aplicarFuncionAleatoriaYObtenerMaximosYMinimos(bufferedImage, sigma, mu);
 		rojoMin = maximosYMinimos[0];
 		rojoMax = maximosYMinimos[1];
 		verdeMin = maximosYMinimos[2];
