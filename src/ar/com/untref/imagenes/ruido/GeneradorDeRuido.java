@@ -275,13 +275,12 @@ public class GeneradorDeRuido {
 	private static float generadorAleatoriosRayleigh(int phi) {
 
 		float x, y;
-		Random numero = new Random();
 		x = 0;
 		do
-			x = (float) numero.nextGaussian();
-		while (x <= 0 | x >= 1); // x no puede ser cero ni mayor a uno
+			x = (float) Math.random();
+		while (x <= 0); // x no puede ser cero
 
-		y = (float) (Float.valueOf(phi) * (Math.sqrt((-2) * Math.log(1-x))));
+		y = (float) (Float.valueOf(phi) * (Math.sqrt( (-2) * Math.log10(1-x) ) ));
 		return y;
 	}
 
@@ -311,6 +310,7 @@ public class GeneradorDeRuido {
 			for (int g = 0; g < ncols; g++) {
 	
 				float funcionAleatoria = generadorAleatoriosRayleigh(phi);
+
 				Color colorActual = new Color(bufferedImage.getRGB(f, g));
 				rojo = (int)(colorActual.getRed() * funcionAleatoria);
 				verde = (int)(colorActual.getGreen() * funcionAleatoria);
@@ -363,9 +363,9 @@ public class GeneradorDeRuido {
 		for (int i = 0; i < nrows; i++) {
 			for (int j = 0; j < ncols; j++) {
 
-				int rojoTransformado = (int) ((255f / (Math.log10(rojoMax+1))) * Math.log10(1 + matrizRojos[i][j]));
-				int verdeTransformado = (int) ((255f / (Math.log10(verdeMax+1))) * Math.log10(1 + matrizVerdes[i][j]));
-				int azulTransformado = (int) ((255f / (Math.log10(azulMax+1))) * Math.log10(1 + matrizAzules[i][j]));
+				int rojoTransformado = (int) ((255f / (Math.log10(rojoMax+1))) * Math.log10(1 + (int)matrizRojos[i][j]));
+				int verdeTransformado = (int) ((255f / (Math.log10(verdeMax+1))) * Math.log10(1 + (int)matrizVerdes[i][j]));
+				int azulTransformado = (int) ((255f / (Math.log10(azulMax+1))) * Math.log10(1 + (int)matrizAzules[i][j]));
 
 				Color colorModificado = new Color(rojoTransformado, verdeTransformado, azulTransformado);
 				imagenConRuido.setRGB(i, j, colorModificado.getRGB()); // Add noise to pixel

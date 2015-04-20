@@ -146,8 +146,8 @@ public class DetectorDeBordes {
         		
         		
         //Creamos la imagen resultante
-        for (int i = 0; i < ancho1; i++) {
-            for (int j = 0; j < alto1; j++) {
+        for (int i = 0; i < imagenFiltradaEnX.getBufferedImage().getWidth(); i++) {
+            for (int j = 0; j < imagenFiltradaEnX.getBufferedImage().getHeight(); j++) {
                 xPixel = imagenFiltradaEnX.getBufferedImage().getRGB(i, j);
                 yPixel = imagenFiltradaEnY.getBufferedImage().getRGB(i, j);
                 imagenResultante.getBufferedImage().setRGB(i, j, (int)Math.hypot(xPixel, yPixel));
