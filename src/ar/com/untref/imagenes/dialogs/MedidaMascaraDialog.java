@@ -104,6 +104,9 @@ public class MedidaMascaraDialog extends JDialog {
 	               		case MEDIA:
 	               			ventana.aplicarFiltroDeLaMedia(longitudMascaraElegida);
 	               			break;
+	               		case MEDIANA:
+	               			ventana.aplicarFiltroDeLaMediana(longitudMascaraElegida);
+	               			break;
 	               		case PASA_ALTOS:
 	               			ventana.aplicarFiltroPasaAltos(longitudMascaraElegida);
 	               			break;

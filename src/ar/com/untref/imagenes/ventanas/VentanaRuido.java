@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
+import java.awt.image.Kernel;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -26,6 +27,7 @@ import ar.com.untref.imagenes.dialogs.MedidaMascaraDialog;
 import ar.com.untref.imagenes.enums.Mascara;
 import ar.com.untref.imagenes.enums.NivelMensaje;
 import ar.com.untref.imagenes.filtros.FiltroDeLaMedia;
+import ar.com.untref.imagenes.filtros.FiltroDeLaMediana;
 import ar.com.untref.imagenes.filtros.FiltroGaussiano;
 import ar.com.untref.imagenes.filtros.FiltroPasaAltos;
 import ar.com.untref.imagenes.helpers.DialogsHelper;
@@ -539,6 +541,16 @@ public class VentanaRuido extends JFrame {
 				d.setVisible(true);
 			}
 		});
+		
+		JMenuItem menuItemFiltroDeLaMediana = new JMenuItem("Filtro de la mediana");
+		menuItemFiltroDeLaMediana.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				MedidaMascaraDialog d = new MedidaMascaraDialog(VentanaRuido.this, Mascara.MEDIANA);
+				d.setVisible(true);
+			}
+		});
+		menuFiltros.add(menuItemFiltroDeLaMediana);
 		menuFiltros.add(menuItemFiltroPasaAltos);
 	}
 		
@@ -636,6 +648,35 @@ public class VentanaRuido extends JFrame {
 	         protected Void doInBackground() throws Exception {
 
 	        	Imagen imagenFiltrada = FiltroDeLaMedia.aplicarFiltroDeLaMedia(ProcesadorDeImagenes.obtenerInstancia().getImagenActual(), longitudMascara);
+	     		ProcesadorDeImagenes.obtenerInstancia().setImagenActual(imagenFiltrada);
+	     		
+	     		VentanaRuido.this.refrescarImagen();
+	     		
+	            return null;
+	         }
+	      };
+
+	      mySwingWorker.execute();
+	      mostrarDialogoDeEspera();
+	}
+	
+	public void aplicarFiltroDeLaMediana(final Integer longitudMascara) {
+
+		SwingWorker<Void, Void> mySwingWorker = new SwingWorker<Void, Void>(){
+	         @Override
+	         protected Void doInBackground() throws Exception {
+
+	     		float filtroK[] = new float[longitudMascara*longitudMascara];
+
+	     		for (int i = 0; i < longitudMascara; i++) {
+	     			for (int j = 0; j < longitudMascara; j++) {
+	     				filtroK[i * longitudMascara + j] = 1;
+	     			}
+	     		} 
+	        	 
+	     		//Generamos un kernel con todos 1, ya que la mascara para este filtro para no modificar los valores al multiplicar por los de la máscara
+	        	FiltroDeLaMediana filtro = new FiltroDeLaMediana(new Kernel(longitudMascara,longitudMascara, filtroK));
+	        	Imagen imagenFiltrada = filtro.aplicarFiltroDeLaMediana(ProcesadorDeImagenes.obtenerInstancia().getImagenActual());
 	     		ProcesadorDeImagenes.obtenerInstancia().setImagenActual(imagenFiltrada);
 	     		
 	     		VentanaRuido.this.refrescarImagen();

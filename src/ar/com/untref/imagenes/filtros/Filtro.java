@@ -16,12 +16,12 @@ public class Filtro implements BufferedImageOp, RasterOp {
 
 	public static final int PIXELES_BORDE_EN_CERO = 0;
 
-	private Kernel kernel;
+	protected static Kernel kernel;
 	private int condicionBorde;
 	private RenderingHints hints;
 
-	public Filtro(Kernel kernel) {
-		this.kernel = kernel;
+	public Filtro(Kernel kernelP) {
+		kernel = kernelP;
 		condicionBorde = PIXELES_BORDE_EN_CERO;
 	}
 
@@ -66,7 +66,7 @@ public class Filtro implements BufferedImageOp, RasterOp {
 		return (Kernel) kernel.clone();
 	}
 
-	public final WritableRaster filter(Raster imagenInicial, WritableRaster imagenDestino) {
+	public WritableRaster filter(Raster imagenInicial, WritableRaster imagenDestino) {
 		if (imagenInicial == imagenDestino)
 			throw new IllegalArgumentException("imagen origen y destino deben ser distintas");
 		if (kernel.getWidth() > imagenInicial.getWidth()
@@ -138,7 +138,7 @@ public class Filtro implements BufferedImageOp, RasterOp {
 		return dst;
 	}
 	
-	public float[] calcularMaximosYMinimos(Raster imagenInicial, WritableRaster imagenDestino){
+	public static float[] calcularMaximosYMinimos(Raster imagenInicial, WritableRaster imagenDestino){
 		
 		int anchoMascara = kernel.getWidth();
 		int alturaMascara = kernel.getHeight();
