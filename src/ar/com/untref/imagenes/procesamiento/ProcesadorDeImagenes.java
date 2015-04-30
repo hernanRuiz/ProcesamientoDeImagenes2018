@@ -363,10 +363,10 @@ public class ProcesadorDeImagenes {
 		int ncols = bufferedImage.getHeight();
 		imagenTransformada = new BufferedImage(nrows, ncols, BufferedImage.TYPE_3BYTE_BGR);
 		
-		Color color = new Color(bufferedImage.getRGB(0, 0));
-		rojoMax = color.getRed();
-		verdeMax = color.getGreen();
-		azulMax = color.getBlue();
+//		Color color = new Color(bufferedImage.getRGB(0, 0));
+		rojoMax = 255;
+		verdeMax = 255;
+		azulMax = 255;
 
 		for (int f = 0; f < nrows; f++) {
 			for (int g = 0; g < ncols; g++) {
@@ -431,13 +431,13 @@ public class ProcesadorDeImagenes {
 		int ncols = bufferedImage.getHeight();
 		imagenTransformada = new BufferedImage(nrows, ncols, BufferedImage.TYPE_3BYTE_BGR);
 		
-		Color color = new Color(bufferedImage.getRGB(0, 0));
-		rojoMin = color.getRed();
-		rojoMax = color.getRed();
-		verdeMin = color.getRed();
-		verdeMax = color.getGreen();
-		azulMin = color.getRed();
-		azulMax = color.getBlue();
+		//Color color = new Color(bufferedImage.getRGB(0, 0));
+		rojoMin = 0;
+		rojoMax = 255;
+		verdeMin = 0;
+		verdeMax = 255;
+		azulMin = 0;
+		azulMax = 255;
 
 		for (int f = 0; f < nrows; f++) {
 			for (int g = 0; g < ncols; g++) {

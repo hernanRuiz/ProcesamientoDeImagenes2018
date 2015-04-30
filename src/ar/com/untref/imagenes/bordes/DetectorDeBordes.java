@@ -1,10 +1,12 @@
 package ar.com.untref.imagenes.bordes;
 
+import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.awt.image.Kernel;
 
 import ar.com.untref.imagenes.filtros.Filtro;
 import ar.com.untref.imagenes.modelo.Imagen;
+import ar.com.untref.imagenes.procesamiento.ProcesadorDeImagenes;
 
 public class DetectorDeBordes {
 
@@ -22,7 +24,7 @@ public class DetectorDeBordes {
 		mascaraDeRobertsEnY[1][0]= -1;
 		mascaraDeRobertsEnY[1][1]= 0;
 		
-		BufferedImage im = new BufferedImage(imagenOriginal.getBufferedImage().getWidth(), imagenOriginal.getBufferedImage().getHeight(), imagenOriginal.getBufferedImage().getType());
+		BufferedImage im = new BufferedImage(imagenOriginal.getBufferedImage().getHeight(), imagenOriginal.getBufferedImage().getWidth(), BufferedImage.TYPE_3BYTE_BGR);
 		Imagen imagenFiltradaEnX = new Imagen(im, imagenOriginal.getFormato(), imagenOriginal.getNombre());
 		Imagen imagenFiltradaEnY = new Imagen(im, imagenOriginal.getFormato(), imagenOriginal.getNombre());
 		Imagen imagenResultante = new Imagen(im, imagenOriginal.getFormato(), imagenOriginal.getNombre());
@@ -102,22 +104,66 @@ public class DetectorDeBordes {
 		mascaraDePrewittEnY[2][1]= 0;
 		mascaraDePrewittEnY[2][2]= 1;
 		
+		float rojoMin = 0;
+		float rojoMax = 255;
+		float verdeMin = 0;
+		float verdeMax = 255;
+		float azulMin = 0;
+		float azulMax = 255;
+		
+		for (int f = 0; f < imagenOriginal.getBufferedImage().getHeight(); f++) {
+			for (int g = 0; g < imagenOriginal.getBufferedImage().getWidth(); g++) {
+		
+				Color colorActual = new Color(imagenOriginal.getBufferedImage().getRGB(f, g));
+				int rojoActual = colorActual.getRed();
+				int verdeActual = colorActual.getGreen();
+				int azulActual = colorActual.getBlue();
+				
+				if (rojoMin > rojoActual) {
+					rojoMin = rojoActual;
+				}
+
+				if (rojoMax < rojoActual) {
+					rojoMax = rojoActual;
+				}
+
+				if (verdeMin > verdeActual) {
+					verdeMin = verdeActual;
+				}
+
+				if (verdeMax < verdeActual) {
+					verdeMax = verdeActual;
+				}
+
+				if (azulMin > azulActual) {
+					azulMin = azulActual;
+				}
+
+				if (azulMax < azulActual) {
+					azulMax = azulActual;
+				}
+
+			}
+
+		}
+		
+		int ancho1 = mascaraDePrewittEnX.length;
+		int alto1 = mascaraDePrewittEnX[0].length;
+		int tam1 = ancho1 * alto1;
+		float filtroK1[] = new float[tam1];
+		
 		int ancho2 = mascaraDePrewittEnY.length;
         int alto2 = mascaraDePrewittEnY[0].length;
         int tam2 = ancho2 * alto2;
         float filtroK2[] = new float[tam2];
         
-        BufferedImage im = new BufferedImage(imagenOriginal.getBufferedImage().getWidth(), imagenOriginal.getBufferedImage().getHeight(), imagenOriginal.getBufferedImage().getType());
+        BufferedImage im = new BufferedImage(imagenOriginal.getBufferedImage().getHeight(), imagenOriginal.getBufferedImage().getWidth(), BufferedImage.TYPE_3BYTE_BGR);
 		Imagen imagenFiltradaEnX = new Imagen(im, imagenOriginal.getFormato(), imagenOriginal.getNombre());
 		Imagen imagenFiltradaEnY = new Imagen(im, imagenOriginal.getFormato(), imagenOriginal.getNombre());
 		Imagen imagenResultante = new Imagen(im, imagenOriginal.getFormato(), imagenOriginal.getNombre());
 		
         int xPixel = 0;
 		int yPixel = 0;
-		int ancho1 = mascaraDePrewittEnX.length;
-        int alto1 = mascaraDePrewittEnX[0].length;
-        int tam1 = ancho1 * alto1;
-        float filtroK1[] = new float[tam1];
         
         
       //Creamos el filtro - Se pasa de una matriz cuadrada (vector de 2 dimensiones) a un vector lineal
@@ -141,18 +187,33 @@ public class DetectorDeBordes {
         Filtro filtroY = new Filtro(kernelY);
         
         //Aplicamos filtros
-        filtroX.filter(imagenOriginal.getBufferedImage(), imagenFiltradaEnX.getBufferedImage());
-        filtroY.filter(imagenOriginal.getBufferedImage(), imagenFiltradaEnY.getBufferedImage());
+        filtroX.filterSinTransformar(imagenOriginal.getBufferedImage(), imagenFiltradaEnX.getBufferedImage());
+        filtroY.filterSinTransformar(imagenOriginal.getBufferedImage(), imagenFiltradaEnY.getBufferedImage());
         		
         		
         //Creamos la imagen resultante
-        for (int i = 0; i < imagenFiltradaEnX.getBufferedImage().getWidth(); i++) {
-            for (int j = 0; j < imagenFiltradaEnX.getBufferedImage().getHeight(); j++) {
-                xPixel = imagenFiltradaEnX.getBufferedImage().getRGB(i, j);
-                yPixel = imagenFiltradaEnY.getBufferedImage().getRGB(i, j);
-                imagenResultante.getBufferedImage().setRGB(i, j, (int)Math.hypot(xPixel, yPixel));
+        for (int i = 0; i < imagenFiltradaEnX.getBufferedImage().getHeight(); i++) {
+            for (int j = 0; j < imagenFiltradaEnX.getBufferedImage().getWidth(); j++) {
+//                xPixel = imagenFiltradaEnX.getBufferedImage().getRGB(i, j);
+//                yPixel = imagenFiltradaEnY.getBufferedImage().getRGB(i, j);
+                
+                Color colorX = new Color(imagenFiltradaEnX.getBufferedImage().getRGB(i, j));
+                Color colorY = new Color(imagenFiltradaEnY.getBufferedImage().getRGB(i, j));
+                
+                int rojo = (int)Math.hypot(colorX.getRed() , colorY.getRed());
+                int verde = (int)Math.hypot(colorX.getGreen() , colorY.getGreen());
+                int azul = (int)Math.hypot(colorX.getBlue() , colorY.getBlue());
+                
+                int rojoTransformado = (int) ((((255f) / (rojoMax - rojoMin)) * rojo) - ((rojoMin * 255f) / (rojoMax - rojoMin)));
+				int verdeTransformado = (int) (((255f / (verdeMax - verdeMin)) * verde) - ((verdeMin * 255f) / (verdeMax - verdeMin)));
+				int azulTransformado = (int) (((255f / (azulMax - azulMin)) * azul) - ((azulMin * 255f) / (azulMax - azulMin)));
+                
+				//Color colorResultante = new Color(rojoTransformado, verdeTransformado, azulTransformado);
+                
+                imagenResultante.getBufferedImage().setRGB(i, j, colorToRGB(rojo, verde, azul));
             }
         }
+//        BufferedImage imagenFinal = ProcesadorDeImagenes.obtenerInstancia().aplicarTransformacionLogaritmica(imagenResultante.getBufferedImage());
         
         return imagenResultante.getBufferedImage();
 		
@@ -182,11 +243,6 @@ public class DetectorDeBordes {
 		mascaraDeSobelEnY[2][1]= 0;
 		mascaraDeSobelEnY[2][2]= 1;
 		
-		int ancho2 = mascaraDeSobelEnY.length;
-        int alto2 = mascaraDeSobelEnY[0].length;
-        int tam2 = ancho2 * alto2;
-        float filtroK2[] = new float[tam2];
-        
         BufferedImage im = new BufferedImage(imagenOriginal.getBufferedImage().getWidth(), imagenOriginal.getBufferedImage().getHeight(), imagenOriginal.getBufferedImage().getType());
 		Imagen imagenFiltradaEnX = new Imagen(im, imagenOriginal.getFormato(), imagenOriginal.getNombre());
 		Imagen imagenFiltradaEnY = new Imagen(im, imagenOriginal.getFormato(), imagenOriginal.getNombre());
@@ -194,10 +250,16 @@ public class DetectorDeBordes {
 		
         int xPixel = 0;
 		int yPixel = 0;
+
 		int ancho1 = mascaraDeSobelEnX.length;
         int alto1 = mascaraDeSobelEnX[0].length;
         int tam1 = ancho1 * alto1;
         float filtroK1[] = new float[tam1];
+        
+        int ancho2 = mascaraDeSobelEnY.length;
+        int alto2 = mascaraDeSobelEnY[0].length;
+        int tam2 = ancho2 * alto2;
+        float filtroK2[] = new float[tam2];
         
         
       //Creamos el filtro - Se pasa de una matriz cuadrada (vector de 2 dimensiones) a un vector lineal
@@ -287,5 +349,20 @@ public class DetectorDeBordes {
 		
 		
 	}
+	
+	public static int colorToRGB(int red, int green, int blue) {
+		int newPixel = 0;
+		
+		
+		newPixel += newPixel << 8;
+		newPixel += red;
+		newPixel = newPixel << 8;
+		newPixel += green;
+		newPixel = newPixel << 8;
+		newPixel += blue;
+		
+		return newPixel;
+	}
+	
 	
 }

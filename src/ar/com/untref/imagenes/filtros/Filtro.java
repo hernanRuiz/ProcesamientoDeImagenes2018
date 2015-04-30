@@ -179,4 +179,74 @@ public class Filtro implements BufferedImageOp, RasterOp {
 		maximosYMinimos[1] = maximo;
 		return maximosYMinimos;
 	}
+	
+	
+	public final BufferedImage filterSinTransformar(BufferedImage imagenOriginal, BufferedImage imagenDestino) {
+		if (imagenOriginal == imagenDestino)
+			throw new IllegalArgumentException("La imagen original y la de destino no pueden ser las mismas");
+
+		if (imagenDestino == null)
+			imagenDestino = createCompatibleDestImage(imagenOriginal, imagenOriginal.getColorModel());
+
+		BufferedImage src1 = imagenOriginal;
+		BufferedImage dst1 = imagenDestino;
+		
+		if (src1.getColorModel().getColorSpace().getType() != imagenDestino
+				.getColorModel().getColorSpace().getType())
+			dst1 = createCompatibleDestImage(imagenOriginal, imagenOriginal.getColorModel());
+
+		filterSinTransformar(src1.getRaster(), dst1.getRaster());
+
+		return imagenDestino;
+	}
+	
+	
+	public WritableRaster filterSinTransformar(Raster imagenInicial, WritableRaster imagenDestino) {
+		if (imagenInicial == imagenDestino)
+			throw new IllegalArgumentException("imagen origen y destino deben ser distintas");
+		if (kernel.getWidth() > imagenInicial.getWidth()
+				|| kernel.getHeight() > imagenInicial.getHeight())
+			throw new ImagingOpException("La máscara es muy grande");
+		if (imagenDestino == null)
+			imagenDestino = createCompatibleDestRaster(imagenInicial);
+		else if (imagenInicial.getNumBands() != imagenDestino.getNumBands())
+			throw new ImagingOpException(
+					"imagen origen y destino tienen distinto numero de bandas");
+
+		int anchoMascara = kernel.getWidth();
+		int alturaMascara = kernel.getHeight();
+		int izquierda = kernel.getXOrigin();
+		int derecha = Math.max(anchoMascara - izquierda - 1, 0);
+		int arriba = kernel.getYOrigin();
+		int abajo = Math.max(alturaMascara - arriba - 1, 0);
+
+		//Magia de buffered image
+		int[] valorMaximo = imagenInicial.getSampleModel().getSampleSize();
+		for (int i = 0; i < valorMaximo.length; i++)
+			valorMaximo[i] = (int) Math.pow(2, valorMaximo[i]) - 1;
+
+		int anchoDeLaRegionAlcanzable = imagenInicial.getWidth() - izquierda - derecha;
+		int altoDeLaRegionAlcanzable = imagenInicial.getHeight() - arriba - abajo;
+		float[] valoresDeLaMascara = kernel.getKernelData(null);
+		float[] matrizTemporal = new float[anchoMascara * alturaMascara];
+		
+		for (int x = 0; x < anchoDeLaRegionAlcanzable; x++) {
+			for (int y = 0; y < altoDeLaRegionAlcanzable; y++) {
+
+				for (int banda = 0; banda < imagenInicial.getNumBands(); banda++) {
+					float v = 0;
+					imagenInicial.getSamples(x, y, anchoMascara, alturaMascara, banda, matrizTemporal);
+					for (int i = 0; i < matrizTemporal.length; i++)
+						v += matrizTemporal[matrizTemporal.length - i - 1] * valoresDeLaMascara[i];
+
+					imagenDestino.setSample(x + kernel.getXOrigin(), y + kernel.getYOrigin(), banda, v);
+					
+				}
+			}
+		}
+
+		return imagenDestino;
+	}
+
+	
 }

@@ -345,6 +345,7 @@ public class GeneradorDeRuido {
 	// 10 - B - Generador de ruido de Rayleigh
 	public static BufferedImage generarRuidoRayleighMultiplicativo(BufferedImage bufferedImage, int phi) {
 
+		
 		int nrows, ncols;
 		BufferedImage imagenConRuido;
 		nrows = bufferedImage.getWidth();
@@ -366,7 +367,7 @@ public class GeneradorDeRuido {
 				int rojoTransformado = (int) ((255f / (Math.log10(rojoMax+1))) * Math.log10(1 + (int)matrizRojos[i][j]));
 				int verdeTransformado = (int) ((255f / (Math.log10(verdeMax+1))) * Math.log10(1 + (int)matrizVerdes[i][j]));
 				int azulTransformado = (int) ((255f / (Math.log10(azulMax+1))) * Math.log10(1 + (int)matrizAzules[i][j]));
-
+		
 				Color colorModificado = new Color(rojoTransformado, verdeTransformado, azulTransformado);
 				imagenConRuido.setRGB(i, j, colorModificado.getRGB()); // Add noise to pixel
 			}
@@ -435,4 +436,17 @@ public class GeneradorDeRuido {
 
 		return imagenConRuido;
 	}
+	
+	public static float[][] getMatrizRojos(){
+		return matrizRojos;
+	}
+	
+	public static float[][] getMatrizVerdes(){
+		return matrizRojos;
+	}
+	
+	public static float[][] getMatrizAzules(){
+		return matrizRojos;
+	}
+	
 }

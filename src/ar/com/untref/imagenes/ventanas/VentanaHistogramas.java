@@ -30,6 +30,7 @@ import ar.com.untref.imagenes.modelo.Histograma;
 import ar.com.untref.imagenes.ventanas.VentanaHistogramaEcualizado;
 import ar.com.untref.imagenes.modelo.Imagen;
 import ar.com.untref.imagenes.procesamiento.ProcesadorDeImagenes;
+import ar.com.untref.imagenes.ruido.GeneradorDeRuido;
 
 @SuppressWarnings("serial")
 public class VentanaHistogramas extends JFrame{
@@ -121,7 +122,8 @@ public class VentanaHistogramas extends JFrame{
 			switch (i) {
 			case 0:
 				
-				histogramaRojo = dibujarHistograma(Histograma.calcularHistogramaRojo(imagen.getBufferedImage()), panelHistoRojo, Canal.ROJO);
+				//histogramaRojo = dibujarHistograma(Histograma.calcularHistogramaRojo(imagen.getBufferedImage()), panelHistoRojo, Canal.ROJO);
+				histogramaRojo = dibujarHistograma(Histograma.calcularHistogramaRojo(GeneradorDeRuido.getMatrizRojos()),panelHistoRojo, Canal.ROJO);
 				break;
 			case 1:
 
