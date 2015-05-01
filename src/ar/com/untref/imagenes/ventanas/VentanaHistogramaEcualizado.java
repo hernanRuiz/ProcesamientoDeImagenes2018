@@ -34,7 +34,6 @@ import ar.com.untref.imagenes.enums.Canal;
 import ar.com.untref.imagenes.enums.FormatoDeImagen;
 import ar.com.untref.imagenes.enums.NivelMensaje;
 import ar.com.untref.imagenes.helpers.DialogsHelper;
-import ar.com.untref.imagenes.listeners.GuardarComoListener;
 import ar.com.untref.imagenes.listeners.GuardarImagenEcualizadaListener;
 import ar.com.untref.imagenes.modelo.HistogramEQ;
 import ar.com.untref.imagenes.modelo.Imagen;

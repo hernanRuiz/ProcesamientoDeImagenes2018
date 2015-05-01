@@ -352,5 +352,24 @@ public class MatricesManager {
 		
 		return matrizTransformada;
 	}
+	
+	public static BufferedImage obtenerImagenDeMatrices(int[][] matrizRojos, int[][] matrizVerdes, int[][] matrizAzules){
+		
+
+		int filas = matrizRojos.length;
+		int columnas = matrizRojos[0].length;
+
+		BufferedImage imagenFinal = new BufferedImage(filas, columnas, BufferedImage.TYPE_3BYTE_BGR);
+			
+		for (int f = 0; f < filas; f++) {
+			for (int g = 0; g < columnas; g++) {
+
+				Color color = new Color(matrizRojos[f][g], matrizVerdes[f][g], matrizAzules[f][g]);
+				imagenFinal.setRGB(f, g, color.getRGB());
+			}
+		}
+		
+		return imagenFinal;
+	}
 }
 

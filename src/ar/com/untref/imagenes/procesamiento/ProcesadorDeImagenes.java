@@ -11,6 +11,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import ar.com.untref.imagenes.enums.Canal;
 import ar.com.untref.imagenes.enums.FormatoDeImagen;
 import ar.com.untref.imagenes.helpers.FormulasHelper;
 import ar.com.untref.imagenes.modelo.Archivo;
@@ -73,6 +74,10 @@ public class ProcesadorDeImagenes {
 
 					Imagen imagen = new Imagen(bufferedImage,
 							formatoDeLaImagen, archivoActual.getNombre());
+					
+					imagen.setMatriz(MatricesManager.calcularMatrizDeLaImagen(bufferedImage, Canal.ROJO), Canal.ROJO);
+					imagen.setMatriz(MatricesManager.calcularMatrizDeLaImagen(bufferedImage, Canal.VERDE), Canal.VERDE);
+					imagen.setMatriz(MatricesManager.calcularMatrizDeLaImagen(bufferedImage, Canal.AZUL), Canal.AZUL);
 
 					imagenActual = imagen;
 					imagenOriginal = imagen;
@@ -119,9 +124,17 @@ public class ProcesadorDeImagenes {
 
 				Imagen imagen = new Imagen(bufferedImage, formatoDeLaImagen,
 						archivoActual.getNombre());
+				
+				int[][] matrizCanal = MatricesManager.calcularMatrizDeLaImagen(bufferedImage, Canal.ROJO);
+				
+				imagen.setMatriz(matrizCanal, Canal.ROJO);
+				imagen.setMatriz(matrizCanal, Canal.VERDE);
+				imagen.setMatriz(matrizCanal, Canal.AZUL);
+
 				imagenActual = imagen;
 				imagenOriginal = imagen;
 				imagenADevolver = imagen;
+				
 			} catch (Exception e) {
 
 				e.printStackTrace();

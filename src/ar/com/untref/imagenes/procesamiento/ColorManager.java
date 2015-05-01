@@ -38,4 +38,18 @@ public class ColorManager {
 	
 		return color;
 	}
+	
+	public static int colorToRGB(int red, int green, int blue) {
+		int newPixel = 0;
+		
+		
+		newPixel += newPixel << 8;
+		newPixel += red;
+		newPixel = newPixel << 8;
+		newPixel += green;
+		newPixel = newPixel << 8;
+		newPixel += blue;
+		
+		return newPixel;
+	}
 }

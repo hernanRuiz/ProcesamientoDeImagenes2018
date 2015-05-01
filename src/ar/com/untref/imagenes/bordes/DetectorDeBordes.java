@@ -1,12 +1,13 @@
 package ar.com.untref.imagenes.bordes;
 
-import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.awt.image.Kernel;
 
+import ar.com.untref.imagenes.enums.Canal;
 import ar.com.untref.imagenes.filtros.Filtro;
+import ar.com.untref.imagenes.filtros.FiltroNuevo;
 import ar.com.untref.imagenes.modelo.Imagen;
-import ar.com.untref.imagenes.procesamiento.ProcesadorDeImagenes;
+import ar.com.untref.imagenes.procesamiento.MatricesManager;
 
 public class DetectorDeBordes {
 
@@ -82,7 +83,53 @@ public class DetectorDeBordes {
 	
 	public static BufferedImage aplicarDetectorDePrewitt(Imagen imagenOriginal){
 		
-		float[][] mascaraDePrewittEnX = new float [3][3];
+		int[][] mascaraDePrewittEnX = calcularMascaraDePrewittEnX();
+		int[][] mascaraDePrewittEnY = calcularMascaraDePrewittEnY();
+		
+        Imagen imagenFiltradaEnX = new Imagen(imagenOriginal.getBufferedImage(), imagenOriginal.getFormato(), imagenOriginal.getNombre(), imagenOriginal.getMatriz(Canal.ROJO), imagenOriginal.getMatriz(Canal.VERDE), imagenOriginal.getMatriz(Canal.AZUL));
+		Imagen imagenFiltradaEnY = new Imagen(imagenOriginal.getBufferedImage(), imagenOriginal.getFormato(), imagenOriginal.getNombre(), imagenOriginal.getMatriz(Canal.ROJO), imagenOriginal.getMatriz(Canal.VERDE), imagenOriginal.getMatriz(Canal.AZUL));
+		
+		Imagen imagenResultante = new Imagen(imagenOriginal.getBufferedImage(), imagenOriginal.getFormato(), imagenOriginal.getNombre(), imagenOriginal.getMatriz(Canal.ROJO), imagenOriginal.getMatriz(Canal.VERDE), imagenOriginal.getMatriz(Canal.AZUL));
+		
+        FiltroNuevo filtroEnX = new FiltroNuevo(mascaraDePrewittEnX);
+        
+        //Aplicamos filtros en X y en Y
+        int[][] matrizRojoEnX = filtroEnX.filtrar(imagenFiltradaEnX, mascaraDePrewittEnX, Canal.ROJO);
+        int[][] matrizVerdeEnX = filtroEnX.filtrar(imagenFiltradaEnX, mascaraDePrewittEnX, Canal.VERDE);
+        int[][] matrizAzulEnX = filtroEnX.filtrar(imagenFiltradaEnX, mascaraDePrewittEnX, Canal.AZUL);
+        		
+        int[][] matrizRojoEnY = filtroEnX.filtrar(imagenFiltradaEnY, mascaraDePrewittEnY, Canal.ROJO);
+        int[][] matrizVerdeEnY = filtroEnX.filtrar(imagenFiltradaEnY, mascaraDePrewittEnY, Canal.VERDE);
+        int[][] matrizAzulEnY = filtroEnX.filtrar(imagenFiltradaEnY, mascaraDePrewittEnY, Canal.AZUL);
+        		
+        //Sintetizamos usando la raiz de los cuadrados
+        int[][] matrizRojosSintetizadosYTransformados = MatricesManager.aplicarTransformacionLineal(sintetizar(matrizRojoEnX, matrizRojoEnY));
+        int[][] matrizVerdesSintetizadosYTransformados = MatricesManager.aplicarTransformacionLineal(sintetizar(matrizVerdeEnX, matrizVerdeEnY));
+        int[][] matrizAzulesSintetizadosYTransformados = MatricesManager.aplicarTransformacionLineal(sintetizar(matrizAzulEnX, matrizAzulEnY));
+
+        imagenResultante.setBufferedImage(MatricesManager.obtenerImagenDeMatrices(matrizRojosSintetizadosYTransformados, matrizVerdesSintetizadosYTransformados, matrizAzulesSintetizadosYTransformados));
+        
+        return imagenResultante.getBufferedImage();
+	}
+
+	private static int[][] calcularMascaraDePrewittEnY() {
+		
+		int[][] mascaraDePrewittEnY = new int [3][3];
+		mascaraDePrewittEnY[0][0]= -1;
+		mascaraDePrewittEnY[0][1]= 0;
+		mascaraDePrewittEnY[0][2]= 1;
+		mascaraDePrewittEnY[1][0]= -1;
+		mascaraDePrewittEnY[1][1]= 0;
+		mascaraDePrewittEnY[1][2]= 1;
+		mascaraDePrewittEnY[2][0]= -1;
+		mascaraDePrewittEnY[2][1]= 0;
+		mascaraDePrewittEnY[2][2]= 1;
+		return mascaraDePrewittEnY;
+	}
+
+	private static int[][] calcularMascaraDePrewittEnX() {
+		
+		int[][] mascaraDePrewittEnX = new int [3][3];
 		mascaraDePrewittEnX[0][0]= -1;
 		mascaraDePrewittEnX[0][1]= -1;
 		mascaraDePrewittEnX[0][2]= -1;
@@ -93,132 +140,23 @@ public class DetectorDeBordes {
 		mascaraDePrewittEnX[2][1]= 1;
 		mascaraDePrewittEnX[2][2]= 1;
 		
-		float[][] mascaraDePrewittEnY = new float [3][3];
-		mascaraDePrewittEnY[0][0]= -1;
-		mascaraDePrewittEnY[0][1]= 0;
-		mascaraDePrewittEnY[0][2]= 1;
-		mascaraDePrewittEnY[1][0]= -1;
-		mascaraDePrewittEnY[1][1]= 0;
-		mascaraDePrewittEnY[1][2]= 1;
-		mascaraDePrewittEnY[2][0]= -1;
-		mascaraDePrewittEnY[2][1]= 0;
-		mascaraDePrewittEnY[2][2]= 1;
-		
-		float rojoMin = 0;
-		float rojoMax = 255;
-		float verdeMin = 0;
-		float verdeMax = 255;
-		float azulMin = 0;
-		float azulMax = 255;
-		
-		for (int f = 0; f < imagenOriginal.getBufferedImage().getHeight(); f++) {
-			for (int g = 0; g < imagenOriginal.getBufferedImage().getWidth(); g++) {
-		
-				Color colorActual = new Color(imagenOriginal.getBufferedImage().getRGB(f, g));
-				int rojoActual = colorActual.getRed();
-				int verdeActual = colorActual.getGreen();
-				int azulActual = colorActual.getBlue();
-				
-				if (rojoMin > rojoActual) {
-					rojoMin = rojoActual;
-				}
-
-				if (rojoMax < rojoActual) {
-					rojoMax = rojoActual;
-				}
-
-				if (verdeMin > verdeActual) {
-					verdeMin = verdeActual;
-				}
-
-				if (verdeMax < verdeActual) {
-					verdeMax = verdeActual;
-				}
-
-				if (azulMin > azulActual) {
-					azulMin = azulActual;
-				}
-
-				if (azulMax < azulActual) {
-					azulMax = azulActual;
-				}
-
-			}
-
-		}
-		
-		int ancho1 = mascaraDePrewittEnX.length;
-		int alto1 = mascaraDePrewittEnX[0].length;
-		int tam1 = ancho1 * alto1;
-		float filtroK1[] = new float[tam1];
-		
-		int ancho2 = mascaraDePrewittEnY.length;
-        int alto2 = mascaraDePrewittEnY[0].length;
-        int tam2 = ancho2 * alto2;
-        float filtroK2[] = new float[tam2];
-        
-        BufferedImage im = new BufferedImage(imagenOriginal.getBufferedImage().getHeight(), imagenOriginal.getBufferedImage().getWidth(), BufferedImage.TYPE_3BYTE_BGR);
-		Imagen imagenFiltradaEnX = new Imagen(im, imagenOriginal.getFormato(), imagenOriginal.getNombre());
-		Imagen imagenFiltradaEnY = new Imagen(im, imagenOriginal.getFormato(), imagenOriginal.getNombre());
-		Imagen imagenResultante = new Imagen(im, imagenOriginal.getFormato(), imagenOriginal.getNombre());
-		
-        int xPixel = 0;
-		int yPixel = 0;
-        
-        
-      //Creamos el filtro - Se pasa de una matriz cuadrada (vector de 2 dimensiones) a un vector lineal
-        for(int i=0; i < ancho1; i++){
-            for(int j=0; j < alto1; j++){
-                filtroK1[i*ancho1 + j] = mascaraDePrewittEnX[i][j];
-            }
-        }
-        
-      //Creamos el filtro - Se pasa de una matriz cuadrada (vector de 2 dimensiones) a un vector lineal
-        for(int i=0; i < ancho2; i++){
-            for(int j=0; j < alto2; j++){
-                filtroK2[i*ancho2 + j] = mascaraDePrewittEnY[i][j];
-            }
-        }
-        
-        Kernel kernelX = new Kernel(ancho1, alto1, filtroK1);
-        Filtro filtroX = new Filtro(kernelX);
-        
-        Kernel kernelY = new Kernel(ancho2, alto2, filtroK2);
-        Filtro filtroY = new Filtro(kernelY);
-        
-        //Aplicamos filtros
-        filtroX.filterSinTransformar(imagenOriginal.getBufferedImage(), imagenFiltradaEnX.getBufferedImage());
-        filtroY.filterSinTransformar(imagenOriginal.getBufferedImage(), imagenFiltradaEnY.getBufferedImage());
-        		
-        		
-        //Creamos la imagen resultante
-        for (int i = 0; i < imagenFiltradaEnX.getBufferedImage().getHeight(); i++) {
-            for (int j = 0; j < imagenFiltradaEnX.getBufferedImage().getWidth(); j++) {
-//                xPixel = imagenFiltradaEnX.getBufferedImage().getRGB(i, j);
-//                yPixel = imagenFiltradaEnY.getBufferedImage().getRGB(i, j);
-                
-                Color colorX = new Color(imagenFiltradaEnX.getBufferedImage().getRGB(i, j));
-                Color colorY = new Color(imagenFiltradaEnY.getBufferedImage().getRGB(i, j));
-                
-                int rojo = (int)Math.hypot(colorX.getRed() , colorY.getRed());
-                int verde = (int)Math.hypot(colorX.getGreen() , colorY.getGreen());
-                int azul = (int)Math.hypot(colorX.getBlue() , colorY.getBlue());
-                
-                int rojoTransformado = (int) ((((255f) / (rojoMax - rojoMin)) * rojo) - ((rojoMin * 255f) / (rojoMax - rojoMin)));
-				int verdeTransformado = (int) (((255f / (verdeMax - verdeMin)) * verde) - ((verdeMin * 255f) / (verdeMax - verdeMin)));
-				int azulTransformado = (int) (((255f / (azulMax - azulMin)) * azul) - ((azulMin * 255f) / (azulMax - azulMin)));
-                
-				//Color colorResultante = new Color(rojoTransformado, verdeTransformado, azulTransformado);
-                
-                imagenResultante.getBufferedImage().setRGB(i, j, colorToRGB(rojo, verde, azul));
-            }
-        }
-//        BufferedImage imagenFinal = ProcesadorDeImagenes.obtenerInstancia().aplicarTransformacionLogaritmica(imagenResultante.getBufferedImage());
-        
-        return imagenResultante.getBufferedImage();
-		
+		return mascaraDePrewittEnX;
 	}
 	
+	private static int[][] sintetizar(int[][] matrizEnX, int[][] matrizEnY) {
+
+		int[][] matrizFinal  = new int[matrizEnX.length][matrizEnX[0].length]; 
+		
+		for (int i=0; i<matrizEnX.length ;i++){
+			for (int j=0; j<matrizEnX[0].length ;j++){
+				
+				matrizFinal[i][j] = (int) Math.hypot(matrizEnX[i][j], matrizEnY[i][j]);
+			}
+		}
+		
+		return matrizFinal;
+	}
+
 	public static BufferedImage aplicarDetectorDeSobel(Imagen imagenOriginal){
 		
 		float[][] mascaraDeSobelEnX = new float [3][3];
@@ -346,23 +284,6 @@ public class DetectorDeBordes {
         }
         
         return imagenResultante.getBufferedImage();
-		
-		
 	}
-	
-	public static int colorToRGB(int red, int green, int blue) {
-		int newPixel = 0;
-		
-		
-		newPixel += newPixel << 8;
-		newPixel += red;
-		newPixel = newPixel << 8;
-		newPixel += green;
-		newPixel = newPixel << 8;
-		newPixel += blue;
-		
-		return newPixel;
-	}
-	
 	
 }
