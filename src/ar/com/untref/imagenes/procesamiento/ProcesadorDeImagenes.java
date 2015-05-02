@@ -22,8 +22,8 @@ public class ProcesadorDeImagenes {
 
 	private static ProcesadorDeImagenes instancia;
 	private Archivo archivoActual;
-	private Imagen imagenActual;
-	private Imagen imagenOriginal;
+	private static Imagen imagenActual;
+	private static Imagen imagenOriginal;
 	private static JLabel labelImagenMarcada;
 	private Integer x1;
 	private Integer x2;
@@ -223,7 +223,7 @@ public class ProcesadorDeImagenes {
 			BufferedImage imagenRecortada = getBufferedImageDeMatriz(matrizRecortada, ancho+1, alto+1);
 			cantidadPixeles = imagenRecortada.getWidth()* imagenRecortada.getHeight();
 			Imagen nuevaImagenRecortada = new Imagen(imagenRecortada, imagenActual.getFormato(), imagenActual.getNombre());
-			this.imagenActual = nuevaImagenRecortada;
+			imagenActual = nuevaImagenRecortada;
 			ventana.refrescarImagen();
 			ventana.refrescarCantidadPixeles(cantidadPixeles);
 		}
@@ -264,7 +264,7 @@ public class ProcesadorDeImagenes {
 		
 		if (imagen != null) {
 
-			this.imagenOriginal = imagen;
+			imagenOriginal = imagen;
 			BufferedImage resultado = imagen.getBufferedImage();
 
 			for (int x = 0; x < resultado.getWidth(); x++) {
@@ -286,7 +286,7 @@ public class ProcesadorDeImagenes {
 
 	public void setImagenActual(Imagen imagen) {
 
-		this.imagenActual = imagen;
+		imagenActual = imagen;
 	}
 	
 	public Archivo getArchivoActual(){
@@ -300,7 +300,7 @@ public class ProcesadorDeImagenes {
 	}
 	
 	public void setImagenOriginal(Imagen imagen){
-		this.imagenOriginal = imagen;
+		imagenOriginal = imagen;
 	}
 	
 	public void aumentarContrastePorFactor(Imagen imagen){
@@ -334,7 +334,7 @@ public class ProcesadorDeImagenes {
 		
 		buffered = MatricesManager.generarImagenRGBconContraste(matrizRojos, matrizVerdes, matrizAzules);
 		
-		this.imagenActual= new Imagen(buffered, imagenOriginal.getFormato(), imagenOriginal.getNombre());
+		imagenActual= new Imagen(buffered, imagenOriginal.getFormato(), imagenOriginal.getNombre());
 	}
 	
 	/**
@@ -362,7 +362,86 @@ public class ProcesadorDeImagenes {
 			}
 		}
 		
-		this.imagenActual = new Imagen(buffered, imagenOriginal.getFormato(), imagenOriginal.getNombre());
+		imagenActual = new Imagen(buffered, imagenOriginal.getFormato(), imagenOriginal.getNombre());
+	}
+	
+	
+	private BufferedImage umbralizarImagenSinMostrar(int umbral){
+		
+		BufferedImage buffered = new BufferedImage(imagenOriginal.getBufferedImage().getWidth(), imagenOriginal.getBufferedImage().getHeight(), imagenOriginal.getBufferedImage().getType());
+		
+		for (int x = 0; x < buffered.getWidth(); x++) {
+			for (int y = 0; y < buffered.getHeight(); y++) {
+
+				Color col = new Color(imagenOriginal.getBufferedImage().getRGB(x, y));
+				
+				if ( col.getRed()<= umbral){
+					
+					col = new Color(0,0,0);
+				} else {
+					
+					col = new Color(255,255,255);
+				}
+				buffered.setRGB(x, y, col.getRGB());
+			}
+		}
+		return buffered;
+	}
+	
+	
+	private int encontrarPrimerUmbralGlobal(int umbral){
+		
+		BufferedImage buffered = umbralizarImagenSinMostrar(umbral);
+		
+		int sumatoriaBlancos = 0;
+		int cantidadBlancos = 0;
+		int mediaBlancos = 0;
+		
+		int sumatoriaNegros = 0;
+		int cantidadNegros = 0;
+		int mediaNegros = 0;
+		
+		int umbralAutomatico1 = 0;
+			
+		for (int x = 0; x < buffered.getWidth(); x++) {
+			for (int y = 0; y < buffered.getHeight(); y++) {
+				
+				Color col = new Color(buffered.getRGB(x, y));
+				
+				if ( col.getRed()<= umbral){
+					
+					sumatoriaNegros +=col.getRed();
+					cantidadNegros++;
+				} else {
+					
+					sumatoriaBlancos +=col.getRed();
+					cantidadBlancos++;
+				}
+			}
+		}
+
+		mediaNegros = (1/cantidadNegros)*sumatoriaNegros;
+		mediaBlancos = (1/cantidadBlancos)*sumatoriaBlancos;
+		
+		umbralAutomatico1 = (mediaNegros + mediaBlancos)/2;
+		
+		return umbralAutomatico1;
+	}
+	
+	public void encontrarUmbralGlobal(int umbral){
+		
+		int deltaUmbral = 30;
+
+		int primerUmbral = encontrarPrimerUmbralGlobal(umbral);
+		int segundoUmbral = encontrarPrimerUmbralGlobal((int) (255 * Math.random()));
+		
+		
+		while((Math.abs(primerUmbral-segundoUmbral)>deltaUmbral)){
+			segundoUmbral = encontrarPrimerUmbralGlobal((int) (255*Math.random()));
+		}
+		
+		umbralizarImagen(segundoUmbral);
+		
 	}
 	
 	public BufferedImage aplicarTransformacionLogaritmica(BufferedImage bufferedImage){
@@ -544,7 +623,7 @@ public class ProcesadorDeImagenes {
 			BufferedImage imagenRecortada = imagenActual.getBufferedImage().getSubimage(x1, y1, ancho, alto);
 			cantidadPixeles = imagenRecortada.getWidth()* imagenRecortada.getHeight();
 			Imagen nuevaImagenRecortada = new Imagen(imagenRecortada, imagenActual.getFormato(), imagenActual.getNombre());
-			this.imagenActual = nuevaImagenRecortada;
+			imagenActual = nuevaImagenRecortada;
 			labelImagenMarcada = new JLabel(new ImageIcon(imagenActual.getBufferedImage()));
 			
 			ventana.mostrarImagenMarcada();

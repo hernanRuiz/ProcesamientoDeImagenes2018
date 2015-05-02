@@ -473,6 +473,16 @@ public class VentanaPrincipal extends JFrame {
 			}
 		});
 		
+		
+		JMenuItem menuItemUmbralGlobal = new JMenuItem("Umbral Global");
+		menuItemUmbralGlobal.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				ProcesadorDeImagenes.obtenerInstancia().encontrarUmbralGlobal(200);
+				VentanaPrincipal.this.refrescarImagen();
+			}
+		});
+		
 		JMenuItem menuItemContrasteConFactor = new JMenuItem("Aumento de contraste con factor");
 		menuItemContrasteConFactor.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -484,6 +494,7 @@ public class VentanaPrincipal extends JFrame {
 		});
 		menuFiltros.add(menuItemContrasteConFactor);
 		menuFiltros.add(menuItemCompresionDeRangoDinamico);
+		menuFiltros.add(menuItemUmbralGlobal);
 		
 		menuItemTemplates = new JMenu("Plantillas");
 		menuBar.add(menuItemTemplates);
@@ -713,9 +724,38 @@ VentanaPrincipal.this.setExtendedState(VentanaPrincipal.this.getExtendedState() 
 			}
 			
 		});
+		
+		JMenuItem menuItemAplicarDetectorLaplaciano = new JMenuItem("Aplicar");
+		menuItemAplicarDetectorLaplaciano.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				Imagen imagenAnterior = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
+				BufferedImage bufferedImage = DetectorDeBordes.aplicarDetectorLaplaciano(imagenAnterior);
+				Imagen nuevaImagenActual = new Imagen(bufferedImage, imagenAnterior.getFormato(), imagenAnterior.getNombre());
+				ProcesadorDeImagenes.obtenerInstancia().setImagenActual(nuevaImagenActual);
+				
+				VentanaPrincipal.this.refrescarImagen();
+			}
+			
+		});
+		
+		JMenuItem menuItemMostrarCrucesPorCero = new JMenuItem("Mostrar Cruces Por Cero");
+		menuItemMostrarCrucesPorCero.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				Imagen imagenAnterior = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
+				BufferedImage bufferedImage = DetectorDeBordes.mostrarMascaraCrucesPorCeros(imagenAnterior);
+				Imagen nuevaImagenActual = new Imagen(bufferedImage, imagenAnterior.getFormato(), imagenAnterior.getNombre());
+				ProcesadorDeImagenes.obtenerInstancia().setImagenActual(nuevaImagenActual);
+				
+				VentanaPrincipal.this.refrescarImagen();
+			}
+			
+		});
+		
 		menuDeteccionLaplaciano.add(menuItemMostrarMascaraLaplaciano);
-		
-		
+		menuDeteccionLaplaciano.add(menuItemMostrarCrucesPorCero);
+		menuDeteccionLaplaciano.add(menuItemAplicarDetectorLaplaciano);
 	}
 	
 	private void cargarImagen(JLabel labelPrincipal,
