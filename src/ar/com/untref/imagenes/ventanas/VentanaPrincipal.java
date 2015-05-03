@@ -745,6 +745,41 @@ VentanaPrincipal.this.setExtendedState(VentanaPrincipal.this.getExtendedState() 
 		menuDeteccionLaplaciano.add(menuItemAplicarDetectorLaplaciano);
 		
 		
+		JMenu menuDeteccionLaplacianoDelGaussiano = new JMenu("Detector Laplaciano del Gaussiano");
+		menuDeteccionDeBordes.add(menuDeteccionLaplacianoDelGaussiano);
+		
+		JMenuItem menuItemAplicarDetectorLaplacianoDelGaussiano = new JMenuItem("Aplicar");
+		menuItemAplicarDetectorLaplacianoDelGaussiano.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				Imagen imagenAnterior = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
+				BufferedImage bufferedImage = DetectorDeBordes.aplicarDetectorLaplacianoDelGaussiano(imagenAnterior, 4);
+				Imagen nuevaImagenActual = new Imagen(bufferedImage, imagenAnterior.getFormato(), imagenAnterior.getNombre());
+				ProcesadorDeImagenes.obtenerInstancia().setImagenActual(nuevaImagenActual);
+				
+				VentanaPrincipal.this.refrescarImagen();
+			}
+			
+		});
+		
+		/*JMenuItem menuItemMostrarMascaraLaplacianoDelGaussiano = new JMenuItem("Mostrar Mascara");
+		menuItemMostrarMascaraLaplacianoDelGaussiano.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				Imagen imagenAnterior = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
+				BufferedImage bufferedImage = DetectorDeBordes.mostrarMascaraLaplacianoDelGaussiano(imagenAnterior, 40);
+				Imagen nuevaImagenActual = new Imagen(bufferedImage, imagenAnterior.getFormato(), imagenAnterior.getNombre());
+				ProcesadorDeImagenes.obtenerInstancia().setImagenActual(nuevaImagenActual);
+				
+				VentanaPrincipal.this.refrescarImagen();
+			}
+			
+		});*/
+		
+		menuDeteccionLaplacianoDelGaussiano.add(menuItemAplicarDetectorLaplacianoDelGaussiano);
+		//menuDeteccionLaplacianoDelGaussiano.add(menuItemMostrarMascaraLaplacianoDelGaussiano);
+
+		
 		JMenu menuDeteccionDeBordesDireccionales = new JMenu("Deteccion de Bordes Direccionales");
 		menuItemEditar.add(menuDeteccionDeBordesDireccionales);
 		

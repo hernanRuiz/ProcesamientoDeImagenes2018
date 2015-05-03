@@ -449,6 +449,139 @@ public class DetectorDeBordes {
 		
 	}
 	
+	
+	private static int[][] calcularMascaraDeLaplacianoDelGaussiano(int sigma) {
+		
+		int[][] matrizDeLaplacianoDelGaussiano = new int [3][3];
+        double primerTermino = -1.0 / (Math.sqrt(2*Math.PI) * Math.pow(sigma, 3.0));
+        double segundoTermino = 0;
+        for (int i = 0; i < 3; i++) {
+         
+            for (int j = 0; j < 3; j++) {
+           
+                segundoTermino = (Math.pow(i, 2.0) + Math.pow(j, 2.0)) / Math.pow(sigma, 2.0);
+                int valorMatriz = (int) (primerTermino * (2 - segundoTermino) * Math.exp(-segundoTermino));
+                matrizDeLaplacianoDelGaussiano[i][j] = valorMatriz;
+            }
+        }
+	
+        return matrizDeLaplacianoDelGaussiano;
+	}
+	
+		public static BufferedImage aplicarDetectorLaplacianoDelGaussiano(Imagen imagenOriginal, int sigma){
+		
+		int umbral = 30;
+		int[][] matrizLaplacianoDelGaussiano = calcularMascaraDeLaplacianoDelGaussiano(sigma);
+		
+		FiltroNuevo filtroLaplacianoDelGaussiano = new FiltroNuevo(matrizLaplacianoDelGaussiano);
+        
+        //Aplicamos filtro
+		int[][] matrizRojo = filtroLaplacianoDelGaussiano.filtrar(imagenOriginal, matrizLaplacianoDelGaussiano, Canal.ROJO);
+		int[][] matrizVerde = filtroLaplacianoDelGaussiano.filtrar(imagenOriginal, matrizLaplacianoDelGaussiano, Canal.VERDE);
+		int[][] matrizAzul = filtroLaplacianoDelGaussiano.filtrar(imagenOriginal, matrizLaplacianoDelGaussiano, Canal.AZUL);
+		
+		int[][] matrizCrucesPorCerosRojo = new int [imagenOriginal.getBufferedImage().getWidth()][imagenOriginal.getBufferedImage().getHeight()];
+		int[][] matrizCrucesPorCerosVerde = new int [imagenOriginal.getBufferedImage().getWidth()][imagenOriginal.getBufferedImage().getHeight()];
+		int[][] matrizCrucesPorCerosAzul = new int [imagenOriginal.getBufferedImage().getWidth()][imagenOriginal.getBufferedImage().getHeight()];
+
+		int[][] matrizRojoTranspuesta = new int[imagenOriginal.getBufferedImage().getHeight()][imagenOriginal.getBufferedImage().getWidth()];
+		int[][] matrizVerdeTranspuesta = new int[imagenOriginal.getBufferedImage().getHeight()][imagenOriginal.getBufferedImage().getWidth()];
+		int[][] matrizAzulTranspuesta = new int[imagenOriginal.getBufferedImage().getHeight()][imagenOriginal.getBufferedImage().getWidth()];
+
+		Imagen imagenResultante = new Imagen(imagenOriginal.getBufferedImage(), imagenOriginal.getFormato(), imagenOriginal.getNombre(), imagenOriginal.getMatriz(Canal.ROJO), imagenOriginal.getMatriz(Canal.VERDE), imagenOriginal.getMatriz(Canal.AZUL));
+    
+        for(int j = 0; j < matrizCrucesPorCerosRojo.length; j++){
+	           for(int i = 0; i < matrizCrucesPorCerosRojo[0].length; i++){
+	        	   matrizRojoTranspuesta[i][j] = matrizRojo[j][i];
+	        	   matrizVerdeTranspuesta[i][j] = matrizVerde[j][i];
+	        	   matrizAzulTranspuesta[i][j] = matrizAzul[j][i];
+	           }
+	       }
+        
+        //Evaluamos cruces por 0
+        if(imagenOriginal.getBufferedImage().getWidth() == imagenOriginal.getBufferedImage().getHeight()){
+        for (int i = 0; i < matrizRojo[0].length; i++) {
+			for (int j = 0; j < matrizRojo.length; j++) {
+				
+				if(hayCambioDeSignoPorFilaYUmbral(matrizRojo, i, j, umbral)){
+					matrizCrucesPorCerosRojo[i][j] = 255;
+				}else{
+					matrizCrucesPorCerosRojo[i][j] = 0;
+				}
+				if(hayCambioDeSignoPorFilaYUmbral(matrizVerde, i, j, umbral)){
+					matrizCrucesPorCerosVerde[i][j] = 255;
+				}else{
+					matrizCrucesPorCerosVerde[i][j] = 0;
+				}
+				
+				if(hayCambioDeSignoPorFilaYUmbral(matrizAzul, i, j, umbral)){
+					matrizCrucesPorCerosAzul[i][j] = 255;
+				}else{
+					matrizCrucesPorCerosAzul[i][j] = 0;
+				}
+				
+			}
+
+		}
+        imagenResultante.setBufferedImage(MatricesManager.obtenerImagenDeMatrices(matrizCrucesPorCerosRojo, matrizCrucesPorCerosVerde, matrizCrucesPorCerosAzul));
+       
+        }else{
+        	for (int i = 0; i < matrizRojo[0].length; i++) {
+    			for (int j = 0; j < matrizRojo.length; j++) {
+    				
+    				if(hayCambioDeSignoPorFilaYUmbral(matrizRojoTranspuesta, i, j, umbral)){
+    					matrizCrucesPorCerosRojo[j][i] = 255;
+    				}else{
+    					matrizCrucesPorCerosRojo[j][i] = 0;
+    				}
+    				
+    				if(hayCambioDeSignoPorFilaYUmbral(matrizVerdeTranspuesta, i, j, umbral)){
+    					matrizCrucesPorCerosVerde[j][i] = 255;
+    				}else{
+    					matrizCrucesPorCerosVerde[j][i] = 0;
+    				}
+    				
+    				if(hayCambioDeSignoPorFilaYUmbral(matrizAzulTranspuesta, i, j, umbral)){
+    					matrizCrucesPorCerosAzul[j][i] = 255;
+    				}else{
+    					matrizCrucesPorCerosAzul[j][i] = 0;
+    				}
+    				
+    			}
+
+    		}
+        	imagenResultante.setBufferedImage(MatricesManager.obtenerImagenDeMatrices(matrizCrucesPorCerosRojo, matrizCrucesPorCerosVerde, matrizCrucesPorCerosAzul));
+        }
+        return imagenResultante.getBufferedImage();
+	}
+	
+
+	/*public static BufferedImage mostrarMascaraLaplacianoDelGaussiano(Imagen imagenOriginal, int sigma){
+		
+		float [][] mascaraDeLaplacianoDelGaussiano = calcularMascaraDeLaplacianoDelGaussiano();
+				
+		BufferedImage bufferedConRuidoDeGauss = GeneradorDeRuido.generarRuidoGauss(imagenOriginal.getBufferedImage(), sigma, 0);
+		Imagen imagenConRuidoDeGauss = new Imagen(bufferedConRuidoDeGauss, imagenOriginal.getFormato(), imagenOriginal.getNombre(), imagenOriginal.getMatriz(Canal.ROJO), imagenOriginal.getMatriz(Canal.VERDE), imagenOriginal.getMatriz(Canal.AZUL));
+		
+		Imagen imagenResultante = new Imagen(imagenOriginal.getBufferedImage(), imagenOriginal.getFormato(), imagenOriginal.getNombre(), imagenOriginal.getMatriz(Canal.ROJO), imagenOriginal.getMatriz(Canal.VERDE), imagenOriginal.getMatriz(Canal.AZUL));
+		
+        FiltroNuevo filtro = new FiltroNuevo(mascaraDeLaplacianoDelGaussiano);
+        
+        //Aplicamos filtros en X y en Y
+        int[][] matrizRojo = filtro.filtrar(imagenConRuidoDeGauss, mascaraDeLaplacianoDelGaussiano, Canal.ROJO);
+        int[][] matrizVerde = filtro.filtrar(imagenConRuidoDeGauss, mascaraDeLaplacianoDelGaussiano, Canal.VERDE);
+        int[][] matrizAzul = filtro.filtrar(imagenConRuidoDeGauss, mascaraDeLaplacianoDelGaussiano, Canal.AZUL);
+        
+        int[][] matrizRojoEnXTransformada = MatricesManager.aplicarTransformacionLineal(matrizRojo);
+        int[][] matrizVerdeEnXTransformada = MatricesManager.aplicarTransformacionLineal(matrizVerde);
+        int[][] matrizAzulEnXTransformada = MatricesManager.aplicarTransformacionLineal(matrizAzul);
+        
+        imagenResultante.setBufferedImage(MatricesManager.obtenerImagenDeMatrices(matrizRojoEnXTransformada, matrizVerdeEnXTransformada, matrizAzulEnXTransformada));
+
+		return imagenResultante.getBufferedImage();
+	}
+	*/
+	
 	private static boolean hayCambioDeSignoPorFila(int[][] matriz, int i, int j) {
 		if (j - 1 >= 0) {
 			
