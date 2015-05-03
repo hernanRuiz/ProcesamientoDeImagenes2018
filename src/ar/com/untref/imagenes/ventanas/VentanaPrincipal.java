@@ -26,6 +26,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
+import ar.com.untref.imagenes.bordes.DetectarBordesDireccionales;
 import ar.com.untref.imagenes.bordes.DetectorDeBordes;
 import ar.com.untref.imagenes.dialogs.OperacionesMatricesDialog;
 import ar.com.untref.imagenes.enums.FormatoDeImagen;
@@ -592,20 +593,6 @@ VentanaPrincipal.this.setExtendedState(VentanaPrincipal.this.getExtendedState() 
 		JMenu menuDeteccionDeBordes = new JMenu("Deteccion de Bordes");
 		menuItemEditar.add(menuDeteccionDeBordes);
 		
-//		JMenuItem menuItemDetectorDeRoberts = new JMenuItem("Detector de Roberts");
-//		menuItemDetectorDeRoberts.addActionListener(new ActionListener() {
-//			public void actionPerformed(ActionEvent e) {
-//				
-//				Imagen imagenAnterior = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
-//				BufferedImage bufferedImage = DetectorDeBordes.aplicarDetectorDeRoberts(imagenAnterior);
-//				Imagen nuevaImagenActual = new Imagen(bufferedImage, imagenAnterior.getFormato(), imagenAnterior.getNombre());
-//				ProcesadorDeImagenes.obtenerInstancia().setImagenActual(nuevaImagenActual);
-//				
-//				VentanaPrincipal.this.refrescarImagen();
-//			}
-//			
-//		});
-//		menuDeteccionDeBordes.add(menuItemDetectorDeRoberts);
 		
 		JMenu menuDeteccionDePrewitt = new JMenu("Detector De Prewitt");
 		menuDeteccionDeBordes.add(menuDeteccionDePrewitt);
@@ -756,6 +743,71 @@ VentanaPrincipal.this.setExtendedState(VentanaPrincipal.this.getExtendedState() 
 		menuDeteccionLaplaciano.add(menuItemMostrarMascaraLaplaciano);
 		menuDeteccionLaplaciano.add(menuItemMostrarCrucesPorCero);
 		menuDeteccionLaplaciano.add(menuItemAplicarDetectorLaplaciano);
+		
+		
+		JMenu menuDeteccionDeBordesDireccionales = new JMenu("Deteccion de Bordes Direccionales");
+		menuItemEditar.add(menuDeteccionDeBordesDireccionales);
+		
+		JMenuItem menuItemPrewittDireccional = new JMenuItem("Aplicar Prewitt Direccional");
+		menuItemPrewittDireccional.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				Imagen imagenAnterior = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
+				BufferedImage bufferedImage = DetectarBordesDireccionales.aplicarDetectorDeBordesDireccional(imagenAnterior, "Prewitt");
+				Imagen nuevaImagenActual = new Imagen(bufferedImage, imagenAnterior.getFormato(), imagenAnterior.getNombre());
+				ProcesadorDeImagenes.obtenerInstancia().setImagenActual(nuevaImagenActual);
+				
+				VentanaPrincipal.this.refrescarImagen();
+			}
+			
+		});
+		menuDeteccionDeBordesDireccionales.add(menuItemPrewittDireccional);
+		
+		JMenuItem menuItemSobelDireccional = new JMenuItem("Aplicar Sobel Direccional");
+		menuItemSobelDireccional.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				Imagen imagenAnterior = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
+				BufferedImage bufferedImage = DetectarBordesDireccionales.aplicarDetectorDeBordesDireccional(imagenAnterior, "Sobel");
+				Imagen nuevaImagenActual = new Imagen(bufferedImage, imagenAnterior.getFormato(), imagenAnterior.getNombre());
+				ProcesadorDeImagenes.obtenerInstancia().setImagenActual(nuevaImagenActual);
+				
+				VentanaPrincipal.this.refrescarImagen();
+			}
+			
+		});
+		menuDeteccionDeBordesDireccionales.add(menuItemSobelDireccional);
+		
+		JMenuItem menuItemKirshDireccional = new JMenuItem("Aplicar Kirsh Direccional");
+		menuItemKirshDireccional.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				Imagen imagenAnterior = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
+				BufferedImage bufferedImage = DetectarBordesDireccionales.aplicarDetectorDeBordesDireccional(imagenAnterior, "Kirsh");
+				Imagen nuevaImagenActual = new Imagen(bufferedImage, imagenAnterior.getFormato(), imagenAnterior.getNombre());
+				ProcesadorDeImagenes.obtenerInstancia().setImagenActual(nuevaImagenActual);
+				
+				VentanaPrincipal.this.refrescarImagen();
+			}
+			
+		});
+		menuDeteccionDeBordesDireccionales.add(menuItemKirshDireccional);
+		
+		JMenuItem menuItemNuevaDireccional = new JMenuItem("Aplicar Nueva Direccional");
+		menuItemNuevaDireccional.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				Imagen imagenAnterior = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
+				BufferedImage bufferedImage = DetectarBordesDireccionales.aplicarDetectorDeBordesDireccional(imagenAnterior, "Nueva");
+				Imagen nuevaImagenActual = new Imagen(bufferedImage, imagenAnterior.getFormato(), imagenAnterior.getNombre());
+				ProcesadorDeImagenes.obtenerInstancia().setImagenActual(nuevaImagenActual);
+				
+				VentanaPrincipal.this.refrescarImagen();
+			}
+			
+		});
+		menuDeteccionDeBordesDireccionales.add(menuItemNuevaDireccional);
+		
 	}
 	
 	private void cargarImagen(JLabel labelPrincipal,
