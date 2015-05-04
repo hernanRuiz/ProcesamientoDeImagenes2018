@@ -479,7 +479,7 @@ public class VentanaPrincipal extends JFrame {
 		menuItemUmbralGlobal.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
-				ProcesadorDeImagenes.obtenerInstancia().encontrarUmbralGlobal(200);
+				ProcesadorDeImagenes.obtenerInstancia().encontrarUmbralGlobal(VentanaPrincipal.this, 128);
 				VentanaPrincipal.this.refrescarImagen();
 			}
 		});

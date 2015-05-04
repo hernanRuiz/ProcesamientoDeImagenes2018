@@ -341,107 +341,26 @@ public class ProcesadorDeImagenes {
 	 * @param imagen - imagen a umbralizar
 	 * @param umbral - valor que hará de separador entre valores 0 y 255
 	 */
-	public void umbralizarImagen(int umbral){
+	public void umbralizarImagen(VentanaPrincipal ventana, int umbral){
 		
-		BufferedImage buffered = new BufferedImage(imagenOriginal.getBufferedImage().getWidth(), imagenOriginal.getBufferedImage().getHeight(), imagenOriginal.getBufferedImage().getType());
-		
-		for (int x = 0; x < buffered.getWidth(); x++) {
-			for (int y = 0; y < buffered.getHeight(); y++) {
-
-				int rgba = imagenOriginal.getBufferedImage().getRGB(x, y);
-				Color col = new Color(rgba, true);
-				
-				if ( col.getRed()<= umbral){
-					
-					col = new Color(0,0,0);
-				} else {
-					
-					col = new Color(255,255,255);
-				}
-				buffered.setRGB(x, y, col.getRGB());
-			}
-		}
-		
-		imagenActual = new Imagen(buffered, imagenOriginal.getFormato(), imagenOriginal.getNombre());
+		imagenActual = Umbralizador.umbralizarImagen(imagenOriginal, umbral);
+		ventana.refrescarImagen();
 	}
 	
-	
-	private BufferedImage umbralizarImagenSinMostrar(int umbral){
-		
-		BufferedImage buffered = new BufferedImage(imagenOriginal.getBufferedImage().getWidth(), imagenOriginal.getBufferedImage().getHeight(), imagenOriginal.getBufferedImage().getType());
-		
-		for (int x = 0; x < buffered.getWidth(); x++) {
-			for (int y = 0; y < buffered.getHeight(); y++) {
-
-				Color col = new Color(imagenOriginal.getBufferedImage().getRGB(x, y));
-				
-				if ( col.getRed()<= umbral){
-					
-					col = new Color(0,0,0);
-				} else {
-					
-					col = new Color(255,255,255);
-				}
-				buffered.setRGB(x, y, col.getRGB());
-			}
-		}
-		return buffered;
-	}
-	
-	
-	private int encontrarPrimerUmbralGlobal(int umbral){
-		
-		BufferedImage buffered = umbralizarImagenSinMostrar(umbral);
-		
-		int sumatoriaBlancos = 0;
-		int cantidadBlancos = 0;
-		int mediaBlancos = 0;
-		
-		int sumatoriaNegros = 0;
-		int cantidadNegros = 0;
-		int mediaNegros = 0;
-		
-		int umbralAutomatico1 = 0;
-			
-		for (int x = 0; x < buffered.getWidth(); x++) {
-			for (int y = 0; y < buffered.getHeight(); y++) {
-				
-				Color col = new Color(buffered.getRGB(x, y));
-				
-				if ( col.getRed()<= umbral){
-					
-					sumatoriaNegros +=col.getRed();
-					cantidadNegros++;
-				} else {
-					
-					sumatoriaBlancos +=col.getRed();
-					cantidadBlancos++;
-				}
-			}
-		}
-
-		mediaNegros = (1/cantidadNegros)*sumatoriaNegros;
-		mediaBlancos = (1/cantidadBlancos)*sumatoriaBlancos;
-		
-		umbralAutomatico1 = (mediaNegros + mediaBlancos)/2;
-		
-		return umbralAutomatico1;
-	}
-	
-	public void encontrarUmbralGlobal(int umbral){
+	public void encontrarUmbralGlobal(VentanaPrincipal ventana, int umbralViejo){
 		
 		int deltaUmbral = 30;
+		boolean finalizo = false;
+		
+		while( !finalizo ){
 
-		int primerUmbral = encontrarPrimerUmbralGlobal(umbral);
-		int segundoUmbral = encontrarPrimerUmbralGlobal((int) (255 * Math.random()));
-		
-		
-		while((Math.abs(primerUmbral-segundoUmbral)>deltaUmbral)){
-			segundoUmbral = encontrarPrimerUmbralGlobal((int) (255*Math.random()));
+			int umbralNuevo = Umbralizador.encontrarNuevoUmbralGlobal(imagenOriginal, umbralViejo);
+			finalizo = (Math.abs(umbralViejo-umbralNuevo) < deltaUmbral);
+			
+			umbralViejo = umbralNuevo;
 		}
 		
-		umbralizarImagen(segundoUmbral);
-		
+		umbralizarImagen(ventana, umbralViejo);
 	}
 	
 	public BufferedImage aplicarTransformacionLogaritmica(BufferedImage bufferedImage){
@@ -455,7 +374,6 @@ public class ProcesadorDeImagenes {
 		int ncols = bufferedImage.getHeight();
 		imagenTransformada = new BufferedImage(nrows, ncols, BufferedImage.TYPE_3BYTE_BGR);
 		
-//		Color color = new Color(bufferedImage.getRGB(0, 0));
 		rojoMax = 255;
 		verdeMax = 255;
 		azulMax = 255;

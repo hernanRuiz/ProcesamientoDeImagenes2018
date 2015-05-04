@@ -24,8 +24,7 @@ public class UmbralListener implements ChangeListener {
 		JSlider source = (JSlider) e.getSource();
 		if (!source.getValueIsAdjusting()) {
 
-			ProcesadorDeImagenes.obtenerInstancia().umbralizarImagen(((JSlider) e.getSource()).getValue());
-			ventana.refrescarImagen();
+			ProcesadorDeImagenes.obtenerInstancia().umbralizarImagen(ventana, ((JSlider) e.getSource()).getValue());
 		}
 	}
 
