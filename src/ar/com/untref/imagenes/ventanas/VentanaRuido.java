@@ -21,6 +21,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingWorker;
 import javax.swing.border.EmptyBorder;
 
+import ar.com.untref.imagenes.bordes.DetectorDeBordes;
 import ar.com.untref.imagenes.dialogs.EspereDialog;
 import ar.com.untref.imagenes.dialogs.MascaraGaussianaDialog;
 import ar.com.untref.imagenes.dialogs.MedidaMascaraDialog;
@@ -552,6 +553,162 @@ public class VentanaRuido extends JFrame {
 		});
 		menuFiltros.add(menuItemFiltroDeLaMediana);
 		menuFiltros.add(menuItemFiltroPasaAltos);
+		
+		
+		JMenu menuDeteccionDeBordes = new JMenu("Deteccion de Bordes");
+		menuItemEditar.add(menuDeteccionDeBordes);
+		
+		
+		JMenu menuDeteccionDePrewitt = new JMenu("Detector De Prewitt");
+		menuDeteccionDeBordes.add(menuDeteccionDePrewitt);
+		
+		JMenuItem menuItemDetectorDePrewitt = new JMenuItem("Aplicar");
+		menuItemDetectorDePrewitt.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				Imagen imagenAnterior = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
+				BufferedImage bufferedImage = DetectorDeBordes.aplicarDetectorDePrewitt(imagenAnterior);
+				Imagen nuevaImagenActual = new Imagen(bufferedImage, imagenAnterior.getFormato(), imagenAnterior.getNombre());
+				ProcesadorDeImagenes.obtenerInstancia().setImagenActual(nuevaImagenActual);
+				
+				VentanaRuido.this.refrescarImagen();
+			}
+			
+		});
+		menuDeteccionDePrewitt.add(menuItemDetectorDePrewitt);
+		
+		
+		JMenuItem menuItemMascaraEnXPrewitt = new JMenuItem("Mostrar mascara en X");
+		menuItemMascaraEnXPrewitt.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				Imagen imagenAnterior = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
+				BufferedImage bufferedImage = DetectorDeBordes.mostrarMascaraDePrewittEnX(imagenAnterior);
+				Imagen nuevaImagenActual = new Imagen(bufferedImage, imagenAnterior.getFormato(), imagenAnterior.getNombre());
+				ProcesadorDeImagenes.obtenerInstancia().setImagenActual(nuevaImagenActual);
+				
+				VentanaRuido.this.refrescarImagen();
+			}
+			
+		});
+		menuDeteccionDePrewitt.add(menuItemMascaraEnXPrewitt);
+		
+		
+		JMenuItem menuItemMascaraEnYPrewitt = new JMenuItem("Mostrar mascara en Y");
+		menuItemMascaraEnYPrewitt.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				Imagen imagenAnterior = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
+				BufferedImage bufferedImage = DetectorDeBordes.mostrarMascaraDePrewittEnY(imagenAnterior);
+				Imagen nuevaImagenActual = new Imagen(bufferedImage, imagenAnterior.getFormato(), imagenAnterior.getNombre());
+				ProcesadorDeImagenes.obtenerInstancia().setImagenActual(nuevaImagenActual);
+				
+				VentanaRuido.this.refrescarImagen();
+			}
+			
+		});
+		menuDeteccionDePrewitt.add(menuItemMascaraEnYPrewitt);
+		
+		
+		JMenu menuDeteccionDeSobel = new JMenu("Detector De Sobel");
+		menuDeteccionDeBordes.add(menuDeteccionDeSobel);
+		
+		JMenuItem menuItemDetectorDeSobel = new JMenuItem("Aplicar");
+		menuItemDetectorDeSobel.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				Imagen imagenAnterior = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
+				BufferedImage bufferedImage = DetectorDeBordes.aplicarDetectorDeSobel(imagenAnterior);
+				Imagen nuevaImagenActual = new Imagen(bufferedImage, imagenAnterior.getFormato(), imagenAnterior.getNombre());
+				ProcesadorDeImagenes.obtenerInstancia().setImagenActual(nuevaImagenActual);
+				
+				VentanaRuido.this.refrescarImagen();
+			}
+			
+		});
+		menuDeteccionDeSobel.add(menuItemDetectorDeSobel);
+		
+		JMenuItem menuItemMascaraEnXSobel = new JMenuItem("Mostrar mascara en X");
+		menuItemMascaraEnXSobel.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				Imagen imagenAnterior = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
+				BufferedImage bufferedImage = DetectorDeBordes.mostrarMascaraDeSobelEnX(imagenAnterior);
+				Imagen nuevaImagenActual = new Imagen(bufferedImage, imagenAnterior.getFormato(), imagenAnterior.getNombre());
+				ProcesadorDeImagenes.obtenerInstancia().setImagenActual(nuevaImagenActual);
+				
+				VentanaRuido.this.refrescarImagen();
+			}
+			
+		});
+		menuDeteccionDeSobel.add(menuItemMascaraEnXSobel);
+		
+		
+		JMenuItem menuItemMascaraEnYSobel = new JMenuItem("Mostrar mascara en Y");
+		menuItemMascaraEnYSobel.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				Imagen imagenAnterior = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
+				BufferedImage bufferedImage = DetectorDeBordes.mostrarMascaraDeSobelEnY(imagenAnterior);
+				Imagen nuevaImagenActual = new Imagen(bufferedImage, imagenAnterior.getFormato(), imagenAnterior.getNombre());
+				ProcesadorDeImagenes.obtenerInstancia().setImagenActual(nuevaImagenActual);
+				
+				VentanaRuido.this.refrescarImagen();
+			}
+			
+		});
+		menuDeteccionDeSobel.add(menuItemMascaraEnYSobel);
+		
+		
+		JMenu menuDeteccionLaplaciano = new JMenu("Detector Laplaciano");
+		menuDeteccionDeBordes.add(menuDeteccionLaplaciano);
+		
+		JMenuItem menuItemMostrarMascaraLaplaciano = new JMenuItem("Mostrar Mascara");
+		menuItemMostrarMascaraLaplaciano.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				Imagen imagenAnterior = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
+				BufferedImage bufferedImage = DetectorDeBordes.mostrarMascaraDeLaplaciano(imagenAnterior);
+				Imagen nuevaImagenActual = new Imagen(bufferedImage, imagenAnterior.getFormato(), imagenAnterior.getNombre());
+				ProcesadorDeImagenes.obtenerInstancia().setImagenActual(nuevaImagenActual);
+				
+				VentanaRuido.this.refrescarImagen();
+			}
+			
+		});
+		
+		JMenuItem menuItemAplicarDetectorLaplaciano = new JMenuItem("Aplicar");
+		menuItemAplicarDetectorLaplaciano.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				Imagen imagenAnterior = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
+				BufferedImage bufferedImage = DetectorDeBordes.aplicarDetectorLaplaciano(imagenAnterior);
+				Imagen nuevaImagenActual = new Imagen(bufferedImage, imagenAnterior.getFormato(), imagenAnterior.getNombre());
+				ProcesadorDeImagenes.obtenerInstancia().setImagenActual(nuevaImagenActual);
+				
+				VentanaRuido.this.refrescarImagen();
+			}
+			
+		});
+		
+		JMenuItem menuItemMostrarCrucesPorCero = new JMenuItem("Mostrar Cruces Por Cero");
+		menuItemMostrarCrucesPorCero.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				Imagen imagenAnterior = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
+				BufferedImage bufferedImage = DetectorDeBordes.mostrarMascaraCrucesPorCeros(imagenAnterior);
+				Imagen nuevaImagenActual = new Imagen(bufferedImage, imagenAnterior.getFormato(), imagenAnterior.getNombre());
+				ProcesadorDeImagenes.obtenerInstancia().setImagenActual(nuevaImagenActual);
+				
+				VentanaRuido.this.refrescarImagen();
+			}
+			
+		});
+		
+		menuDeteccionLaplaciano.add(menuItemMostrarMascaraLaplaciano);
+		menuDeteccionLaplaciano.add(menuItemMostrarCrucesPorCero);
+		menuDeteccionLaplaciano.add(menuItemAplicarDetectorLaplaciano);
+		
 	}
 		
 	private void cargarImagen(JLabel labelPrincipal,

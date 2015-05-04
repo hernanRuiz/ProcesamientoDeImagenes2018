@@ -4,6 +4,7 @@ import java.awt.image.BufferedImage;
 
 import ar.com.untref.imagenes.enums.Canal;
 import ar.com.untref.imagenes.enums.FormatoDeImagen;
+import ar.com.untref.imagenes.procesamiento.MatricesManager;
 
 public class Imagen {
 
@@ -22,6 +23,9 @@ public class Imagen {
 		this.imagen = imagen;
 		this.formato = formato;
 		this.nombre = nombre;
+		this.matrizRojos = MatricesManager.calcularMatrizDeLaImagen(imagen, Canal.ROJO);
+		this.matrizVerdes = MatricesManager.calcularMatrizDeLaImagen(imagen, Canal.VERDE);
+		this.matrizAzules = MatricesManager.calcularMatrizDeLaImagen(imagen, Canal.AZUL);
 	}
 	
 	public Imagen(BufferedImage imagen, FormatoDeImagen formato, String nombre, int[][] matrizRojos, int[][] matrizVerdes, int[][] matrizAzules){
