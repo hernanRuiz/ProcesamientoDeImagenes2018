@@ -8,9 +8,9 @@ import java.util.Random;
 
 public class GeneradorDeRuido {
 
-	static float[][] matrizRojos;
-	static float[][] matrizVerdes;
-	static float[][] matrizAzules;
+	private static float[][] matrizRojos;
+	private static float[][] matrizVerdes;
+	private static float[][] matrizAzules;
 
 	// 8 - A - Generador de Aleatorios para Ruido de Gauss
 	private static double[] generadorFuncionesAleatoriasDeGauss() {
@@ -442,11 +442,11 @@ public class GeneradorDeRuido {
 	}
 	
 	public static float[][] getMatrizVerdes(){
-		return matrizRojos;
+		return matrizVerdes;
 	}
 	
 	public static float[][] getMatrizAzules(){
-		return matrizRojos;
+		return matrizAzules;
 	}
 	
 }

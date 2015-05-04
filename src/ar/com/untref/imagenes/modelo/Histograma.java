@@ -26,18 +26,18 @@ public class Histograma {
 		return histograma;
 	}
 	
-	public static float[] calcularHistogramaRojo(float[][] matrizRojos) {
+	public static float[] calcularHistogramaDelCanal(float[][] matriz) {
 
-		int ancho = matrizRojos[0].length;
-		int alto = matrizRojos.length;
+		int ancho = matriz[0].length;
+		int alto = matriz.length;
 		
 		int maximo = 0;
 		
 		for (int i = 0; i < ancho; i++) {
 
 			for (int j = 0; j < alto; j++) {
-				if(matrizRojos[i][j] > maximo){
-					maximo = (int)matrizRojos[i][j];
+				if(matriz[j][i] > maximo){
+					maximo = (int)matriz[j][i];
 				}
 			}	
 		}
@@ -51,7 +51,7 @@ public class Histograma {
 
 			for (int j = 0; j < alto; j++) {
 
-				histograma[(int)matrizRojos[i][j]] += porcentual.floatValue();
+				histograma[(int)matriz[j][i]] += porcentual.floatValue();
 			}
 		}
 		return histograma;

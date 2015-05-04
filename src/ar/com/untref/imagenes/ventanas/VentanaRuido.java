@@ -503,7 +503,7 @@ public class VentanaRuido extends JFrame {
 				Imagen imagenActual = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
 				if ( imagenActual!=null ){
 					
-					VentanaHistogramas ventanaHistogramas = new VentanaHistogramas(imagenActual);
+					VentanaHistogramas ventanaHistogramas = new VentanaHistogramas(imagenActual, false);
 					ventanaHistogramas.setVisible(true);
 				}
 			}

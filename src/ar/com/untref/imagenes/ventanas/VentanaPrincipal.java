@@ -387,7 +387,7 @@ public class VentanaPrincipal extends JFrame {
 				Imagen imagenActual = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
 				if ( imagenActual!=null ){
 					
-					VentanaHistogramas ventanaHistogramas = new VentanaHistogramas(imagenActual);
+					VentanaHistogramas ventanaHistogramas = new VentanaHistogramas(imagenActual, true);
 					ventanaHistogramas.setVisible(true);
 				}
 			}

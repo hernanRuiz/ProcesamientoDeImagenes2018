@@ -27,7 +27,6 @@ import org.jfree.data.category.DefaultCategoryDataset;
 import ar.com.untref.imagenes.enums.Canal;
 import ar.com.untref.imagenes.listeners.GuardarHistogramasListener;
 import ar.com.untref.imagenes.modelo.Histograma;
-import ar.com.untref.imagenes.ventanas.VentanaHistogramaEcualizado;
 import ar.com.untref.imagenes.modelo.Imagen;
 import ar.com.untref.imagenes.procesamiento.ProcesadorDeImagenes;
 import ar.com.untref.imagenes.ruido.GeneradorDeRuido;
@@ -42,7 +41,7 @@ public class VentanaHistogramas extends JFrame{
 	private JFreeChart histogramaVerde;
 	private JFreeChart histogramaAzul;
 	
-	public VentanaHistogramas(Imagen imagen) {
+	public VentanaHistogramas(Imagen imagen, boolean esHistogramaEstandar) {
 		
 		this.setTitle("Histogramas");
 		
@@ -117,13 +116,26 @@ public class VentanaHistogramas extends JFrame{
 		
 		menu.add(menuItem);
 		
+		if (!esHistogramaEstandar && GeneradorDeRuido.getMatrizRojos()!=null){
+			
+			dibujarHistogramaConValoresSinTransformar(imagen, panelHistoRojo, panelHistoAzul, panelHistoVerde, GeneradorDeRuido.getMatrizRojos(), GeneradorDeRuido.getMatrizVerdes(), GeneradorDeRuido.getMatrizAzules());
+		} else {
+			
+			dibujarHistogramaComun(imagen, panelHistoRojo, panelHistoAzul, panelHistoVerde);
+		}
+		
+		GuardarHistogramasListener listener = new GuardarHistogramasListener(contentPane, histogramaRojo, histogramaVerde, histogramaAzul);
+		menuItemGuardarComo.addActionListener(listener);
+	}
+
+	private void dibujarHistogramaComun(Imagen imagen, JPanel panelHistoRojo,
+			JPanel panelHistoAzul, JPanel panelHistoVerde) {
 		for (int i = 0; i < 3; i++) {
 
 			switch (i) {
 			case 0:
 				
-				//histogramaRojo = dibujarHistograma(Histograma.calcularHistogramaRojo(imagen.getBufferedImage()), panelHistoRojo, Canal.ROJO);
-				histogramaRojo = dibujarHistograma(Histograma.calcularHistogramaRojo(GeneradorDeRuido.getMatrizRojos()),panelHistoRojo, Canal.ROJO);
+				histogramaRojo = dibujarHistograma(Histograma.calcularHistogramaRojo(imagen.getBufferedImage()), panelHistoRojo, Canal.ROJO);
 				break;
 			case 1:
 
@@ -135,9 +147,28 @@ public class VentanaHistogramas extends JFrame{
 				break;
 			}
 		}
+	}
+	
+	private void dibujarHistogramaConValoresSinTransformar(Imagen imagen, JPanel panelHistoRojo, 
+			JPanel panelHistoAzul, JPanel panelHistoVerde, float[][] matrizRojos, float[][] matrizVerdes, float[][] matrizAzules) {
 		
-		GuardarHistogramasListener listener = new GuardarHistogramasListener(contentPane, histogramaRojo, histogramaVerde, histogramaAzul);
-		menuItemGuardarComo.addActionListener(listener);
+		for (int i = 0; i < 3; i++) {
+
+			switch (i) {
+			case 0:
+				
+				histogramaRojo = dibujarHistograma(Histograma.calcularHistogramaDelCanal(matrizRojos),panelHistoRojo, Canal.ROJO);
+				break;
+			case 1:
+
+				histogramaVerde= dibujarHistograma(Histograma.calcularHistogramaDelCanal(matrizVerdes),panelHistoVerde, Canal.VERDE);
+				break;
+			case 2:
+				
+				histogramaAzul = dibujarHistograma(Histograma.calcularHistogramaDelCanal(matrizAzules), panelHistoAzul, Canal.AZUL);
+				break;
+			}
+		}
 	}
 	
 	private JFreeChart dibujarHistograma(float[] histograma, JPanel jPanel, Canal colorBarras) {
@@ -146,8 +177,19 @@ public class VentanaHistogramas extends JFrame{
 
 		String serie = "Porcentaje";
 
-		for (int i = 0; i < histograma.length; i++) {
-			dataset.addValue(histograma[i], serie, "" + i);
+		if (histograma.length > 256){
+
+			int separacion = (int) (histograma.length / 255);
+			
+			for (int i = 0; i < histograma.length; i=i+separacion) {
+				dataset.addValue(histograma[i], serie, "" + i);
+			}
+			
+		} else {
+			
+			for (int i = 0; i < histograma.length; i++) {
+				dataset.addValue(histograma[i], serie, "" + i);
+			}
 		}
 		// Creamos el chart
 		JFreeChart chart = ChartFactory.createBarChart("Histograma " + colorBarras.getNombre(), null,
