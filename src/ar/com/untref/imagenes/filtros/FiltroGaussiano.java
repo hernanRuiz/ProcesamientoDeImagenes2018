@@ -33,7 +33,7 @@ public class FiltroGaussiano {
         Filtro filtro = new Filtro(kernel);
 
         //Aplicamos el filtro
-        filtro.filter(imagenOriginal.getBufferedImage(), imagenFiltrada.getBufferedImage());
+        filtro.filter(imagenOriginal, imagenFiltrada);
 
 		return imagenFiltrada;
 	}

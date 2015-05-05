@@ -29,7 +29,6 @@ import ar.com.untref.imagenes.listeners.GuardarHistogramasListener;
 import ar.com.untref.imagenes.modelo.Histograma;
 import ar.com.untref.imagenes.modelo.Imagen;
 import ar.com.untref.imagenes.procesamiento.ProcesadorDeImagenes;
-import ar.com.untref.imagenes.ruido.GeneradorDeRuido;
 
 @SuppressWarnings("serial")
 public class VentanaHistogramas extends JFrame{
@@ -116,13 +115,13 @@ public class VentanaHistogramas extends JFrame{
 		
 		menu.add(menuItem);
 		
-		if (!esHistogramaEstandar && GeneradorDeRuido.getMatrizRojos()!=null){
-			
-			dibujarHistogramaConValoresSinTransformar(imagen, panelHistoRojo, panelHistoAzul, panelHistoVerde, GeneradorDeRuido.getMatrizRojos(), GeneradorDeRuido.getMatrizVerdes(), GeneradorDeRuido.getMatrizAzules());
-		} else {
+//		if (!esHistogramaEstandar && GeneradorDeRuido.getMatrizRojos()!=null){
+//			
+//			dibujarHistogramaConValoresSinTransformar(imagen, panelHistoRojo, panelHistoAzul, panelHistoVerde, GeneradorDeRuido.getMatrizRojos(), GeneradorDeRuido.getMatrizVerdes(), GeneradorDeRuido.getMatrizAzules());
+//		} else {
 			
 			dibujarHistogramaComun(imagen, panelHistoRojo, panelHistoAzul, panelHistoVerde);
-		}
+//		}
 		
 		GuardarHistogramasListener listener = new GuardarHistogramasListener(contentPane, histogramaRojo, histogramaVerde, histogramaAzul);
 		menuItemGuardarComo.addActionListener(listener);

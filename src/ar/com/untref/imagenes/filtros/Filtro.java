@@ -12,6 +12,10 @@ import java.awt.image.Raster;
 import java.awt.image.RasterOp;
 import java.awt.image.WritableRaster;
 
+import ar.com.untref.imagenes.enums.Canal;
+import ar.com.untref.imagenes.modelo.Imagen;
+import ar.com.untref.imagenes.procesamiento.MatricesManager;
+
 public class Filtro implements BufferedImageOp, RasterOp {
 
 	public static final int PIXELES_BORDE_EN_CERO = 0;
@@ -25,23 +29,31 @@ public class Filtro implements BufferedImageOp, RasterOp {
 		condicionBorde = PIXELES_BORDE_EN_CERO;
 	}
 
-	public final BufferedImage filter(BufferedImage imagenOriginal, BufferedImage imagenDestino) {
-		if (imagenOriginal == imagenDestino)
+	public final BufferedImage filter(Imagen imagenOriginal, Imagen imagenDestino) {
+		
+		BufferedImage bufferOriginal = imagenOriginal.getBufferedImage();
+		BufferedImage bufferDestino = imagenDestino.getBufferedImage();
+		
+		if (bufferOriginal == bufferDestino)
 			throw new IllegalArgumentException("La imagen original y la de destino no pueden ser las mismas");
 
-		if (imagenDestino == null)
-			imagenDestino = createCompatibleDestImage(imagenOriginal, imagenOriginal.getColorModel());
+		if (bufferDestino == null)
+			bufferDestino = createCompatibleDestImage(bufferOriginal, bufferOriginal.getColorModel());
 
-		BufferedImage src1 = imagenOriginal;
-		BufferedImage dst1 = imagenDestino;
+		BufferedImage src1 = bufferOriginal;
+		BufferedImage dst1 = bufferDestino;
 		
-		if (src1.getColorModel().getColorSpace().getType() != imagenDestino
+		if (src1.getColorModel().getColorSpace().getType() != bufferDestino
 				.getColorModel().getColorSpace().getType())
-			dst1 = createCompatibleDestImage(imagenOriginal, imagenOriginal.getColorModel());
+			dst1 = createCompatibleDestImage(bufferOriginal, bufferOriginal.getColorModel());
 
 		filter(src1.getRaster(), dst1.getRaster());
 
-		return imagenDestino;
+		imagenDestino.setMatriz(MatricesManager.calcularMatrizDeLaImagen(bufferDestino, Canal.ROJO), Canal.ROJO);
+		imagenDestino.setMatriz(MatricesManager.calcularMatrizDeLaImagen(bufferDestino, Canal.VERDE), Canal.VERDE);
+		imagenDestino.setMatriz(MatricesManager.calcularMatrizDeLaImagen(bufferDestino, Canal.AZUL), Canal.AZUL);
+		
+		return bufferDestino;
 	}
 
 	public BufferedImage createCompatibleDestImage(BufferedImage src,
@@ -179,5 +191,11 @@ public class Filtro implements BufferedImageOp, RasterOp {
 		maximosYMinimos[1] = maximo;
 		return maximosYMinimos;
 	}
-	
+
+	@Override
+	public BufferedImage filter(BufferedImage src, BufferedImage dest) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }
