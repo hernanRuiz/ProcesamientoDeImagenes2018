@@ -5,11 +5,13 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JOptionPane;
+
+import ar.com.untref.imagenes.modelo.Histograma;
 import ar.com.untref.imagenes.modelo.Imagen;
 
 public class Umbralizador {
 
-	
 	/**
 	 * @param imagen - imagen a umbralizar
 	 * @param umbral - valor que hará de separador entre valores 0 y 255
@@ -104,6 +106,43 @@ public class Umbralizador {
 		}
 		
 		return sumatoria;
+	}
+	
+	public static Imagen generarUmbralizacionOtsu(Imagen imagen, int umbral) {
+				
+		float[] probabilidadesDeOcurrencia = Histograma.calcularHistogramaRojo(imagen.getBufferedImage());
+		
+		float w1 = 0;
+		float w2 = 0;
+		
+		for (int i = 0 ; i < probabilidadesDeOcurrencia.length ; i++) {
+			
+			if (i < umbral) {
+				w1 += probabilidadesDeOcurrencia[i];
+			} else {
+				w2 += probabilidadesDeOcurrencia[i];
+			}
+		}
+		
+		float u1 = 0;
+		float u2 = 0;
+		for (int i = 0 ; i < probabilidadesDeOcurrencia.length ; i++) {
+			
+			if (i < umbral) {
+				
+				u1 += i * probabilidadesDeOcurrencia[i] / w1;
+			} else {
+				
+				u2 += i * probabilidadesDeOcurrencia[i] / w2;
+			}
+			
+		}
+		
+		int umbralResultante = (int) (w1*u1 + w2*u2); 
+		
+		JOptionPane.showMessageDialog(null, "Umbral Calculado: " + String.valueOf(umbralResultante));
+		
+		return umbralizarImagen(imagen, umbralResultante);
 	}
 	
 }

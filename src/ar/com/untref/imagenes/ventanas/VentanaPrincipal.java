@@ -19,6 +19,7 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSlider;
@@ -45,6 +46,7 @@ import ar.com.untref.imagenes.procesamiento.ColorManager;
 import ar.com.untref.imagenes.procesamiento.Graficador;
 import ar.com.untref.imagenes.procesamiento.OperacionesManager;
 import ar.com.untref.imagenes.procesamiento.ProcesadorDeImagenes;
+import ar.com.untref.imagenes.procesamiento.Umbralizador;
 
 @SuppressWarnings("serial")
 public class VentanaPrincipal extends JFrame {
@@ -498,6 +500,17 @@ public class VentanaPrincipal extends JFrame {
 		menuFiltros.add(menuItemCompresionDeRangoDinamico);
 		menuFiltros.add(menuItemUmbralGlobal);
 		
+		JMenuItem menuItemUmbralOtsu = new JMenuItem("Umbral Otsu");
+		menuItemUmbralOtsu.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				int umbral = Integer.valueOf(JOptionPane.showInputDialog(null, "Umbral t = ", "Umbralizacion Otzu.", JOptionPane.DEFAULT_OPTION));
+				ProcesadorDeImagenes.obtenerInstancia().setImagenActual(Umbralizador.generarUmbralizacionOtsu(ProcesadorDeImagenes.obtenerInstancia().getImagenActual(), umbral));
+				VentanaPrincipal.this.refrescarImagen();
+			}
+		});
+		menuFiltros.add(menuItemUmbralOtsu);
+		
 		menuItemTemplates = new JMenu("Plantillas");
 		menuBar.add(menuItemTemplates);
 		
@@ -928,8 +941,7 @@ VentanaPrincipal.this.setExtendedState(VentanaPrincipal.this.getExtendedState() 
 
 	public void refrescarImagen() {
 
-		Imagen imagen = ProcesadorDeImagenes.obtenerInstancia()
-				.getImagenActual();
+		Imagen imagen = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
 		labelPrincipal.setIcon(new ImageIcon(imagen.getBufferedImage()));
 		chequearGuardarComo(menuItemGuardarComo);
 	}
