@@ -12,6 +12,7 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 
 import ar.com.untref.imagenes.ventanas.VentanaPrincipal;
+import ar.com.untref.imagenes.ventanas.VentanaRuido;
 
 @SuppressWarnings("serial")
 public class SigmaDialog extends JDialog {
@@ -20,12 +21,20 @@ public class SigmaDialog extends JDialog {
 	private JButton botonConfirmar;
 	private JLabel labelSigma;
 	private JTextField sigmaElegido;
+	private VentanaRuido ventanaRuido;
 
 	public SigmaDialog(VentanaPrincipal ventana) {
 		super(ventana);
 		this.ventana = ventana;
 		initUI();
 	}
+
+	public SigmaDialog(VentanaRuido ventanaRuido) {
+		super(ventanaRuido);
+		this.ventanaRuido = ventanaRuido;
+		initUI();
+	}
+
 
 	private void initUI() {
 
@@ -52,7 +61,15 @@ public class SigmaDialog extends JDialog {
 					
 					try{
 						int sigma = Integer.valueOf(sigmaElegido.getText().toString());
-						ventana.mostrarMascaraLaplacianoDelGaussiano(sigma);
+						
+						if(ventana != null){
+							ventana.mostrarMascaraLaplacianoDelGaussiano(sigma);
+						}
+					
+						if(ventanaRuido != null){
+							ventanaRuido.mostrarMascaraLaplacianoDelGaussiano(sigma);
+						}
+						
 						SigmaDialog.this.dispose();
 					} catch (Exception ex){
 						

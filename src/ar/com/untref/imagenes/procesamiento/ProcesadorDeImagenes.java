@@ -13,6 +13,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import ar.com.untref.imagenes.enums.Canal;
 import ar.com.untref.imagenes.enums.FormatoDeImagen;
+import ar.com.untref.imagenes.filtros.FiltroGaussiano;
 import ar.com.untref.imagenes.helpers.FormulasHelper;
 import ar.com.untref.imagenes.modelo.Archivo;
 import ar.com.untref.imagenes.modelo.Imagen;
@@ -560,4 +561,15 @@ public class ProcesadorDeImagenes {
 		return valoresXEY;
 	}
 
+	public BufferedImage aplicarDifusionIsotropica(Imagen imagen, int sigma, int repeticiones){
+				
+		Imagen imagenResultante = new Imagen(imagenOriginal.getBufferedImage(), imagenOriginal.getFormato(), imagenOriginal.getNombre(), imagenOriginal.getMatriz(Canal.ROJO), imagenOriginal.getMatriz(Canal.VERDE), imagenOriginal.getMatriz(Canal.AZUL));
+				
+				for(int i = 0; i < repeticiones ; i++){
+					imagenResultante = FiltroGaussiano.aplicarFiltroGaussiano(imagenResultante, sigma);
+				}
+				
+				return imagenResultante.getBufferedImage();
+	}
+	
 }

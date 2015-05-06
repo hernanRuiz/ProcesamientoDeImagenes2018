@@ -19,7 +19,6 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSlider;
@@ -29,6 +28,7 @@ import javax.swing.border.EmptyBorder;
 
 import ar.com.untref.imagenes.bordes.DetectarBordesDireccionales;
 import ar.com.untref.imagenes.bordes.DetectorDeBordes;
+import ar.com.untref.imagenes.dialogs.DifusionIsotropicaDialog;
 import ar.com.untref.imagenes.dialogs.LoGDialog;
 import ar.com.untref.imagenes.dialogs.OperacionesMatricesDialog;
 import ar.com.untref.imagenes.dialogs.SigmaDialog;
@@ -795,7 +795,6 @@ VentanaPrincipal.this.setExtendedState(VentanaPrincipal.this.getExtendedState() 
 			}
 		});
 		menuDeteccionLaplacianoDelGaussiano.add(menuItemMostrarMascaraLoG);
-		//menuDeteccionLaplacianoDelGaussiano.add(menuItemMostrarMascaraLaplacianoDelGaussiano);
 
 		
 		JMenu menuDeteccionDeBordesDireccionales = new JMenu("Deteccion de Bordes Direccionales");
@@ -860,6 +859,21 @@ VentanaPrincipal.this.setExtendedState(VentanaPrincipal.this.getExtendedState() 
 			
 		});
 		menuDeteccionDeBordesDireccionales.add(menuItemNuevaDireccional);
+		
+		JMenu menuDifusion = new JMenu("Difusion");
+		menuItemEditar.add(menuDifusion);
+		
+		JMenuItem menuItemDifusionIsotropica = new JMenuItem("Aplicar Difusión Isotrópica");
+		menuItemDifusionIsotropica.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				DifusionIsotropicaDialog dialogo = new DifusionIsotropicaDialog(VentanaPrincipal.this);
+				dialogo.setVisible(true);
+			}
+			
+		});
+		menuDifusion.add(menuItemDifusionIsotropica);
+		
 		
 	}
 
@@ -1018,4 +1032,17 @@ VentanaPrincipal.this.setExtendedState(VentanaPrincipal.this.getExtendedState() 
 
 		VentanaPrincipal.this.refrescarImagen();
 	}
+	
+	public void aplicarDifusionIsotropica(int sigma, int repeticiones) {
+
+		Imagen imagenAnterior = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
+		BufferedImage bufferedImage = ProcesadorDeImagenes.obtenerInstancia().aplicarDifusionIsotropica(imagenAnterior, sigma, repeticiones);
+		Imagen nuevaImagenActual = new Imagen(bufferedImage,
+				imagenAnterior.getFormato(), imagenAnterior.getNombre());
+		ProcesadorDeImagenes.obtenerInstancia().setImagenActual(
+				nuevaImagenActual);
+
+		VentanaPrincipal.this.refrescarImagen();
+	}
+	
 }

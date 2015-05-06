@@ -22,9 +22,12 @@ import javax.swing.SwingWorker;
 import javax.swing.border.EmptyBorder;
 
 import ar.com.untref.imagenes.bordes.DetectorDeBordes;
+import ar.com.untref.imagenes.dialogs.DifusionIsotropicaDialog;
 import ar.com.untref.imagenes.dialogs.EspereDialog;
+import ar.com.untref.imagenes.dialogs.LoGDialog;
 import ar.com.untref.imagenes.dialogs.MascaraGaussianaDialog;
 import ar.com.untref.imagenes.dialogs.MedidaMascaraDialog;
+import ar.com.untref.imagenes.dialogs.SigmaDialog;
 import ar.com.untref.imagenes.enums.Mascara;
 import ar.com.untref.imagenes.enums.NivelMensaje;
 import ar.com.untref.imagenes.filtros.FiltroDeLaMedia;
@@ -35,6 +38,7 @@ import ar.com.untref.imagenes.helpers.DialogsHelper;
 import ar.com.untref.imagenes.listeners.GuardarComoListener;
 import ar.com.untref.imagenes.modelo.Imagen;
 import ar.com.untref.imagenes.procesamiento.ProcesadorDeImagenes;
+import ar.com.untref.imagenes.procesamiento.Umbralizador;
 import ar.com.untref.imagenes.ruido.GeneradorDeRuido;
 
 @SuppressWarnings("serial")
@@ -709,6 +713,57 @@ public class VentanaRuido extends JFrame {
 		menuDeteccionLaplaciano.add(menuItemMostrarCrucesPorCero);
 		menuDeteccionLaplaciano.add(menuItemAplicarDetectorLaplaciano);
 		
+		JMenu menuDeteccionLoG = new JMenu("Detector Laplaciano del Gaussiano");
+		menuDeteccionDeBordes.add(menuDeteccionLoG);
+		
+		JMenuItem menuItemAplicarDetectorLoG = new JMenuItem("Aplicar");
+		menuItemAplicarDetectorLoG.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				LoGDialog dialogo = new LoGDialog(VentanaRuido.this);
+				dialogo.setVisible(true);
+			}
+			
+		});
+		menuDeteccionLoG.add(menuItemAplicarDetectorLoG);
+		
+		JMenuItem menuItemUmbralOtsu = new JMenuItem("Umbral Otsu");
+		menuItemUmbralOtsu.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				ProcesadorDeImagenes.obtenerInstancia().setImagenActual(Umbralizador.generarUmbralizacionOtsu(ProcesadorDeImagenes.obtenerInstancia().getImagenActual(), 128));
+				VentanaRuido.this.refrescarImagen();
+			}
+		});
+		menuFiltros.add(menuItemUmbralOtsu);
+		menuItemEditar.add(menuItemUmbralOtsu);
+		
+		JMenuItem menuItemMostrarMascaraLaplacianoDelGaussiano = new JMenuItem("Mostrar Mascara");
+		menuItemMostrarMascaraLaplacianoDelGaussiano.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				SigmaDialog dialogo = new SigmaDialog(VentanaRuido.this);
+				dialogo.setVisible(true);
+			}
+			
+		});
+		menuDeteccionLoG.add(menuItemMostrarMascaraLaplacianoDelGaussiano);
+		
+		
+		JMenu menuDifusion = new JMenu("Difusion");
+		menuItemEditar.add(menuDifusion);
+		
+		JMenuItem menuItemDifusionIsotropica = new JMenuItem("Aplicar Difusión Isotrópica");
+		menuItemDifusionIsotropica.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				DifusionIsotropicaDialog dialogo = new DifusionIsotropicaDialog(VentanaRuido.this);
+				dialogo.setVisible(true);
+			}
+			
+		});
+		menuDifusion.add(menuItemDifusionIsotropica);
+		
 	}
 		
 	private void cargarImagen(JLabel labelPrincipal,
@@ -875,4 +930,38 @@ public class VentanaRuido extends JFrame {
 		this.dialogoEspera.ocultar();
 	}
 	
+	public void aplicarLaplacianoDelGaussiano(int sigma, int umbral) {
+		Imagen imagenAnterior = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
+		BufferedImage bufferedImage = DetectorDeBordes.aplicarDetectorLaplacianoDelGaussiano(imagenAnterior, sigma, umbral);
+		Imagen nuevaImagenActual = new Imagen(bufferedImage,
+				imagenAnterior.getFormato(), imagenAnterior.getNombre());
+		ProcesadorDeImagenes.obtenerInstancia().setImagenActual(
+				nuevaImagenActual);
+
+		VentanaRuido.this.refrescarImagen();
+	}
+	
+	public void mostrarMascaraLaplacianoDelGaussiano(int sigma) {
+
+		Imagen imagenAnterior = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
+		BufferedImage bufferedImage = DetectorDeBordes.mostrarMascaraLaplacianoDelGaussiano(imagenAnterior, sigma);
+		Imagen nuevaImagenActual = new Imagen(bufferedImage,
+				imagenAnterior.getFormato(), imagenAnterior.getNombre());
+		ProcesadorDeImagenes.obtenerInstancia().setImagenActual(
+				nuevaImagenActual);
+
+		VentanaRuido.this.refrescarImagen();
+	}
+	
+	public void aplicarDifusionIsotropica(int sigma, int repeticiones) {
+
+		Imagen imagenAnterior = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
+		BufferedImage bufferedImage = ProcesadorDeImagenes.obtenerInstancia().aplicarDifusionIsotropica(imagenAnterior, sigma, repeticiones);
+		Imagen nuevaImagenActual = new Imagen(bufferedImage,
+				imagenAnterior.getFormato(), imagenAnterior.getNombre());
+		ProcesadorDeImagenes.obtenerInstancia().setImagenActual(
+				nuevaImagenActual);
+
+		VentanaRuido.this.refrescarImagen();
+	}
 }
