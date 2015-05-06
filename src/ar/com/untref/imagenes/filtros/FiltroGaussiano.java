@@ -7,8 +7,6 @@ import ar.com.untref.imagenes.modelo.Imagen;
 
 public class FiltroGaussiano {
 
-	private static int[] dimensionesDeMatricesPosibles = { 3, 5, 9, 13, 15, 19 };
-
 	public static Imagen aplicarFiltroGaussiano(Imagen imagenOriginal, int sigma) {
 
 		float[][] mascara = generarMascaraGaussiana(sigma);
@@ -40,8 +38,12 @@ public class FiltroGaussiano {
 
 	private static float[][] generarMascaraGaussiana(int sigma) {
 
-		// Siempre son matrices cuadradas
-		int dimension = dimensionesDeMatricesPosibles[sigma-1];
+		int dimension = sigma*3;
+		if ( dimension%2==0 ){
+			
+			dimension = dimension-1;
+		}
+		
 		float[][] mascara = new float[dimension][dimension];
 
 		for (int j = 0; j < dimension; ++j) {

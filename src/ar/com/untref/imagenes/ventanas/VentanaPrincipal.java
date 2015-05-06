@@ -28,7 +28,9 @@ import javax.swing.border.EmptyBorder;
 
 import ar.com.untref.imagenes.bordes.DetectarBordesDireccionales;
 import ar.com.untref.imagenes.bordes.DetectorDeBordes;
+import ar.com.untref.imagenes.dialogs.LoGDialog;
 import ar.com.untref.imagenes.dialogs.OperacionesMatricesDialog;
+import ar.com.untref.imagenes.dialogs.SigmaDialog;
 import ar.com.untref.imagenes.enums.FormatoDeImagen;
 import ar.com.untref.imagenes.enums.NivelMensaje;
 import ar.com.untref.imagenes.helpers.DialogsHelper;
@@ -62,7 +64,6 @@ public class VentanaPrincipal extends JFrame {
 	private JMenuItem menuItemGuardarComo;
 	private JSlider umbralSlider;
 	private JLabel resultadoCantidadPixeles;
-
 
 	public VentanaPrincipal() {
 
@@ -479,7 +480,7 @@ public class VentanaPrincipal extends JFrame {
 		menuItemUmbralGlobal.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
-				ProcesadorDeImagenes.obtenerInstancia().encontrarUmbralGlobal(VentanaPrincipal.this, 128);
+				ProcesadorDeImagenes.obtenerInstancia().encontrarUmbralGlobal(VentanaPrincipal.this, 150);
 				VentanaPrincipal.this.refrescarImagen();
 			}
 		});
@@ -752,17 +753,12 @@ VentanaPrincipal.this.setExtendedState(VentanaPrincipal.this.getExtendedState() 
 		menuItemAplicarDetectorLaplacianoDelGaussiano.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
-				Imagen imagenAnterior = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
-				BufferedImage bufferedImage = DetectorDeBordes.aplicarDetectorLaplacianoDelGaussiano(imagenAnterior, 4);
-				Imagen nuevaImagenActual = new Imagen(bufferedImage, imagenAnterior.getFormato(), imagenAnterior.getNombre());
-				ProcesadorDeImagenes.obtenerInstancia().setImagenActual(nuevaImagenActual);
-				
-				VentanaPrincipal.this.refrescarImagen();
+				LoGDialog dialogo = new LoGDialog(VentanaPrincipal.this);
+				dialogo.setVisible(true);
 			}
-			
 		});
 		
-		/*JMenuItem menuItemMostrarMascaraLaplacianoDelGaussiano = new JMenuItem("Mostrar Mascara");
+		JMenuItem menuItemMostrarMascaraLaplacianoDelGaussiano = new JMenuItem("Mostrar Mascara");
 		menuItemMostrarMascaraLaplacianoDelGaussiano.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
@@ -774,9 +770,19 @@ VentanaPrincipal.this.setExtendedState(VentanaPrincipal.this.getExtendedState() 
 				VentanaPrincipal.this.refrescarImagen();
 			}
 			
-		});*/
+		});
 		
 		menuDeteccionLaplacianoDelGaussiano.add(menuItemAplicarDetectorLaplacianoDelGaussiano);
+		
+		JMenuItem menuItemMostrarMascaraLoG = new JMenuItem("Mostrar m\u00E1scara");
+		menuItemMostrarMascaraLoG.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				SigmaDialog dialogo = new SigmaDialog(VentanaPrincipal.this);
+				dialogo.setVisible(true);
+			}
+		});
+		menuDeteccionLaplacianoDelGaussiano.add(menuItemMostrarMascaraLoG);
 		//menuDeteccionLaplacianoDelGaussiano.add(menuItemMostrarMascaraLaplacianoDelGaussiano);
 
 		
@@ -844,37 +850,54 @@ VentanaPrincipal.this.setExtendedState(VentanaPrincipal.this.getExtendedState() 
 		menuDeteccionDeBordesDireccionales.add(menuItemNuevaDireccional);
 		
 	}
-	
+
+	public void aplicarLaplacianoDelGaussiano(int sigma, int umbral) {
+		Imagen imagenAnterior = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
+		BufferedImage bufferedImage = DetectorDeBordes.aplicarDetectorLaplacianoDelGaussiano(imagenAnterior, sigma, umbral);
+		Imagen nuevaImagenActual = new Imagen(bufferedImage,
+				imagenAnterior.getFormato(), imagenAnterior.getNombre());
+		ProcesadorDeImagenes.obtenerInstancia().setImagenActual(
+				nuevaImagenActual);
+
+		VentanaPrincipal.this.refrescarImagen();
+	}
+
 	private void cargarImagen(JLabel labelPrincipal,
 			JMenuItem menuItemGuardarComo) {
-		Imagen imagenElegida = ProcesadorDeImagenes.obtenerInstancia().cargarUnaImagenDesdeArchivo();
-		int cantidadPixeles = imagenElegida.getBufferedImage().getWidth()* imagenElegida.getBufferedImage().getHeight();
+		Imagen imagenElegida = ProcesadorDeImagenes.obtenerInstancia()
+				.cargarUnaImagenDesdeArchivo();
+		int cantidadPixeles = imagenElegida.getBufferedImage().getWidth()
+				* imagenElegida.getBufferedImage().getHeight();
 		refrescarCantidadPixeles(cantidadPixeles);
 		actualizarPanelDeImagen(menuItemGuardarComo, imagenElegida);
 	}
-	
-	private void inhabilitarItem(JMenuItem item){
-		
+
+	private void inhabilitarItem(JMenuItem item) {
+
 		item.addActionListener(null);
 		item.setEnabled(false);
 	}
 
 	private void chequearGuardarComo(JMenuItem menuItemGuardarComo) {
-		Imagen imagenActual = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
-		
-		if (imagenActual!=null){
-			
-			GuardarComoListener listener = new GuardarComoListener(imagenActual, contentPane);
+		Imagen imagenActual = ProcesadorDeImagenes.obtenerInstancia()
+				.getImagenActual();
+
+		if (imagenActual != null) {
+
+			GuardarComoListener listener = new GuardarComoListener(
+					imagenActual, contentPane);
 			menuItemGuardarComo.setEnabled(true);
-			
-			if (menuItemGuardarComo.getActionListeners().length >0){
-				
-				menuItemGuardarComo.removeActionListener(menuItemGuardarComo.getActionListeners()[0]);
+
+			if (menuItemGuardarComo.getActionListeners().length > 0) {
+
+				menuItemGuardarComo.removeActionListener(menuItemGuardarComo
+						.getActionListeners()[0]);
 			}
 			menuItemGuardarComo.addActionListener(listener);
 		} else {
-			
-			menuItemGuardarComo.removeActionListener(menuItemGuardarComo.getActionListeners()[0]);
+
+			menuItemGuardarComo.removeActionListener(menuItemGuardarComo
+					.getActionListeners()[0]);
 			menuItemGuardarComo.setEnabled(false);
 		}
 	}
@@ -883,78 +906,105 @@ VentanaPrincipal.this.setExtendedState(VentanaPrincipal.this.getExtendedState() 
 
 		int posicionX = Integer.valueOf(posicionXTextField.getText());
 		int posicionY = Integer.valueOf(posicionYTextField.getText());
-		
-		Imagen imagenActual = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
+
+		Imagen imagenActual = ProcesadorDeImagenes.obtenerInstancia()
+				.getImagenActual();
 		imagenActual.getBufferedImage().setRGB(posicionX, posicionY, rgb);
 		labelPrincipal.setIcon(new ImageIcon(imagenActual.getBufferedImage()));
 	}
-	
-	private void actualizarPanelDeImagen(
-			final JMenuItem menuItemGuardarComo, Imagen imagenElegida) {
-		if (imagenElegida!=null){
-			
-			labelPrincipal.setIcon(new ImageIcon(imagenElegida.getBufferedImage()));
+
+	private void actualizarPanelDeImagen(final JMenuItem menuItemGuardarComo,
+			Imagen imagenElegida) {
+		if (imagenElegida != null) {
+
+			labelPrincipal.setIcon(new ImageIcon(imagenElegida
+					.getBufferedImage()));
 			menuItemEditar.setEnabled(true);
 			panelPixel.setVisible(true);
 		}
-		
+
 		chequearGuardarComo(menuItemGuardarComo);
 	}
 
 	public void refrescarImagen() {
 
-		Imagen imagen = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
+		Imagen imagen = ProcesadorDeImagenes.obtenerInstancia()
+				.getImagenActual();
 		labelPrincipal.setIcon(new ImageIcon(imagen.getBufferedImage()));
 		chequearGuardarComo(menuItemGuardarComo);
 	}
 
-	public void refrescarCantidadPixeles(int cantidadPixeles){
+	public void refrescarCantidadPixeles(int cantidadPixeles) {
 		resultadoCantidadPixeles.setText(String.valueOf(cantidadPixeles));
 	}
-	
-	
+
 	public void mostrarImagenMarcada() {
 
 		Graphics g = super.getGraphics();
 		Graphics2D g2 = (Graphics2D) g;
 		g2.setColor(Color.GREEN);
-		
-		Integer[] coordenadas = ProcesadorDeImagenes.obtenerInstancia().getXEY();
+
+		Integer[] coordenadas = ProcesadorDeImagenes.obtenerInstancia()
+				.getXEY();
 		int x1 = coordenadas[0];
 		int x2 = coordenadas[1];
 		int y1 = coordenadas[2];
 		int y2 = coordenadas[3];
-		g2.drawRect(x1, x1, x2-x1, y2-y1);
-		
-	}
-	
-	public void obtenerMatrizResultanteDeSuma(Imagen primeraImagen, Imagen segundaImagen){
-		
-		OperacionesManager.aplicarOperacionMatematica(VentanaPrincipal.this, contentPane, primeraImagen, segundaImagen, OperacionMatematica.SUMA);
-	}
-	
-	public void obtenerMatrizResultanteDeResta(Imagen primeraImagen, Imagen segundaImagen){
-		
-		OperacionesManager.aplicarOperacionMatematica(VentanaPrincipal.this, contentPane, primeraImagen, segundaImagen, OperacionMatematica.RESTA);
+		g2.drawRect(x1, x1, x2 - x1, y2 - y1);
+
 	}
 
-	public void obtenerMatrizResultanteDeMultiplicar(Imagen primeraImagen, Imagen segundaImagen){
-		
-		OperacionesManager.aplicarOperacionMatematica(VentanaPrincipal.this, contentPane, primeraImagen, segundaImagen, OperacionMatematica.MULTIPLICACION);
+	public void obtenerMatrizResultanteDeSuma(Imagen primeraImagen,
+			Imagen segundaImagen) {
+
+		OperacionesManager.aplicarOperacionMatematica(VentanaPrincipal.this,
+				contentPane, primeraImagen, segundaImagen,
+				OperacionMatematica.SUMA);
 	}
-	
-	public void obtenerMatrizResultanteDeSumaEscalar(int escalar){
-		
-		OperacionesManager.operarConUnEscalar(VentanaPrincipal.this, contentPane, escalar, OperacionMatematica.SUMA);
+
+	public void obtenerMatrizResultanteDeResta(Imagen primeraImagen,
+			Imagen segundaImagen) {
+
+		OperacionesManager.aplicarOperacionMatematica(VentanaPrincipal.this,
+				contentPane, primeraImagen, segundaImagen,
+				OperacionMatematica.RESTA);
 	}
-	
-	public void obtenerMatrizResultanteDeRestaEscalar(int escalar){
-		
-		OperacionesManager.operarConUnEscalar(VentanaPrincipal.this, contentPane, escalar, OperacionMatematica.RESTA);
+
+	public void obtenerMatrizResultanteDeMultiplicar(Imagen primeraImagen,
+			Imagen segundaImagen) {
+
+		OperacionesManager.aplicarOperacionMatematica(VentanaPrincipal.this,
+				contentPane, primeraImagen, segundaImagen,
+				OperacionMatematica.MULTIPLICACION);
 	}
-	
-	public void obtenerMatrizResultanteDeMultiplicarPorEscalar(int escalar){
-		
-		OperacionesManager.operarConUnEscalar(VentanaPrincipal.this, contentPane, escalar, OperacionMatematica.MULTIPLICACION);
+
+	public void obtenerMatrizResultanteDeSumaEscalar(int escalar) {
+
+		OperacionesManager.operarConUnEscalar(VentanaPrincipal.this,
+				contentPane, escalar, OperacionMatematica.SUMA);
+	}
+
+	public void obtenerMatrizResultanteDeRestaEscalar(int escalar) {
+
+		OperacionesManager.operarConUnEscalar(VentanaPrincipal.this,
+				contentPane, escalar, OperacionMatematica.RESTA);
+	}
+
+	public void obtenerMatrizResultanteDeMultiplicarPorEscalar(int escalar) {
+
+		OperacionesManager.operarConUnEscalar(VentanaPrincipal.this,
+				contentPane, escalar, OperacionMatematica.MULTIPLICACION);
+	}
+
+	public void mostrarMascaraLaplacianoDelGaussiano(int sigma) {
+
+		Imagen imagenAnterior = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
+		BufferedImage bufferedImage = DetectorDeBordes.mostrarMascaraLaplacianoDelGaussiano(imagenAnterior, sigma);
+		Imagen nuevaImagenActual = new Imagen(bufferedImage,
+				imagenAnterior.getFormato(), imagenAnterior.getNombre());
+		ProcesadorDeImagenes.obtenerInstancia().setImagenActual(
+				nuevaImagenActual);
+
+		VentanaPrincipal.this.refrescarImagen();
 	}
 }

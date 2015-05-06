@@ -72,8 +72,6 @@ public class MascaraGaussianaDialog extends JDialog {
 				.addComponent(labelInstrucciones).addGap(20).addComponent(labelSigma).addGap(20).addComponent(comboSigmas)
 				.addGap(20).addComponent(labelImagen).addGap(20).addComponent(botonConfirmar).addGap(30));
 		
-		
-
 		pack();
 	}
 	
