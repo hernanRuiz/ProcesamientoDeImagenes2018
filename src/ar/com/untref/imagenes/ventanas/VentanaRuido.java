@@ -736,7 +736,22 @@ public class VentanaRuido extends JFrame {
 			}
 		});
 		menuFiltros.add(menuItemUmbralOtsu);
-		menuItemEditar.add(menuItemUmbralOtsu);
+		
+		
+		JMenuItem menuItemUmbralGlobal = new JMenuItem("Umbral Global");
+		menuItemUmbralGlobal.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				ProcesadorDeImagenes.obtenerInstancia().encontrarUmbralGlobal(VentanaRuido.this, 150);
+				VentanaRuido.this.refrescarImagen();
+			}
+		});
+		
+		JMenu menuUmbral = new JMenu ("Umbrales");
+		menuItemEditar.add(menuUmbral);
+		
+		menuUmbral.add(menuItemUmbralGlobal);
+		menuUmbral.add(menuItemUmbralOtsu);
 		
 		JMenuItem menuItemMostrarMascaraLaplacianoDelGaussiano = new JMenuItem("Mostrar Mascara");
 		menuItemMostrarMascaraLaplacianoDelGaussiano.addActionListener(new ActionListener() {

@@ -18,6 +18,7 @@ import ar.com.untref.imagenes.helpers.FormulasHelper;
 import ar.com.untref.imagenes.modelo.Archivo;
 import ar.com.untref.imagenes.modelo.Imagen;
 import ar.com.untref.imagenes.ventanas.VentanaPrincipal;
+import ar.com.untref.imagenes.ventanas.VentanaRuido;
 
 public class ProcesadorDeImagenes {
 
@@ -363,6 +364,25 @@ public class ProcesadorDeImagenes {
 		
 		umbralizarImagen(ventana, umbralViejo);
 	}
+	
+	
+	public void encontrarUmbralGlobal(VentanaRuido ventana, int umbralViejo){
+		
+		int deltaUmbral = 30;
+		boolean finalizo = false;
+		
+		while( !finalizo ){
+
+			int umbralNuevo = Umbralizador.encontrarNuevoUmbralGlobal(imagenOriginal, umbralViejo);
+			finalizo = (Math.abs(umbralViejo-umbralNuevo) < deltaUmbral);
+			
+			umbralViejo = umbralNuevo;
+		}
+		
+		imagenActual = Umbralizador.umbralizarImagen(imagenOriginal, umbralViejo);
+		ventana.refrescarImagen();
+	}
+	
 	
 	public BufferedImage aplicarTransformacionLogaritmica(BufferedImage bufferedImage){
 		
