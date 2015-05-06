@@ -504,8 +504,7 @@ public class VentanaPrincipal extends JFrame {
 		menuItemUmbralOtsu.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
-				int umbral = Integer.valueOf(JOptionPane.showInputDialog(null, "Umbral t = ", "Umbralizacion Otzu.", JOptionPane.DEFAULT_OPTION));
-				ProcesadorDeImagenes.obtenerInstancia().setImagenActual(Umbralizador.generarUmbralizacionOtsu(ProcesadorDeImagenes.obtenerInstancia().getImagenActual(), umbral));
+				ProcesadorDeImagenes.obtenerInstancia().setImagenActual(Umbralizador.generarUmbralizacionOtsu(ProcesadorDeImagenes.obtenerInstancia().getImagenActual(), 128));
 				VentanaPrincipal.this.refrescarImagen();
 			}
 		});
