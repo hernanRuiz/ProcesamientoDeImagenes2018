@@ -11,6 +11,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import ar.com.untref.imagenes.bordes.InterfaceDetectorDeBordes;
 import ar.com.untref.imagenes.enums.Canal;
 import ar.com.untref.imagenes.enums.FormatoDeImagen;
 import ar.com.untref.imagenes.filtros.FiltroGaussiano;
@@ -591,5 +592,84 @@ public class ProcesadorDeImagenes {
 				
 				return imagenResultante.getBufferedImage();
 	}
+	
+	public BufferedImage aplicarDifusionAnisotrópica(Imagen imagen, InterfaceDetectorDeBordes detectorDeBordes){
+		
+		Imagen imagenResultante = new Imagen(imagenOriginal.getBufferedImage(), imagenOriginal.getFormato(), imagenOriginal.getNombre(), imagenOriginal.getMatriz(Canal.ROJO), imagenOriginal.getMatriz(Canal.VERDE), imagenOriginal.getMatriz(Canal.AZUL));			
+		int ancho = imagen.getBufferedImage().getWidth();	
+		int alto = imagen.getBufferedImage().getHeight();
+		int[][] matrizRojo = imagen.getMatriz(Canal.ROJO);
+		int[][] matrizVerde = imagen.getMatriz(Canal.VERDE);
+		int[][] matrizAzul = imagen.getMatriz(Canal.AZUL);
+		
+		int[][] matrizRojoResultante = new int[ancho][alto];
+		int[][] matrizVerdeResultante = new int[ancho][alto];
+		int[][] matrizAzulResultante = new int[ancho][alto];
+			
+			for (int i = 0; i < ancho; i++) {
+				for (int j = 0; j < alto; j++) {
+					
+					int rojoActual = new Color (imagen.getBufferedImage().getRGB(i, j)).getRed();
+					int verdeActual = new Color (imagen.getBufferedImage().getRGB(i, j)).getRed();
+					int azulActual = new Color (imagen.getBufferedImage().getRGB(i, j)).getRed();
+
+					int DnIijRojo = i > 0 ? matrizRojo[i - 1][j] - rojoActual : 0;
+					int DsIijRojo = i < ancho - 1 ? matrizRojo[i + 1][j] - rojoActual : 0;
+					int DeIijRojo = j < alto - 1 ? matrizRojo[i][j + 1] - rojoActual : 0;
+					int DoIijRojo = j > 0 ? matrizRojo[i][j - 1] - rojoActual : 0;
+
+					int DnIijVerde = i > 0 ? matrizVerde[i - 1][j] - verdeActual : 0;
+					int DsIijVerde = i < ancho - 1 ? matrizVerde[i + 1][j] - verdeActual : 0;
+					int DeIijVerde = j < alto - 1 ? matrizVerde[i][j + 1] - verdeActual : 0;
+					int DoIijVerde = j > 0 ? matrizVerde[i][j - 1] - verdeActual : 0;
+					
+					int DnIijAzul = i > 0 ? matrizAzul[i - 1][j] - azulActual : 0;
+					int DsIijAzul = i < ancho - 1 ? matrizAzul[i + 1][j] - azulActual : 0;
+					int DeIijAzul = j < alto - 1 ? matrizAzul[i][j + 1] - azulActual : 0;
+					int DoIijAzul = j > 0 ? matrizAzul[i][j - 1] - azulActual : 0;
+					
+					double nuevoValorRojo = calcularValorDifusionAnisotropica(detectorDeBordes, rojoActual, DnIijRojo, DsIijRojo, DeIijRojo, DoIijRojo);
+					double nuevoValorVerde = calcularValorDifusionAnisotropica(detectorDeBordes, verdeActual, DnIijVerde, DsIijVerde, DeIijVerde, DoIijVerde);					
+					double nuevoValorAzul = calcularValorDifusionAnisotropica(detectorDeBordes, azulActual, DnIijAzul, DsIijAzul, DeIijAzul, DoIijAzul);
+
+					matrizRojoResultante[i][j] = (int) nuevoValorRojo;
+					matrizVerdeResultante[i][j] = (int) nuevoValorVerde;
+					matrizAzulResultante[i][j] = (int) nuevoValorAzul;
+					
+					int[][] matrizRojoFinal = MatricesManager.aplicarTransformacionLineal(matrizRojoResultante);
+					int[][] matrizVerdeFinal = MatricesManager.aplicarTransformacionLineal(matrizVerdeResultante);
+					int[][] matrizAzulFinal = MatricesManager.aplicarTransformacionLineal(matrizAzulResultante);
+					
+					imagenResultante.setBufferedImage(MatricesManager.obtenerImagenDeMatrices(matrizRojoFinal, matrizVerdeFinal, matrizAzulFinal));
+					
+//					Color colorResultante = new Color((int)nuevoValorRojo, (int)nuevoValorVerde, (int)nuevoValorAzul);
+//					imagenResultante.getBufferedImage().setRGB(i, j, colorResultante.getRGB());
+				}
+			}
+
+			return imagenResultante.getBufferedImage();
+		}
+
+	private double calcularValorDifusionAnisotropica(
+			InterfaceDetectorDeBordes detectorDeBordes, int colorActual,
+			int DnIij, int DsIij, int DeIij, int DoIij) {
+		
+		double Cnij = detectorDeBordes.gradiente(DnIij);
+		double Csij = detectorDeBordes.gradiente(DsIij);
+		double Ceij = detectorDeBordes.gradiente(DeIij);
+		double Coij = detectorDeBordes.gradiente(DoIij);
+
+		double DnIijCnij = DnIij * Cnij;
+		double DsIijCsij = DsIij * Csij;
+		double DeIijCeij = DeIij * Ceij;
+		double DoIijCoij = DoIij * Coij;
+
+		double lambda = 0.25;
+		double nuevoValor = colorActual + lambda * (DnIijCnij + DsIijCsij + DeIijCeij + DoIijCoij);
+		return nuevoValor;
+	}
+
+		
+	
 	
 }

@@ -613,4 +613,5 @@ public class DetectorDeBordes {
 		
 		return matrizFinal;
 	}
+	
 }

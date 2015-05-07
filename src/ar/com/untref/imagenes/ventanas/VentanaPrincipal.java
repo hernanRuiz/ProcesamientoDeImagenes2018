@@ -28,6 +28,8 @@ import javax.swing.border.EmptyBorder;
 
 import ar.com.untref.imagenes.bordes.DetectarBordesDireccionales;
 import ar.com.untref.imagenes.bordes.DetectorDeBordes;
+import ar.com.untref.imagenes.bordes.InterfaceDetectorDeBordes;
+import ar.com.untref.imagenes.dialogs.DifusionAnisotropicaDialog;
 import ar.com.untref.imagenes.dialogs.DifusionIsotropicaDialog;
 import ar.com.untref.imagenes.dialogs.LoGDialog;
 import ar.com.untref.imagenes.dialogs.OperacionesMatricesDialog;
@@ -875,6 +877,17 @@ VentanaPrincipal.this.setExtendedState(VentanaPrincipal.this.getExtendedState() 
 		menuDifusion.add(menuItemDifusionIsotropica);
 		
 		
+		JMenuItem menuItemDifusionAnisotropica = new JMenuItem("Aplicar Difusión Anisotrópica");
+		menuItemDifusionAnisotropica.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				DifusionAnisotropicaDialog dialogo = new DifusionAnisotropicaDialog(VentanaPrincipal.this);
+				dialogo.setVisible(true);
+			}
+			
+		});
+		menuDifusion.add(menuItemDifusionAnisotropica);
+		
 	}
 
 	public void aplicarLaplacianoDelGaussiano(int sigma, int umbral) {
@@ -1041,6 +1054,21 @@ VentanaPrincipal.this.setExtendedState(VentanaPrincipal.this.getExtendedState() 
 				imagenAnterior.getFormato(), imagenAnterior.getNombre());
 		ProcesadorDeImagenes.obtenerInstancia().setImagenActual(
 				nuevaImagenActual);
+
+		VentanaPrincipal.this.refrescarImagen();
+	}
+	
+	public void aplicarDifusionAnisotropica(int sigma, int repeticiones, InterfaceDetectorDeBordes detectorDeBordes) {
+
+		Imagen imagenAnterior = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
+		BufferedImage bufferedImage = imagenAnterior.getBufferedImage();
+		
+		for(int i = 0; i < repeticiones ; i++){
+			bufferedImage = ProcesadorDeImagenes.obtenerInstancia().aplicarDifusionAnisotrópica(imagenAnterior, detectorDeBordes);
+		}
+		
+		Imagen nuevaImagenActual = new Imagen(bufferedImage, imagenAnterior.getFormato(), imagenAnterior.getNombre());
+		ProcesadorDeImagenes.obtenerInstancia().setImagenActual(nuevaImagenActual);
 
 		VentanaPrincipal.this.refrescarImagen();
 	}

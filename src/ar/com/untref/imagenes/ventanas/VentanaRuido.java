@@ -22,6 +22,8 @@ import javax.swing.SwingWorker;
 import javax.swing.border.EmptyBorder;
 
 import ar.com.untref.imagenes.bordes.DetectorDeBordes;
+import ar.com.untref.imagenes.bordes.InterfaceDetectorDeBordes;
+import ar.com.untref.imagenes.dialogs.DifusionAnisotropicaDialog;
 import ar.com.untref.imagenes.dialogs.DifusionIsotropicaDialog;
 import ar.com.untref.imagenes.dialogs.EspereDialog;
 import ar.com.untref.imagenes.dialogs.LoGDialog;
@@ -779,6 +781,17 @@ public class VentanaRuido extends JFrame {
 		});
 		menuDifusion.add(menuItemDifusionIsotropica);
 		
+		JMenuItem menuItemDifusionAnisotropica = new JMenuItem("Aplicar Difusión Anisotrópica");
+		menuItemDifusionAnisotropica.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				DifusionAnisotropicaDialog dialogo = new DifusionAnisotropicaDialog(VentanaRuido.this);
+				dialogo.setVisible(true);
+			}
+			
+		});
+		menuDifusion.add(menuItemDifusionAnisotropica);
+		
 	}
 		
 	private void cargarImagen(JLabel labelPrincipal,
@@ -976,6 +989,21 @@ public class VentanaRuido extends JFrame {
 				imagenAnterior.getFormato(), imagenAnterior.getNombre());
 		ProcesadorDeImagenes.obtenerInstancia().setImagenActual(
 				nuevaImagenActual);
+
+		VentanaRuido.this.refrescarImagen();
+	}
+	
+	public void aplicarDifusionAnisotropica(int sigma, int repeticiones, InterfaceDetectorDeBordes detectorDeBordes) {
+
+		Imagen imagenAnterior = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
+		BufferedImage bufferedImage = imagenAnterior.getBufferedImage();
+		
+		for(int i = 0; i < repeticiones ; i++){
+			bufferedImage = ProcesadorDeImagenes.obtenerInstancia().aplicarDifusionAnisotrópica(imagenAnterior, detectorDeBordes);
+		}
+		
+		Imagen nuevaImagenActual = new Imagen(bufferedImage, imagenAnterior.getFormato(), imagenAnterior.getNombre());
+		ProcesadorDeImagenes.obtenerInstancia().setImagenActual(nuevaImagenActual);
 
 		VentanaRuido.this.refrescarImagen();
 	}
