@@ -148,6 +148,7 @@ public class VentanaHistogramas extends JFrame{
 		}
 	}
 	
+	@SuppressWarnings("unused")
 	private void dibujarHistogramaConValoresSinTransformar(Imagen imagen, JPanel panelHistoRojo, 
 			JPanel panelHistoAzul, JPanel panelHistoVerde, float[][] matrizRojos, float[][] matrizVerdes, float[][] matrizAzules) {
 		

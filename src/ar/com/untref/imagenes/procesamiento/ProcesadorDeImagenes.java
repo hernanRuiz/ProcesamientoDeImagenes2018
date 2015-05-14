@@ -14,7 +14,6 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import ar.com.untref.imagenes.bordes.InterfaceDetectorDeBordes;
 import ar.com.untref.imagenes.enums.Canal;
 import ar.com.untref.imagenes.enums.FormatoDeImagen;
-import ar.com.untref.imagenes.filtros.FiltroGaussiano;
 import ar.com.untref.imagenes.helpers.FormulasHelper;
 import ar.com.untref.imagenes.modelo.Archivo;
 import ar.com.untref.imagenes.modelo.Imagen;
@@ -583,15 +582,59 @@ public class ProcesadorDeImagenes {
 	}
 
 	public BufferedImage aplicarDifusionIsotropica(Imagen imagen, int sigma, int repeticiones){
-				
-		Imagen imagenResultante = new Imagen(imagenOriginal.getBufferedImage(), imagenOriginal.getFormato(), imagenOriginal.getNombre(), imagenOriginal.getMatriz(Canal.ROJO), imagenOriginal.getMatriz(Canal.VERDE), imagenOriginal.getMatriz(Canal.AZUL));
-				
-				for(int i = 0; i < repeticiones ; i++){
-					imagenResultante = FiltroGaussiano.aplicarFiltroGaussiano(imagenResultante, sigma);
+							
+			Imagen imagenResultante = new Imagen(imagenOriginal.getBufferedImage(), imagenOriginal.getFormato(), imagenOriginal.getNombre(), imagenOriginal.getMatriz(Canal.ROJO), imagenOriginal.getMatriz(Canal.VERDE), imagenOriginal.getMatriz(Canal.AZUL));			
+			int ancho = imagen.getBufferedImage().getWidth();	
+			int alto = imagen.getBufferedImage().getHeight();
+			
+			int[][] matrizRojoResultante = new int[ancho][alto];
+			int[][] matrizVerdeResultante = new int[ancho][alto];
+			int[][] matrizAzulResultante = new int[ancho][alto];
+			float lambda = 0.25f;
+			
+				for (int i = 0; i < ancho; i++) {
+					for (int j = 0; j < alto; j++) {
+						
+						int rojoActual = new Color (imagen.getBufferedImage().getRGB(i, j)).getRed();
+						int verdeActual = new Color (imagen.getBufferedImage().getRGB(i, j)).getRed();
+						int azulActual = new Color (imagen.getBufferedImage().getRGB(i, j)).getRed();
+
+						float derivadaNorteRojo = calcularDerivadaNorte(imagen.getBufferedImage(), i, j, Canal.ROJO);
+						float derivadaNorteVerde = calcularDerivadaNorte(imagen.getBufferedImage(), i, j, Canal.VERDE);
+						float derivadaNorteAzul = calcularDerivadaNorte(imagen.getBufferedImage(), i, j, Canal.AZUL);
+						
+						float derivadaEsteRojo = calcularDerivadaEste(imagen.getBufferedImage(), i, j, Canal.ROJO);
+						float derivadaEsteVerde = calcularDerivadaEste(imagen.getBufferedImage(), i, j, Canal.VERDE);
+						float derivadaEsteAzul = calcularDerivadaEste(imagen.getBufferedImage(), i, j, Canal.AZUL);
+						
+						float derivadaOesteRojo = calcularDerivadaOeste(imagen.getBufferedImage(), i, j, Canal.ROJO);
+						float derivadaOesteVerde = calcularDerivadaOeste(imagen.getBufferedImage(), i, j, Canal.VERDE);
+						float derivadaOesteAzul = calcularDerivadaOeste(imagen.getBufferedImage(), i, j, Canal.AZUL);
+						
+						float derivadaSurRojo = calcularDerivadaSur(imagen.getBufferedImage(), i, j, Canal.ROJO);
+						float derivadaSurVerde = calcularDerivadaSur(imagen.getBufferedImage(), i, j, Canal.VERDE);
+						float derivadaSurAzul = calcularDerivadaSur(imagen.getBufferedImage(), i, j, Canal.AZUL);
+						
+						
+						float nuevoValorRojo = rojoActual + lambda * (derivadaNorteRojo + derivadaEsteRojo + derivadaOesteRojo + derivadaSurRojo);
+						float nuevoValorVerde = verdeActual + lambda * (derivadaNorteVerde + derivadaEsteVerde + derivadaOesteVerde + derivadaSurVerde);
+						float nuevoValorAzul = azulActual + lambda * (derivadaNorteAzul + derivadaEsteAzul + derivadaOesteAzul + derivadaSurAzul);
+						
+						matrizRojoResultante[i][j] = (int) nuevoValorRojo;
+						matrizVerdeResultante[i][j] = (int) nuevoValorVerde;
+						matrizAzulResultante[i][j] = (int) nuevoValorAzul;
+						
+					}
 				}
+				int[][] matrizRojoFinal = MatricesManager.aplicarTransformacionLineal(matrizRojoResultante);
+				int[][] matrizVerdeFinal = MatricesManager.aplicarTransformacionLineal(matrizVerdeResultante);
+				int[][] matrizAzulFinal = MatricesManager.aplicarTransformacionLineal(matrizAzulResultante);
 				
+				imagenResultante.setBufferedImage(MatricesManager.obtenerImagenDeMatrices(matrizRojoFinal, matrizVerdeFinal, matrizAzulFinal));
+
 				return imagenResultante.getBufferedImage();
-	}
+			}
+
 	
 	public BufferedImage aplicarDifusionAnisotrópica(Imagen imagen, InterfaceDetectorDeBordes detectorDeBordes){
 		
@@ -854,6 +897,9 @@ public class ProcesadorDeImagenes {
 		
 		return valorADevolver;
 	}
+	
+	
+	
 
 		
 	
