@@ -9,8 +9,8 @@ public class DetectorDeBordesLorentz implements InterfaceDetectorDeBordes{
 	}
 	
 	@Override
-	public int gradiente(int x) {
-		return (int) (1/((Math.pow(Math.abs(x), 2) / Math.pow(sigma, 2)) + 1));
+	public float gradiente(float derivada) {
+		return (float) (1/((Math.pow(Math.abs(derivada), 2) / Math.pow(sigma, 2)) + 1));
 	}
 	
 }

@@ -468,25 +468,36 @@ public class DetectorDeBordes {
 	}
 	
 	
-	private static int[][] calcularMascaraDeLaplacianoDelGaussiano(int longitudMascara) {
+	private static int[][] calcularMascaraDeLaplacianoDelGaussiano(int longitudMascara, int sigma) {
 		
 		int[][] mascaraDeLaplacianoDeGaussiano = new int [longitudMascara][longitudMascara];
+		
 		for (int j = 0; j < longitudMascara; ++j) {
 			for (int i = 0; i < longitudMascara; ++i) {
 				
 				if (j == longitudMascara/2 && i == longitudMascara/2){
 					
-					mascaraDeLaplacianoDeGaussiano[i][j] = ((longitudMascara * longitudMascara)-1)*-1;
+					mascaraDeLaplacianoDeGaussiano[i][j] = (int) (-2/((Math.sqrt(2*Math.PI))*Math.pow(sigma,3)));
 				} else {
 					
-					mascaraDeLaplacianoDeGaussiano[i][j] = 1;
+					mascaraDeLaplacianoDeGaussiano[i][j] = (int) calcularValorMascaraLaplacianoDelGaussiano(i - (longitudMascara/2), j - 
+							(longitudMascara/2), sigma);
 				}
 			}
 		}
 		return mascaraDeLaplacianoDeGaussiano;
 	}
 	
-		public static BufferedImage aplicarDetectorLaplacianoDelGaussiano(Imagen imagenOriginal, int sigma, int umbral){
+	private static float calcularValorMascaraLaplacianoDelGaussiano(int indiceI, int indiceJ, int sigma){
+		
+		float termino1 = (float) ((-1/((Math.sqrt(2*Math.PI))*Math.pow(sigma,3))));
+		float termino2 = (float) (2-(Math.pow(indiceI, 2) + Math.pow(indiceJ, 2)/Math.pow(sigma, 2)));
+		float termino3 = (float) Math.pow(Math.E,(-1*((Math.pow(indiceI, 2) + Math.pow(indiceJ, 2))/(2*Math.pow(sigma, 2)))));
+		float valor = (termino1 * termino2 * termino3);
+		return valor;
+	}
+		
+	public static BufferedImage aplicarDetectorLaplacianoDelGaussiano(Imagen imagenOriginal, int sigma, int umbral){
 		
 		Imagen imagenFiltrada = FiltroGaussiano.aplicarFiltroGaussiano(imagenOriginal, sigma);
 		int longitudMascara = sigma * 3;
@@ -496,7 +507,7 @@ public class DetectorDeBordes {
 			longitudMascara = longitudMascara-1;
 		}
 		
-		int[][] mascaraLaplacianoDelGaussiano = calcularMascaraDeLaplacianoDelGaussiano(longitudMascara);
+		int[][] mascaraLaplacianoDelGaussiano = calcularMascaraDeLaplacianoDelGaussiano(longitudMascara, sigma);
 		
 		FiltroNuevo filtroLaplacianoDelGaussiano = new FiltroNuevo(mascaraLaplacianoDelGaussiano);
         
@@ -540,7 +551,7 @@ public class DetectorDeBordes {
 			longitudMascara = longitudMascara-1;
 		}
 		
-		int[][] mascaraDeLaplacianoDelGaussiano = calcularMascaraDeLaplacianoDelGaussiano(longitudMascara);
+		int[][] mascaraDeLaplacianoDelGaussiano = calcularMascaraDeLaplacianoDelGaussiano(longitudMascara, sigma);
 				
 		Imagen imagenFiltrada = FiltroGaussiano.aplicarFiltroGaussiano(imagenOriginal, sigma);
 

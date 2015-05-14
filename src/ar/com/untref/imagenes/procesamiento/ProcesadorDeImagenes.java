@@ -598,9 +598,6 @@ public class ProcesadorDeImagenes {
 		Imagen imagenResultante = new Imagen(imagenOriginal.getBufferedImage(), imagenOriginal.getFormato(), imagenOriginal.getNombre(), imagenOriginal.getMatriz(Canal.ROJO), imagenOriginal.getMatriz(Canal.VERDE), imagenOriginal.getMatriz(Canal.AZUL));			
 		int ancho = imagen.getBufferedImage().getWidth();	
 		int alto = imagen.getBufferedImage().getHeight();
-		int[][] matrizRojo = imagen.getMatriz(Canal.ROJO);
-		int[][] matrizVerde = imagen.getMatriz(Canal.VERDE);
-		int[][] matrizAzul = imagen.getMatriz(Canal.AZUL);
 		
 		int[][] matrizRojoResultante = new int[ancho][alto];
 		int[][] matrizVerdeResultante = new int[ancho][alto];
@@ -613,60 +610,249 @@ public class ProcesadorDeImagenes {
 					int verdeActual = new Color (imagen.getBufferedImage().getRGB(i, j)).getRed();
 					int azulActual = new Color (imagen.getBufferedImage().getRGB(i, j)).getRed();
 
-					int DnIijRojo = i > 0 ? matrizRojo[i - 1][j] - rojoActual : 0;
-					int DsIijRojo = i < ancho - 1 ? matrizRojo[i + 1][j] - rojoActual : 0;
-					int DeIijRojo = j < alto - 1 ? matrizRojo[i][j + 1] - rojoActual : 0;
-					int DoIijRojo = j > 0 ? matrizRojo[i][j - 1] - rojoActual : 0;
-
-					int DnIijVerde = i > 0 ? matrizVerde[i - 1][j] - verdeActual : 0;
-					int DsIijVerde = i < ancho - 1 ? matrizVerde[i + 1][j] - verdeActual : 0;
-					int DeIijVerde = j < alto - 1 ? matrizVerde[i][j + 1] - verdeActual : 0;
-					int DoIijVerde = j > 0 ? matrizVerde[i][j - 1] - verdeActual : 0;
+					float derivadaNorteRojo = calcularDerivadaNorte(imagen.getBufferedImage(), i, j, Canal.ROJO);
+					float derivadaNorteVerde = calcularDerivadaNorte(imagen.getBufferedImage(), i, j, Canal.VERDE);
+					float derivadaNorteAzul = calcularDerivadaNorte(imagen.getBufferedImage(), i, j, Canal.AZUL);
 					
-					int DnIijAzul = i > 0 ? matrizAzul[i - 1][j] - azulActual : 0;
-					int DsIijAzul = i < ancho - 1 ? matrizAzul[i + 1][j] - azulActual : 0;
-					int DeIijAzul = j < alto - 1 ? matrizAzul[i][j + 1] - azulActual : 0;
-					int DoIijAzul = j > 0 ? matrizAzul[i][j - 1] - azulActual : 0;
+					float derivadaEsteRojo = calcularDerivadaEste(imagen.getBufferedImage(), i, j, Canal.ROJO);
+					float derivadaEsteVerde = calcularDerivadaEste(imagen.getBufferedImage(), i, j, Canal.VERDE);
+					float derivadaEsteAzul = calcularDerivadaEste(imagen.getBufferedImage(), i, j, Canal.AZUL);
 					
-					double nuevoValorRojo = calcularValorDifusionAnisotropica(detectorDeBordes, rojoActual, DnIijRojo, DsIijRojo, DeIijRojo, DoIijRojo);
-					double nuevoValorVerde = calcularValorDifusionAnisotropica(detectorDeBordes, verdeActual, DnIijVerde, DsIijVerde, DeIijVerde, DoIijVerde);					
-					double nuevoValorAzul = calcularValorDifusionAnisotropica(detectorDeBordes, azulActual, DnIijAzul, DsIijAzul, DeIijAzul, DoIijAzul);
+					float derivadaOesteRojo = calcularDerivadaOeste(imagen.getBufferedImage(), i, j, Canal.ROJO);
+					float derivadaOesteVerde = calcularDerivadaOeste(imagen.getBufferedImage(), i, j, Canal.VERDE);
+					float derivadaOesteAzul = calcularDerivadaOeste(imagen.getBufferedImage(), i, j, Canal.AZUL);
+					
+					float derivadaSurRojo = calcularDerivadaSur(imagen.getBufferedImage(), i, j, Canal.ROJO);
+					float derivadaSurVerde = calcularDerivadaSur(imagen.getBufferedImage(), i, j, Canal.VERDE);
+					float derivadaSurAzul = calcularDerivadaSur(imagen.getBufferedImage(), i, j, Canal.AZUL);
+					
+					float nuevoValorRojo = calcularValorDifusionAnisotropica(detectorDeBordes, rojoActual, derivadaNorteRojo, derivadaSurRojo, derivadaEsteRojo, derivadaOesteRojo);
+					float nuevoValorVerde = calcularValorDifusionAnisotropica(detectorDeBordes, verdeActual, derivadaNorteVerde, derivadaSurVerde, derivadaEsteVerde, derivadaOesteVerde);					
+					float nuevoValorAzul = calcularValorDifusionAnisotropica(detectorDeBordes, azulActual, derivadaNorteAzul, derivadaSurAzul, derivadaEsteAzul, derivadaOesteAzul);
 
 					matrizRojoResultante[i][j] = (int) nuevoValorRojo;
 					matrizVerdeResultante[i][j] = (int) nuevoValorVerde;
 					matrizAzulResultante[i][j] = (int) nuevoValorAzul;
 					
-					int[][] matrizRojoFinal = MatricesManager.aplicarTransformacionLineal(matrizRojoResultante);
-					int[][] matrizVerdeFinal = MatricesManager.aplicarTransformacionLineal(matrizVerdeResultante);
-					int[][] matrizAzulFinal = MatricesManager.aplicarTransformacionLineal(matrizAzulResultante);
-					
-					imagenResultante.setBufferedImage(MatricesManager.obtenerImagenDeMatrices(matrizRojoFinal, matrizVerdeFinal, matrizAzulFinal));
-					
-//					Color colorResultante = new Color((int)nuevoValorRojo, (int)nuevoValorVerde, (int)nuevoValorAzul);
-//					imagenResultante.getBufferedImage().setRGB(i, j, colorResultante.getRGB());
 				}
 			}
+			int[][] matrizRojoFinal = MatricesManager.aplicarTransformacionLineal(matrizRojoResultante);
+			int[][] matrizVerdeFinal = MatricesManager.aplicarTransformacionLineal(matrizVerdeResultante);
+			int[][] matrizAzulFinal = MatricesManager.aplicarTransformacionLineal(matrizAzulResultante);
+			
+			imagenResultante.setBufferedImage(MatricesManager.obtenerImagenDeMatrices(matrizRojoFinal, matrizVerdeFinal, matrizAzulFinal));
 
 			return imagenResultante.getBufferedImage();
 		}
 
-	private double calcularValorDifusionAnisotropica(
+	private float calcularValorDifusionAnisotropica(
 			InterfaceDetectorDeBordes detectorDeBordes, int colorActual,
-			int DnIij, int DsIij, int DeIij, int DoIij) {
+			float derivadaNorte, float derivadaSur, float derivadaEste, float derivadaOeste) {
 		
-		double Cnij = detectorDeBordes.gradiente(DnIij);
-		double Csij = detectorDeBordes.gradiente(DsIij);
-		double Ceij = detectorDeBordes.gradiente(DeIij);
-		double Coij = detectorDeBordes.gradiente(DoIij);
+		float Cnij = detectorDeBordes.gradiente(derivadaNorte);
+		float Csij = detectorDeBordes.gradiente(derivadaSur);
+		float Ceij = detectorDeBordes.gradiente(derivadaEste);
+		float Coij = detectorDeBordes.gradiente(derivadaOeste);
 
-		double DnIijCnij = DnIij * Cnij;
-		double DsIijCsij = DsIij * Csij;
-		double DeIijCeij = DeIij * Ceij;
-		double DoIijCoij = DoIij * Coij;
+		float DnIijCnij = derivadaNorte * Cnij;
+		float DsIijCsij = derivadaSur * Csij;
+		float DeIijCeij = derivadaEste * Ceij;
+		float DoIijCoij = derivadaOeste * Coij;
 
-		double lambda = 0.25;
-		double nuevoValor = colorActual + lambda * (DnIijCnij + DsIijCsij + DeIijCeij + DoIijCoij);
+		float lambda = 0.25f;
+		float nuevoValor = colorActual + lambda * (DnIijCnij + DsIijCsij + DeIijCeij + DoIijCoij);
 		return nuevoValor;
+	}
+
+	private static int calcularDerivadaEste(BufferedImage image, int j, int k, Canal canal) {
+		
+		int coordenada = 0;
+		int valorADevolver = 0;
+		int colorActual = 0;
+		int colorCorrido = 0;
+		
+		switch(canal){
+			case ROJO:
+				coordenada = j - 1;
+				colorActual = new Color(image.getRGB(j, k)).getRed();
+				if(coordenada < image.getWidth() && coordenada >= 0){
+
+				colorCorrido = new Color(image.getRGB(j - 1, k)).getRed();
+				}else{
+					colorCorrido = colorActual;
+				}
+				valorADevolver = colorCorrido - colorActual;
+				break;
+		
+			case VERDE:
+				coordenada = j - 1;
+				colorActual = new Color(image.getRGB(j, k)).getGreen();
+				
+				if(coordenada < image.getWidth() && coordenada >= 0){
+				colorCorrido = new Color(image.getRGB(j - 1, k)).getGreen();
+				}else{
+					colorCorrido = colorActual;
+				}
+				valorADevolver = colorActual;
+				break;
+		default:
+			coordenada = j - 1;
+			colorActual = new Color(image.getRGB(j, k)).getBlue();
+			if(coordenada < image.getWidth() && coordenada >= 0){
+			valorADevolver = new Color(image.getRGB(
+					j - 1, k)).getBlue();
+			}else{
+				colorCorrido = colorActual;
+			}
+			valorADevolver = colorCorrido - colorActual;
+			break;
+		}
+		
+		return valorADevolver;
+	}
+
+	private static int calcularDerivadaOeste(BufferedImage image, int j, int k, Canal canal) {
+		
+		int valorADevolver = 0;
+		int coordenada = 0;
+		int colorActual = 0;
+		int colorCorrido = 0;
+		
+		switch(canal){
+			case ROJO:
+				coordenada = j + 1;
+				colorActual = new Color(image.getRGB(j, k)).getRed();
+				if(coordenada < image.getWidth() && coordenada >= 0){
+
+				colorCorrido = new Color(image.getRGB(j + 1, k)).getRed();
+				}else{
+					colorCorrido = colorActual;
+				}
+				valorADevolver = colorCorrido - colorActual;
+				break;
+				
+			case VERDE:
+				coordenada = j + 1;
+				colorActual = new Color(image.getRGB(j, k)).getRed();
+				if(coordenada < image.getWidth() && coordenada >= 0){
+
+				colorCorrido = new Color(image.getRGB(j + 1, k)).getGreen();
+				}else{
+					colorCorrido = colorActual;
+				}
+				valorADevolver = colorCorrido - colorActual;
+				break;
+				
+		default:
+			coordenada = j + 1;
+			colorActual = new Color(image.getRGB(j, k)).getRed();
+			if(coordenada < image.getWidth() && coordenada >= 0){
+
+			colorCorrido = new Color(image.getRGB(j + 1, k)).getBlue();
+			}else{
+				colorCorrido = colorActual;
+			}
+			valorADevolver = colorCorrido - colorActual;
+			break;
+		}
+		
+		return valorADevolver;
+	}
+
+	private static int calcularDerivadaSur(BufferedImage image, int j, int k, Canal canal) {
+		
+		int valorADevolver = 0;
+		int coordenada = 0;
+		int colorActual = 0;
+		int colorCorrido = 0;
+		
+		switch(canal){
+			case ROJO:
+				coordenada = k + 1;
+				colorActual = new Color(image.getRGB(j, k)).getRed();
+				if(coordenada < image.getHeight() && coordenada >= 0){
+
+				colorCorrido = new Color(image.getRGB(j, k + 1)).getRed();
+				}else{
+					colorCorrido = colorActual;
+				}
+				valorADevolver = colorCorrido - colorActual;
+				break;
+		
+			case VERDE:
+				coordenada = k + 1;
+				colorActual = new Color(image.getRGB(j, k)).getRed();
+				if(coordenada < image.getHeight() && coordenada >= 0){
+
+				colorCorrido = new Color(image.getRGB(j, k + 1)).getGreen();
+				}else{
+					colorCorrido = colorActual;
+				}
+				valorADevolver = colorCorrido - colorActual;
+				break;
+				
+		default:
+			coordenada = k + 1;
+			colorActual = new Color(image.getRGB(j, k)).getRed();
+			if(coordenada < image.getHeight() && coordenada >= 0){
+
+			colorCorrido = new Color(image.getRGB(j, k + 1)).getBlue();
+			}else{
+				colorCorrido = colorActual;
+			}
+			valorADevolver = colorCorrido - colorActual;
+			break;
+		}
+		
+		return valorADevolver;
+	}
+
+	private static int calcularDerivadaNorte(BufferedImage image, int j, int k, Canal canal) {
+		
+		int valorADevolver = 0;
+		int coordenada = 0;
+		int colorActual = 0;
+		int colorCorrido = 0;
+		
+		switch(canal){
+			case ROJO:
+				coordenada = k - 1;
+				colorActual = new Color(image.getRGB(j, k)).getRed();
+				if(coordenada < image.getHeight() && coordenada >= 0){
+
+				colorCorrido = new Color(image.getRGB(j, k - 1)).getRed();
+				}else{
+					colorCorrido = colorActual;
+				}
+				valorADevolver = colorCorrido - colorActual;
+				break;
+		
+			case VERDE:
+				coordenada = k - 1;
+				colorActual = new Color(image.getRGB(j, k)).getRed();
+				if(coordenada < image.getHeight() && coordenada >= 0){
+
+				colorCorrido = new Color(image.getRGB(j, k - 1)).getGreen();
+				}else{
+					colorCorrido = colorActual;
+				}
+				valorADevolver = colorCorrido - colorActual;
+				break;
+				
+		default:
+			coordenada = k - 1;
+			colorActual = new Color(image.getRGB(j, k)).getRed();
+			if(coordenada < image.getHeight() && coordenada >= 0){
+
+			colorCorrido = new Color(image.getRGB(j, k - 1)).getBlue();
+			}else{
+				colorCorrido = colorActual;
+			}
+			valorADevolver = colorCorrido - colorActual;
+			break;
+		}
+		
+		return valorADevolver;
 	}
 
 		
