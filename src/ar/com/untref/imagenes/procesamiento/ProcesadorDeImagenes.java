@@ -592,6 +592,7 @@ public class ProcesadorDeImagenes {
 			int[][] matrizAzulResultante = new int[ancho][alto];
 			float lambda = 0.25f;
 			
+			for (int h = 0; h < repeticiones; h++){
 				for (int i = 0; i < ancho; i++) {
 					for (int j = 0; j < alto; j++) {
 						
@@ -631,12 +632,12 @@ public class ProcesadorDeImagenes {
 				int[][] matrizAzulFinal = MatricesManager.aplicarTransformacionLineal(matrizAzulResultante);
 				
 				imagenResultante.setBufferedImage(MatricesManager.obtenerImagenDeMatrices(matrizRojoFinal, matrizVerdeFinal, matrizAzulFinal));
-
+			}
 				return imagenResultante.getBufferedImage();
 			}
 
 	
-	public BufferedImage aplicarDifusionAnisotrópica(Imagen imagen, InterfaceDetectorDeBordes detectorDeBordes){
+	public BufferedImage aplicarDifusionAnisotrópica(Imagen imagen, InterfaceDetectorDeBordes detectorDeBordes, int repeticiones){
 		
 		Imagen imagenResultante = new Imagen(imagenOriginal.getBufferedImage(), imagenOriginal.getFormato(), imagenOriginal.getNombre(), imagenOriginal.getMatriz(Canal.ROJO), imagenOriginal.getMatriz(Canal.VERDE), imagenOriginal.getMatriz(Canal.AZUL));			
 		int ancho = imagen.getBufferedImage().getWidth();	
@@ -646,6 +647,7 @@ public class ProcesadorDeImagenes {
 		int[][] matrizVerdeResultante = new int[ancho][alto];
 		int[][] matrizAzulResultante = new int[ancho][alto];
 			
+		for(int h = 0; h < repeticiones ; h++){
 			for (int i = 0; i < ancho; i++) {
 				for (int j = 0; j < alto; j++) {
 					
@@ -684,7 +686,7 @@ public class ProcesadorDeImagenes {
 			int[][] matrizAzulFinal = MatricesManager.aplicarTransformacionLineal(matrizAzulResultante);
 			
 			imagenResultante.setBufferedImage(MatricesManager.obtenerImagenDeMatrices(matrizRojoFinal, matrizVerdeFinal, matrizAzulFinal));
-
+		}
 			return imagenResultante.getBufferedImage();
 		}
 

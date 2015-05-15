@@ -999,7 +999,7 @@ public class VentanaRuido extends JFrame {
 		BufferedImage bufferedImage = imagenAnterior.getBufferedImage();
 		
 		for(int i = 0; i < repeticiones ; i++){
-			bufferedImage = ProcesadorDeImagenes.obtenerInstancia().aplicarDifusionAnisotrópica(imagenAnterior, detectorDeBordes);
+			bufferedImage = ProcesadorDeImagenes.obtenerInstancia().aplicarDifusionAnisotrópica(imagenAnterior, detectorDeBordes, repeticiones);
 		}
 		
 		Imagen nuevaImagenActual = new Imagen(bufferedImage, imagenAnterior.getFormato(), imagenAnterior.getNombre());

@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -30,9 +31,7 @@ public class DifusionAnisotropicaDialog extends JDialog {
 	private JLabel labelRepeticiones;
 	private JTextField repeticionElegida;
 	private VentanaRuido ventanaRuido;
-	private JRadioButton leclerc;
-	private JRadioButton lorentz;
-	private JPanel borderDetectorPanel;
+	private JComboBox<String> comboDetectores;
 
 	public DifusionAnisotropicaDialog(VentanaPrincipal ventana) {
 		super(ventana);
@@ -53,14 +52,11 @@ public class DifusionAnisotropicaDialog extends JDialog {
 		sigmaElegido = new JTextField();
 		repeticionElegida = new JTextField();
 		
-		borderDetectorPanel = new JPanel();
 		
-		leclerc = new JRadioButton("Leclerc", true);
-		lorentz = new JRadioButton("Lorentz");
+		String[] detectores = {"Leclerc", "Lorentz"};
+		comboDetectores = new JComboBox<String>(detectores);
+		comboDetectores.setSelectedIndex(0);
 		
-		borderDetectorPanel.add(leclerc);
-		borderDetectorPanel.add(lorentz);
-		borderDetectorPanel.setBorder(BorderFactory.createTitledBorder("Detector de borde"));
 		createLayout();
 
 		setModalityType(ModalityType.APPLICATION_MODAL);
@@ -84,12 +80,11 @@ public class DifusionAnisotropicaDialog extends JDialog {
 						int repeticiones = Integer.valueOf(repeticionElegida.getText().toString());
 						
 						InterfaceDetectorDeBordes detectorDeBordes = null;
-						if(leclerc.isSelected()) {
+						
+						if(comboDetectores.getSelectedIndex() == 0) {
 							detectorDeBordes = new DetectorDeBordesLeclerc(sigma);
-							lorentz.setSelected(false);
-						} else if(lorentz.isSelected()) {
+						} else if(comboDetectores.getSelectedIndex() == 1){
 							detectorDeBordes = new DetectorDeBordesLorentz(sigma);
-							leclerc.setSelected(false);
 						}
 						
 						if(ventana != null){
@@ -99,7 +94,6 @@ public class DifusionAnisotropicaDialog extends JDialog {
 						if (ventanaRuido != null){
 							ventanaRuido.aplicarDifusionAnisotropica(sigma, repeticiones, detectorDeBordes);							
 						}
-						
 						
 						DifusionAnisotropicaDialog.this.dispose();
 					} catch (Exception ex){
@@ -120,14 +114,14 @@ public class DifusionAnisotropicaDialog extends JDialog {
 		gl.setHorizontalGroup(gl.createParallelGroup(Alignment.CENTER)
 				.addComponent(labelSigma).addComponent(labelRepeticiones)
 				.addComponent(sigmaElegido).addComponent(repeticionElegida)
-				.addComponent(borderDetectorPanel).addComponent(leclerc).addComponent(lorentz)
+				.addComponent(comboDetectores)
 				.addComponent(botonConfirmar).addGap(200));
 
 		gl.setVerticalGroup(gl.createSequentialGroup().addGap(30)
 				.addComponent(labelSigma).addGap(20).addComponent(sigmaElegido).addGap(20)
-				.addComponent(labelRepeticiones).addGap(20).addComponent(repeticionElegida)
-				.addComponent(borderDetectorPanel).addGap(20).addComponent(leclerc).addGap(20)
-				.addComponent(lorentz).addGap(20).addGap(20).addComponent(botonConfirmar).addGap(30));
+				.addComponent(labelRepeticiones).addGap(20).addComponent(repeticionElegida).addGap(20)
+				.addComponent(comboDetectores).addGap(20)
+				.addComponent(botonConfirmar).addGap(30));
 
 		pack();
 	}
