@@ -19,8 +19,6 @@ public class DifusionIsotropicaDialog extends JDialog {
 
 	private VentanaPrincipal ventana;
 	private JButton botonConfirmar;
-	private JLabel labelSigma;
-	private JTextField sigmaElegido;
 	private JLabel labelRepeticiones;
 	private JTextField repeticionElegida;
 	private VentanaRuido ventanaRuido;
@@ -39,9 +37,7 @@ public class DifusionIsotropicaDialog extends JDialog {
 
 	private void initUI() {
 
-		labelSigma = new JLabel("Sigma");
 		labelRepeticiones = new JLabel("Repeticiones");
-		sigmaElegido = new JTextField();
 		repeticionElegida = new JTextField();
 
 		createLayout();
@@ -60,20 +56,18 @@ public class DifusionIsotropicaDialog extends JDialog {
 		botonConfirmar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 
-				if (!sigmaElegido.getText().toString().isEmpty() && !repeticionElegida.getText().toString().isEmpty()) {
+				if (!repeticionElegida.getText().toString().isEmpty()) {
 					
 					try{
-						int sigma = Integer.valueOf(sigmaElegido.getText().toString());
 						int repeticiones = Integer.valueOf(repeticionElegida.getText().toString());
 						
 						if(ventana != null){
-							ventana.aplicarDifusionIsotropica(sigma, repeticiones);							
+							ventana.aplicarDifusionIsotropica(repeticiones);							
 						}
 						
 						if (ventanaRuido != null){
-							ventanaRuido.aplicarDifusionIsotropica(sigma, repeticiones);							
+							ventanaRuido.aplicarDifusionIsotropica(repeticiones);							
 						}
-						
 						
 						DifusionIsotropicaDialog.this.dispose();
 					} catch (Exception ex){
@@ -92,12 +86,10 @@ public class DifusionIsotropicaDialog extends JDialog {
 		gl.setAutoCreateGaps(true);
 
 		gl.setHorizontalGroup(gl.createParallelGroup(Alignment.CENTER)
-				.addComponent(labelSigma).addComponent(labelRepeticiones)
-				.addComponent(sigmaElegido).addComponent(repeticionElegida)
+				.addComponent(labelRepeticiones).addComponent(repeticionElegida)
 				.addComponent(botonConfirmar).addGap(200));
 
 		gl.setVerticalGroup(gl.createSequentialGroup().addGap(30)
-				.addComponent(labelSigma).addGap(20).addComponent(sigmaElegido).addGap(20)
 				.addComponent(labelRepeticiones).addGap(20).addComponent(repeticionElegida)
 				.addGap(20).addComponent(botonConfirmar).addGap(30));
 

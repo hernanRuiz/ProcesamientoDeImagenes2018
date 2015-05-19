@@ -39,6 +39,7 @@ import ar.com.untref.imagenes.filtros.FiltroPasaAltos;
 import ar.com.untref.imagenes.helpers.DialogsHelper;
 import ar.com.untref.imagenes.listeners.GuardarComoListener;
 import ar.com.untref.imagenes.modelo.Imagen;
+import ar.com.untref.imagenes.procesamiento.Difuminador;
 import ar.com.untref.imagenes.procesamiento.ProcesadorDeImagenes;
 import ar.com.untref.imagenes.procesamiento.Umbralizador;
 import ar.com.untref.imagenes.ruido.GeneradorDeRuido;
@@ -981,10 +982,10 @@ public class VentanaRuido extends JFrame {
 		VentanaRuido.this.refrescarImagen();
 	}
 	
-	public void aplicarDifusionIsotropica(int sigma, int repeticiones) {
+	public void aplicarDifusionIsotropica(int repeticiones) {
 
 		Imagen imagenAnterior = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
-		BufferedImage bufferedImage = ProcesadorDeImagenes.obtenerInstancia().aplicarDifusionIsotropica(imagenAnterior, sigma, repeticiones);
+		BufferedImage bufferedImage = Difuminador.aplicarDifusion(imagenAnterior, null, repeticiones, true);
 		Imagen nuevaImagenActual = new Imagen(bufferedImage,
 				imagenAnterior.getFormato(), imagenAnterior.getNombre());
 		ProcesadorDeImagenes.obtenerInstancia().setImagenActual(
@@ -993,15 +994,13 @@ public class VentanaRuido extends JFrame {
 		VentanaRuido.this.refrescarImagen();
 	}
 	
-	public void aplicarDifusionAnisotropica(int sigma, int repeticiones, InterfaceDetectorDeBordes detectorDeBordes) {
+	public void aplicarDifusionAnisotropica(int repeticiones, InterfaceDetectorDeBordes detectorDeBordes) {
 
 		Imagen imagenAnterior = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
 		BufferedImage bufferedImage = imagenAnterior.getBufferedImage();
 		
-		for(int i = 0; i < repeticiones ; i++){
-			bufferedImage = ProcesadorDeImagenes.obtenerInstancia().aplicarDifusionAnisotrópica(imagenAnterior, detectorDeBordes, repeticiones);
-		}
-		
+		bufferedImage = Difuminador.aplicarDifusion(imagenAnterior, detectorDeBordes, repeticiones, false);
+	
 		Imagen nuevaImagenActual = new Imagen(bufferedImage, imagenAnterior.getFormato(), imagenAnterior.getNombre());
 		ProcesadorDeImagenes.obtenerInstancia().setImagenActual(nuevaImagenActual);
 

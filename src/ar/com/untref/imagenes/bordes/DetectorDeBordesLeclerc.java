@@ -10,7 +10,7 @@ public class DetectorDeBordesLeclerc implements InterfaceDetectorDeBordes {
 
 	@Override
 	public float gradiente(float derivada) {
-		return (float) Math.exp(-Math.pow(Math.abs(derivada), 2) / Math.pow(sigma, 2));
+		return (float) Math.exp( (float) -Math.pow(Math.abs(derivada), 2) / Math.pow(sigma, 2));
 	}
 	
 }

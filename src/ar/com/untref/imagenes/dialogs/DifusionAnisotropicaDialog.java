@@ -4,16 +4,13 @@ import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
 import javax.swing.JTextField;
-import javax.swing.GroupLayout.Alignment;
 
 import ar.com.untref.imagenes.bordes.DetectorDeBordesLeclerc;
 import ar.com.untref.imagenes.bordes.DetectorDeBordesLorentz;
@@ -82,17 +79,19 @@ public class DifusionAnisotropicaDialog extends JDialog {
 						InterfaceDetectorDeBordes detectorDeBordes = null;
 						
 						if(comboDetectores.getSelectedIndex() == 0) {
+							
 							detectorDeBordes = new DetectorDeBordesLeclerc(sigma);
 						} else if(comboDetectores.getSelectedIndex() == 1){
+							
 							detectorDeBordes = new DetectorDeBordesLorentz(sigma);
 						}
 						
 						if(ventana != null){
-							ventana.aplicarDifusionAnisotropica(sigma, repeticiones, detectorDeBordes);
+							ventana.aplicarDifusionAnisotropica(repeticiones, detectorDeBordes);
 						}
 						
 						if (ventanaRuido != null){
-							ventanaRuido.aplicarDifusionAnisotropica(sigma, repeticiones, detectorDeBordes);							
+							ventanaRuido.aplicarDifusionAnisotropica(repeticiones, detectorDeBordes);							
 						}
 						
 						DifusionAnisotropicaDialog.this.dispose();

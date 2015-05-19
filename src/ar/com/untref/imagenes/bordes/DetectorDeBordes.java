@@ -274,13 +274,13 @@ public class DetectorDeBordes {
         int[][] matrizAzul = filtroEnX.filtrar(imagenFiltradaEnX, mascaraDeLaplaciano, Canal.AZUL);
         	
         for(int j = 0; j < matrizCrucesPorCerosRojo.length; j++){
-	           for(int i = 0; i < matrizCrucesPorCerosRojo[0].length; i++){
-	        	   matrizRojoTranspuesta[i][j] = matrizRojo[j][i];
-	        	   matrizVerdeTranspuesta[i][j] = matrizVerde[j][i];
-	        	   matrizAzulTranspuesta[i][j] = matrizAzul[j][i];
-	           }
-	       }
-        
+           for(int i = 0; i < matrizCrucesPorCerosRojo[0].length; i++){
+        	   matrizRojoTranspuesta[i][j] = matrizRojo[j][i];
+        	   matrizVerdeTranspuesta[i][j] = matrizVerde[j][i];
+        	   matrizAzulTranspuesta[i][j] = matrizAzul[j][i];
+           }
+        }
+    
         calcularCrucesPorCero(imagenOriginal, matrizCrucesPorCerosRojo,
 				matrizCrucesPorCerosVerde, matrizCrucesPorCerosAzul,
 				matrizRojoTranspuesta, matrizVerdeTranspuesta,
