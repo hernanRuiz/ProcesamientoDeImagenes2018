@@ -11,10 +11,10 @@ public class DetectarBordesDireccionales {
 
 	public static BufferedImage aplicarDetectorDeBordesDireccional(Imagen imagenOriginal, String nombreMascara){
 		
-		int[][] mascaraEnX = calcularMascaraEnDireccion(nombreMascara);
-		int[][] mascaraEnY = calcularMascaraEnDireccion(mascaraEnX, nombreMascara,  "y");
-		int[][] mascaraEn45 = calcularMascaraEnDireccion(mascaraEnX, nombreMascara, "45");
-		int[][] mascaraEn135 = calcularMascaraEnDireccion(mascaraEnX, nombreMascara, "135");
+		float[][] mascaraEnX = calcularMascaraEnDireccion(nombreMascara);
+		float[][] mascaraEnY = calcularMascaraEnDireccion(mascaraEnX, nombreMascara,  "y");
+		float[][] mascaraEn45 = calcularMascaraEnDireccion(mascaraEnX, nombreMascara, "45");
+		float[][] mascaraEn135 = calcularMascaraEnDireccion(mascaraEnX, nombreMascara, "135");
 		
 		int[][] matrizMejoresBordesRojos = new int[imagenOriginal.getBufferedImage().getWidth()][imagenOriginal.getBufferedImage().getHeight()];
 		int[][] matrizMejoresBordesVerdes = new int[imagenOriginal.getBufferedImage().getWidth()][imagenOriginal.getBufferedImage().getHeight()];
@@ -33,21 +33,21 @@ public class DetectarBordesDireccionales {
         FiltroNuevo filtroEn135 = new FiltroNuevo(mascaraEn135);
         
         //Aplicamos filtros en X, en Y, en 45 y en 135
-        int[][] matrizRojoEnX = filtroEnX.filtrar(imagenFiltradaEnX, mascaraEnX, Canal.ROJO);
-        int[][] matrizVerdeEnX = filtroEnX.filtrar(imagenFiltradaEnX, mascaraEnX, Canal.VERDE);
-        int[][] matrizAzulEnX = filtroEnX.filtrar(imagenFiltradaEnX, mascaraEnX, Canal.AZUL);
+        int[][] matrizRojoEnX = filtroEnX.filtrar(imagenFiltradaEnX, Canal.ROJO);
+        int[][] matrizVerdeEnX = filtroEnX.filtrar(imagenFiltradaEnX, Canal.VERDE);
+        int[][] matrizAzulEnX = filtroEnX.filtrar(imagenFiltradaEnX, Canal.AZUL);
         		
-        int[][] matrizRojoEnY = filtroEnY.filtrar(imagenFiltradaEnY, mascaraEnY, Canal.ROJO);
-        int[][] matrizVerdeEnY = filtroEnY.filtrar(imagenFiltradaEnY, mascaraEnY, Canal.VERDE);
-        int[][] matrizAzulEnY = filtroEnY.filtrar(imagenFiltradaEnY, mascaraEnY, Canal.AZUL);
+        int[][] matrizRojoEnY = filtroEnY.filtrar(imagenFiltradaEnY, Canal.ROJO);
+        int[][] matrizVerdeEnY = filtroEnY.filtrar(imagenFiltradaEnY, Canal.VERDE);
+        int[][] matrizAzulEnY = filtroEnY.filtrar(imagenFiltradaEnY, Canal.AZUL);
         
-        int[][] matrizRojoEn45 = filtroEn45.filtrar(imagenFiltradaEn45, mascaraEn45, Canal.ROJO);
-        int[][] matrizVerdeEn45 = filtroEn45.filtrar(imagenFiltradaEn45, mascaraEn45, Canal.VERDE);
-        int[][] matrizAzulEn45 = filtroEn45.filtrar(imagenFiltradaEn45, mascaraEn45, Canal.AZUL);
+        int[][] matrizRojoEn45 = filtroEn45.filtrar(imagenFiltradaEn45, Canal.ROJO);
+        int[][] matrizVerdeEn45 = filtroEn45.filtrar(imagenFiltradaEn45, Canal.VERDE);
+        int[][] matrizAzulEn45 = filtroEn45.filtrar(imagenFiltradaEn45, Canal.AZUL);
         		
-        int[][] matrizRojoEn135 = filtroEn135.filtrar(imagenFiltradaEn135, mascaraEn135, Canal.ROJO);
-        int[][] matrizVerdeEn135 = filtroEn135.filtrar(imagenFiltradaEn135, mascaraEn135, Canal.VERDE);
-        int[][] matrizAzulEn135 = filtroEn135.filtrar(imagenFiltradaEn135, mascaraEn135, Canal.AZUL);
+        int[][] matrizRojoEn135 = filtroEn135.filtrar(imagenFiltradaEn135, Canal.ROJO);
+        int[][] matrizVerdeEn135 = filtroEn135.filtrar(imagenFiltradaEn135, Canal.VERDE);
+        int[][] matrizAzulEn135 = filtroEn135.filtrar(imagenFiltradaEn135, Canal.AZUL);
         		
         //Hallamos los mejores bordes: el máximo para cada punto entre las 4 matrices.
         if(imagenOriginal.getBufferedImage().getWidth() == imagenOriginal.getBufferedImage().getHeight()){
@@ -119,9 +119,9 @@ public class DetectarBordesDireccionales {
 	}
 	
 	
-	private static int[][] calcularMascaraEnDireccion(String nombre) {
+	private static float[][] calcularMascaraEnDireccion(String nombre) {
 		
-		int [][] mascara = new int[3][3];
+		float [][] mascara = new float[3][3];
 		
 		switch (nombre) {
 
@@ -145,9 +145,9 @@ public class DetectarBordesDireccionales {
 		return mascara;
 	}
 	
-	private static int[][] calcularMascaraEnDireccion(int[][] mascaraOriginal, String nombre, String direccion) {
+	private static float[][] calcularMascaraEnDireccion(float[][] mascaraOriginal, String nombre, String direccion) {
 		
-		int [][] mascara = new int[3][3];
+		float [][] mascara = new float[3][3];
 		
 		switch (direccion) {
 
@@ -177,9 +177,10 @@ public class DetectarBordesDireccionales {
 	}
 
 	
-	private static int[][] calcularMascaraDePrewittEnX() {
+	private static float[][] calcularMascaraDePrewittEnX() {
 		
-		int[][] mascaraDePrewittEnX = new int [3][3];
+		float[][] mascaraDePrewittEnX = new float [3][3];
+		
 		mascaraDePrewittEnX[0][0]= -1;
 		mascaraDePrewittEnX[0][1]= -1;
 		mascaraDePrewittEnX[0][2]= -1;
@@ -193,8 +194,10 @@ public class DetectarBordesDireccionales {
 		return mascaraDePrewittEnX;
 	}
 	
-	private static int[][] calcularMascaraDePrewittEnY() {
-		int[][] mascaraDePrewittEnY = new int [3][3];
+	private static float[][] calcularMascaraDePrewittEnY() {
+		
+		float[][] mascaraDePrewittEnY = new float [3][3];
+		
 		mascaraDePrewittEnY[0][0]= -1;
 		mascaraDePrewittEnY[0][1]= 0;
 		mascaraDePrewittEnY[0][2]= 1;
@@ -208,9 +211,10 @@ public class DetectarBordesDireccionales {
 		return mascaraDePrewittEnY;
 	}
 	
-	private static int[][] calcularMascaraDePrewittEn45() {
+	private static float[][] calcularMascaraDePrewittEn45() {
 		
-		int[][] mascaraDePrewittEnX = new int [3][3];
+		float[][] mascaraDePrewittEnX = new float [3][3];
+		
 		mascaraDePrewittEnX[0][0]= 0;
 		mascaraDePrewittEnX[0][1]= -1;
 		mascaraDePrewittEnX[0][2]= -1;
@@ -224,9 +228,10 @@ public class DetectarBordesDireccionales {
 		return mascaraDePrewittEnX;
 	}
 	
-	private static int[][] calcularMascaraDePrewittEn135() {
+	private static float[][] calcularMascaraDePrewittEn135() {
 		
-		int[][] mascaraDePrewittEnX = new int [3][3];
+		float[][] mascaraDePrewittEnX = new float [3][3];
+		
 		mascaraDePrewittEnX[0][0]= -1;
 		mascaraDePrewittEnX[0][1]= -1;
 		mascaraDePrewittEnX[0][2]= 0;
@@ -240,8 +245,10 @@ public class DetectarBordesDireccionales {
 		return mascaraDePrewittEnX;
 	}
 	
-	private static int[][] calcularMascaraDeSobelEnX() {
-		int[][] mascaraDeSobelEnX = new int [3][3];
+	private static float[][] calcularMascaraDeSobelEnX() {
+		
+		float[][] mascaraDeSobelEnX = new float [3][3];
+		
 		mascaraDeSobelEnX[0][0]= -1;
 		mascaraDeSobelEnX[0][1]= -2;
 		mascaraDeSobelEnX[0][2]= -1;
@@ -251,11 +258,14 @@ public class DetectarBordesDireccionales {
 		mascaraDeSobelEnX[2][0]= 1;
 		mascaraDeSobelEnX[2][1]= 2;
 		mascaraDeSobelEnX[2][2]= 1;
+		
 		return mascaraDeSobelEnX;
 	}
 	
-	private static int[][] calcularMascaraDeSobelEnY() {
-		int[][] mascaraDeSobelEnY = new int [3][3];
+	private static float[][] calcularMascaraDeSobelEnY() {
+		
+		float[][] mascaraDeSobelEnY = new float [3][3];
+		
 		mascaraDeSobelEnY[0][0]= -1;
 		mascaraDeSobelEnY[0][1]= 0;
 		mascaraDeSobelEnY[0][2]= 1;
@@ -269,8 +279,10 @@ public class DetectarBordesDireccionales {
 		return mascaraDeSobelEnY;
 	}
 	
-	private static int[][] calcularMascaraDeSobelEn45() {
-		int[][] mascaraDeSobelEn45 = new int [3][3];
+	private static float[][] calcularMascaraDeSobelEn45() {
+		
+		float[][] mascaraDeSobelEn45 = new float [3][3];
+		
 		mascaraDeSobelEn45[0][0]= 0;
 		mascaraDeSobelEn45[0][1]= -1;
 		mascaraDeSobelEn45[0][2]= -2;
@@ -284,8 +296,10 @@ public class DetectarBordesDireccionales {
 		return mascaraDeSobelEn45;
 	}
 	
-	private static int[][] calcularMascaraDeSobelEn135() {
-		int[][] mascaraDeSobelEn135 = new int [3][3];
+	private static float[][] calcularMascaraDeSobelEn135() {
+		
+		float[][] mascaraDeSobelEn135 = new float [3][3];
+		
 		mascaraDeSobelEn135[0][0]= 0;
 		mascaraDeSobelEn135[0][1]= 1;
 		mascaraDeSobelEn135[0][2]= 2;
@@ -299,8 +313,10 @@ public class DetectarBordesDireccionales {
 		return mascaraDeSobelEn135;
 	}
 	
-	private static int[][] calcularMascaraDeKirshEnX() {
-		int[][] mascaraDeKirshEnX = new int [3][3];
+	private static float[][] calcularMascaraDeKirshEnX() {
+		
+		float[][] mascaraDeKirshEnX = new float [3][3];
+		
 		mascaraDeKirshEnX[0][0]= 5;
 		mascaraDeKirshEnX[0][1]= 5;
 		mascaraDeKirshEnX[0][2]= 5;
@@ -314,8 +330,10 @@ public class DetectarBordesDireccionales {
 		return mascaraDeKirshEnX;
 	}
 	
-	private static int[][] calcularMascaraDeKirshEnY() {
-		int[][] mascaraDeKirshEnY = new int [3][3];
+	private static float[][] calcularMascaraDeKirshEnY() {
+		
+		float[][] mascaraDeKirshEnY = new float [3][3];
+		
 		mascaraDeKirshEnY[0][0]= 5;
 		mascaraDeKirshEnY[0][1]= -3;
 		mascaraDeKirshEnY[0][2]= -3;
@@ -329,8 +347,10 @@ public class DetectarBordesDireccionales {
 		return mascaraDeKirshEnY;
 	}
 	
-	private static int[][] calcularMascaraDeKirshEn45() {
-		int[][] mascaraDeKirshEn45 = new int [3][3];
+	private static float[][] calcularMascaraDeKirshEn45() {
+		
+		float[][] mascaraDeKirshEn45 = new float [3][3];
+		
 		mascaraDeKirshEn45[0][0]=-3;
 		mascaraDeKirshEn45[0][1]= -3;
 		mascaraDeKirshEn45[0][2]= -3;
@@ -344,8 +364,10 @@ public class DetectarBordesDireccionales {
 		return mascaraDeKirshEn45;
 	}
 	
-	private static int[][] calcularMascaraDeKirshEn135() {
-		int[][] mascaraDeKirshEn135 = new int [3][3];
+	private static float[][] calcularMascaraDeKirshEn135() {
+		
+		float[][] mascaraDeKirshEn135 = new float [3][3];
+		
 		mascaraDeKirshEn135[0][0]=-3;
 		mascaraDeKirshEn135[0][1]= -3;
 		mascaraDeKirshEn135[0][2]= -3;
@@ -359,8 +381,10 @@ public class DetectarBordesDireccionales {
 		return mascaraDeKirshEn135;
 	}
 	
-	private static int[][] calcularMascaraNuevaEnX() {
-		int[][] mascaraDeNuevaEnX = new int [3][3];
+	private static float[][] calcularMascaraNuevaEnX() {
+		
+		float[][] mascaraDeNuevaEnX = new float [3][3];
+		
 		mascaraDeNuevaEnX[0][0]= 1;
 		mascaraDeNuevaEnX[0][1]= 1;
 		mascaraDeNuevaEnX[0][2]= 1;
@@ -374,8 +398,10 @@ public class DetectarBordesDireccionales {
 		return mascaraDeNuevaEnX;
 	}
 	
-	private static int[][] calcularMascaraNuevaEnY() {
-		int[][] mascaraDeNuevaEnY = new int [3][3];
+	private static float[][] calcularMascaraNuevaEnY() {
+		
+		float[][] mascaraDeNuevaEnY = new float [3][3];
+		
 		mascaraDeNuevaEnY[0][0]= 1;
 		mascaraDeNuevaEnY[0][1]= 1;
 		mascaraDeNuevaEnY[0][2]= -1;
@@ -389,8 +415,10 @@ public class DetectarBordesDireccionales {
 		return mascaraDeNuevaEnY;
 	}
 	
-	private static int[][] calcularMascaraNuevaEn45() {
-		int[][] mascaraDeNuevaEn45 = new int [3][3];
+	private static float[][] calcularMascaraNuevaEn45() {
+		
+		float[][] mascaraDeNuevaEn45 = new float [3][3];
+		
 		mascaraDeNuevaEn45[0][0]= 1;
 		mascaraDeNuevaEn45[0][1]= -1;
 		mascaraDeNuevaEn45[0][2]= -1;
@@ -404,8 +432,10 @@ public class DetectarBordesDireccionales {
 		return mascaraDeNuevaEn45;
 	}
 	
-	private static int[][] calcularMascaraNuevaEn135() {
-		int[][] mascaraDeNuevaEn135 = new int [3][3];
+	private static float[][] calcularMascaraNuevaEn135() {
+		
+		float[][] mascaraDeNuevaEn135 = new float [3][3];
+		
 		mascaraDeNuevaEn135[0][0]= -1;
 		mascaraDeNuevaEn135[0][1]= -1;
 		mascaraDeNuevaEn135[0][2]= 1;

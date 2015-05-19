@@ -10,9 +10,10 @@ import ar.com.untref.imagenes.procesamiento.MatricesManager;
 
 public class DetectorDeBordes {
 	
-	private static int[][] calcularMascaraDePrewittEnY() {
+	private static float[][] calcularMascaraDePrewittEnY() {
 		
-		int[][] mascaraDePrewittEnY = new int [3][3];
+		float[][] mascaraDePrewittEnY = new float [3][3];
+		
 		mascaraDePrewittEnY[0][0]= -1;
 		mascaraDePrewittEnY[0][1]= 0;
 		mascaraDePrewittEnY[0][2]= 1;
@@ -26,9 +27,10 @@ public class DetectorDeBordes {
 		return mascaraDePrewittEnY;
 	}
 	
-	private static int[][] calcularMascaraDePrewittEnX() {
+	private static float[][] calcularMascaraDePrewittEnX() {
 		
-		int[][] mascaraDePrewittEnX = new int [3][3];
+		float[][] mascaraDePrewittEnX = new float [3][3];
+		
 		mascaraDePrewittEnX[0][0]= -1;
 		mascaraDePrewittEnX[0][1]= -1;
 		mascaraDePrewittEnX[0][2]= -1;
@@ -44,8 +46,8 @@ public class DetectorDeBordes {
 	
 	public static BufferedImage aplicarDetectorDePrewitt(Imagen imagenOriginal){
 		
-		int[][] mascaraDePrewittEnX = calcularMascaraDePrewittEnX();
-		int[][] mascaraDePrewittEnY = calcularMascaraDePrewittEnY();
+		float[][] mascaraDePrewittEnX = calcularMascaraDePrewittEnX();
+		float[][] mascaraDePrewittEnY = calcularMascaraDePrewittEnY();
 		
         Imagen imagenFiltradaEnX = new Imagen(imagenOriginal.getBufferedImage(), imagenOriginal.getFormato(), imagenOriginal.getNombre(), imagenOriginal.getMatriz(Canal.ROJO), imagenOriginal.getMatriz(Canal.VERDE), imagenOriginal.getMatriz(Canal.AZUL));
 		Imagen imagenFiltradaEnY = new Imagen(imagenOriginal.getBufferedImage(), imagenOriginal.getFormato(), imagenOriginal.getNombre(), imagenOriginal.getMatriz(Canal.ROJO), imagenOriginal.getMatriz(Canal.VERDE), imagenOriginal.getMatriz(Canal.AZUL));
@@ -56,13 +58,13 @@ public class DetectorDeBordes {
         FiltroNuevo filtroEnY = new FiltroNuevo(mascaraDePrewittEnY);
         
         //Aplicamos filtros en X y en Y
-        int[][] matrizRojoEnX = filtroEnX.filtrar(imagenFiltradaEnX, mascaraDePrewittEnX, Canal.ROJO);
-        int[][] matrizVerdeEnX = filtroEnX.filtrar(imagenFiltradaEnX, mascaraDePrewittEnX, Canal.VERDE);
-        int[][] matrizAzulEnX = filtroEnX.filtrar(imagenFiltradaEnX, mascaraDePrewittEnX, Canal.AZUL);
+        int[][] matrizRojoEnX = filtroEnX.filtrar(imagenFiltradaEnX, Canal.ROJO);
+        int[][] matrizVerdeEnX = filtroEnX.filtrar(imagenFiltradaEnX, Canal.VERDE);
+        int[][] matrizAzulEnX = filtroEnX.filtrar(imagenFiltradaEnX, Canal.AZUL);
         		
-        int[][] matrizRojoEnY = filtroEnY.filtrar(imagenFiltradaEnY, mascaraDePrewittEnY, Canal.ROJO);
-        int[][] matrizVerdeEnY = filtroEnY.filtrar(imagenFiltradaEnY, mascaraDePrewittEnY, Canal.VERDE);
-        int[][] matrizAzulEnY = filtroEnY.filtrar(imagenFiltradaEnY, mascaraDePrewittEnY, Canal.AZUL);
+        int[][] matrizRojoEnY = filtroEnY.filtrar(imagenFiltradaEnY, Canal.ROJO);
+        int[][] matrizVerdeEnY = filtroEnY.filtrar(imagenFiltradaEnY, Canal.VERDE);
+        int[][] matrizAzulEnY = filtroEnY.filtrar(imagenFiltradaEnY, Canal.AZUL);
         		
         //Sintetizamos usando la raiz de los cuadrados
         int[][] matrizRojosSintetizadosYTransformados = MatricesManager.aplicarTransformacionLineal(sintetizar(matrizRojoEnX, matrizRojoEnY));
@@ -76,7 +78,7 @@ public class DetectorDeBordes {
 
 	public static BufferedImage mostrarMascaraDePrewittEnX(Imagen imagenOriginal){
 		
-		int[][] mascaraDePrewittEnX = calcularMascaraDePrewittEnX();
+		float[][] mascaraDePrewittEnX = calcularMascaraDePrewittEnX();
 		
 		Imagen imagenFiltradaEnX = new Imagen(imagenOriginal.getBufferedImage(), imagenOriginal.getFormato(), imagenOriginal.getNombre(), imagenOriginal.getMatriz(Canal.ROJO), imagenOriginal.getMatriz(Canal.VERDE), imagenOriginal.getMatriz(Canal.AZUL));
 		Imagen imagenResultante = new Imagen(imagenOriginal.getBufferedImage(), imagenOriginal.getFormato(), imagenOriginal.getNombre(), imagenOriginal.getMatriz(Canal.ROJO), imagenOriginal.getMatriz(Canal.VERDE), imagenOriginal.getMatriz(Canal.AZUL));
@@ -84,9 +86,9 @@ public class DetectorDeBordes {
         FiltroNuevo filtroEnX = new FiltroNuevo(mascaraDePrewittEnX);
         
         //Aplicamos filtros en X y en Y
-        int[][] matrizRojoEnX = filtroEnX.filtrar(imagenFiltradaEnX, mascaraDePrewittEnX, Canal.ROJO);
-        int[][] matrizVerdeEnX = filtroEnX.filtrar(imagenFiltradaEnX, mascaraDePrewittEnX, Canal.VERDE);
-        int[][] matrizAzulEnX = filtroEnX.filtrar(imagenFiltradaEnX, mascaraDePrewittEnX, Canal.AZUL);
+        int[][] matrizRojoEnX = filtroEnX.filtrar(imagenFiltradaEnX, Canal.ROJO);
+        int[][] matrizVerdeEnX = filtroEnX.filtrar(imagenFiltradaEnX, Canal.VERDE);
+        int[][] matrizAzulEnX = filtroEnX.filtrar(imagenFiltradaEnX, Canal.AZUL);
         
         int[][] matrizRojoEnXTransformada = MatricesManager.aplicarTransformacionLineal(matrizRojoEnX);
         int[][] matrizVerdeEnXTransformada = MatricesManager.aplicarTransformacionLineal(matrizVerdeEnX);
@@ -100,7 +102,7 @@ public class DetectorDeBordes {
 	
 	public static BufferedImage mostrarMascaraDePrewittEnY(Imagen imagenOriginal){
 		
-		int[][] mascaraDePrewittEnY = calcularMascaraDePrewittEnY();
+		float[][] mascaraDePrewittEnY = calcularMascaraDePrewittEnY();
 		
 		Imagen imagenFiltradaEnY = new Imagen(imagenOriginal.getBufferedImage(), imagenOriginal.getFormato(), imagenOriginal.getNombre(), imagenOriginal.getMatriz(Canal.ROJO), imagenOriginal.getMatriz(Canal.VERDE), imagenOriginal.getMatriz(Canal.AZUL));
 		Imagen imagenResultante = new Imagen(imagenOriginal.getBufferedImage(), imagenOriginal.getFormato(), imagenOriginal.getNombre(), imagenOriginal.getMatriz(Canal.ROJO), imagenOriginal.getMatriz(Canal.VERDE), imagenOriginal.getMatriz(Canal.AZUL));
@@ -108,9 +110,9 @@ public class DetectorDeBordes {
         FiltroNuevo filtroEnY = new FiltroNuevo(mascaraDePrewittEnY);
         
         //Aplicamos filtros en X y en Y
-        int[][] matrizRojoEnY = filtroEnY.filtrar(imagenFiltradaEnY, mascaraDePrewittEnY, Canal.ROJO);
-        int[][] matrizVerdeEnY = filtroEnY.filtrar(imagenFiltradaEnY, mascaraDePrewittEnY, Canal.VERDE);
-        int[][] matrizAzulEnY = filtroEnY.filtrar(imagenFiltradaEnY, mascaraDePrewittEnY, Canal.AZUL);
+        int[][] matrizRojoEnY = filtroEnY.filtrar(imagenFiltradaEnY, Canal.ROJO);
+        int[][] matrizVerdeEnY = filtroEnY.filtrar(imagenFiltradaEnY, Canal.VERDE);
+        int[][] matrizAzulEnY = filtroEnY.filtrar(imagenFiltradaEnY, Canal.AZUL);
         
         int[][] matrizRojoEnYTransformada = MatricesManager.aplicarTransformacionLineal(matrizRojoEnY);
         int[][] matrizVerdeEnYTransformada = MatricesManager.aplicarTransformacionLineal(matrizVerdeEnY);
@@ -123,8 +125,10 @@ public class DetectorDeBordes {
 	}
 
 	
-	private static int[][] calcularMascaraDeSobelEnY() {
-		int[][] mascaraDeSobelEnY = new int [3][3];
+	private static float[][] calcularMascaraDeSobelEnY() {
+		
+		float[][] mascaraDeSobelEnY = new float [3][3];
+		
 		mascaraDeSobelEnY[0][0]= -1;
 		mascaraDeSobelEnY[0][1]= 0;
 		mascaraDeSobelEnY[0][2]= 1;
@@ -134,11 +138,14 @@ public class DetectorDeBordes {
 		mascaraDeSobelEnY[2][0]= -1;
 		mascaraDeSobelEnY[2][1]= 0;
 		mascaraDeSobelEnY[2][2]= 1;
+		
 		return mascaraDeSobelEnY;
 	}
 	
-	private static int[][] calcularMascaraDeSobelEnX() {
-		int[][] mascaraDeSobelEnX = new int [3][3];
+	private static float[][] calcularMascaraDeSobelEnX() {
+		
+		float[][] mascaraDeSobelEnX = new float [3][3];
+		
 		mascaraDeSobelEnX[0][0]= -1;
 		mascaraDeSobelEnX[0][1]= -2;
 		mascaraDeSobelEnX[0][2]= -1;
@@ -148,13 +155,14 @@ public class DetectorDeBordes {
 		mascaraDeSobelEnX[2][0]= 1;
 		mascaraDeSobelEnX[2][1]= 2;
 		mascaraDeSobelEnX[2][2]= 1;
+		
 		return mascaraDeSobelEnX;
 	}
 	
 	public static BufferedImage aplicarDetectorDeSobel(Imagen imagenOriginal){
 		
-		int[][] mascaraDeSobelEnX = calcularMascaraDeSobelEnX();
-		int[][] mascaraDeSobelEnY = calcularMascaraDeSobelEnY();
+		float[][] mascaraDeSobelEnX = calcularMascaraDeSobelEnX();
+		float[][] mascaraDeSobelEnY = calcularMascaraDeSobelEnY();
 		
 		Imagen imagenFiltradaEnX = new Imagen(imagenOriginal.getBufferedImage(), imagenOriginal.getFormato(), imagenOriginal.getNombre(), imagenOriginal.getMatriz(Canal.ROJO), imagenOriginal.getMatriz(Canal.VERDE), imagenOriginal.getMatriz(Canal.AZUL));
 		Imagen imagenFiltradaEnY = new Imagen(imagenOriginal.getBufferedImage(), imagenOriginal.getFormato(), imagenOriginal.getNombre(), imagenOriginal.getMatriz(Canal.ROJO), imagenOriginal.getMatriz(Canal.VERDE), imagenOriginal.getMatriz(Canal.AZUL));
@@ -165,13 +173,13 @@ public class DetectorDeBordes {
         FiltroNuevo filtroEnY = new FiltroNuevo(mascaraDeSobelEnY);
         
         //Aplicamos filtros en X y en Y
-        int[][] matrizRojoEnX = filtroEnX.filtrar(imagenFiltradaEnX, mascaraDeSobelEnX, Canal.ROJO);
-        int[][] matrizVerdeEnX = filtroEnX.filtrar(imagenFiltradaEnX, mascaraDeSobelEnX, Canal.VERDE);
-        int[][] matrizAzulEnX = filtroEnX.filtrar(imagenFiltradaEnX, mascaraDeSobelEnX, Canal.AZUL);
+        int[][] matrizRojoEnX = filtroEnX.filtrar(imagenFiltradaEnX, Canal.ROJO);
+        int[][] matrizVerdeEnX = filtroEnX.filtrar(imagenFiltradaEnX, Canal.VERDE);
+        int[][] matrizAzulEnX = filtroEnX.filtrar(imagenFiltradaEnX, Canal.AZUL);
         		
-        int[][] matrizRojoEnY = filtroEnY.filtrar(imagenFiltradaEnY, mascaraDeSobelEnY, Canal.ROJO);
-        int[][] matrizVerdeEnY = filtroEnY.filtrar(imagenFiltradaEnY, mascaraDeSobelEnY, Canal.VERDE);
-        int[][] matrizAzulEnY = filtroEnY.filtrar(imagenFiltradaEnY, mascaraDeSobelEnY, Canal.AZUL);
+        int[][] matrizRojoEnY = filtroEnY.filtrar(imagenFiltradaEnY, Canal.ROJO);
+        int[][] matrizVerdeEnY = filtroEnY.filtrar(imagenFiltradaEnY, Canal.VERDE);
+        int[][] matrizAzulEnY = filtroEnY.filtrar(imagenFiltradaEnY, Canal.AZUL);
         		
         //Sintetizamos usando la raiz de los cuadrados
         int[][] matrizRojosSintetizadosYTransformados = MatricesManager.aplicarTransformacionLineal(sintetizar(matrizRojoEnX, matrizRojoEnY));
@@ -186,7 +194,7 @@ public class DetectorDeBordes {
 	
 	public static BufferedImage mostrarMascaraDeSobelEnX(Imagen imagenOriginal){
 		
-		int[][] mascaraDeSobelEnX = calcularMascaraDeSobelEnX();
+		float[][] mascaraDeSobelEnX = calcularMascaraDeSobelEnX();
 		
 		Imagen imagenFiltradaEnX = new Imagen(imagenOriginal.getBufferedImage(), imagenOriginal.getFormato(), imagenOriginal.getNombre(), imagenOriginal.getMatriz(Canal.ROJO), imagenOriginal.getMatriz(Canal.VERDE), imagenOriginal.getMatriz(Canal.AZUL));
 		Imagen imagenResultante = new Imagen(imagenOriginal.getBufferedImage(), imagenOriginal.getFormato(), imagenOriginal.getNombre(), imagenOriginal.getMatriz(Canal.ROJO), imagenOriginal.getMatriz(Canal.VERDE), imagenOriginal.getMatriz(Canal.AZUL));
@@ -194,9 +202,9 @@ public class DetectorDeBordes {
         FiltroNuevo filtroEnX = new FiltroNuevo(mascaraDeSobelEnX);
         
         //Aplicamos filtros en X y en Y
-        int[][] matrizRojoEnX = filtroEnX.filtrar(imagenFiltradaEnX, mascaraDeSobelEnX, Canal.ROJO);
-        int[][] matrizVerdeEnX = filtroEnX.filtrar(imagenFiltradaEnX, mascaraDeSobelEnX, Canal.VERDE);
-        int[][] matrizAzulEnX = filtroEnX.filtrar(imagenFiltradaEnX, mascaraDeSobelEnX, Canal.AZUL);
+        int[][] matrizRojoEnX = filtroEnX.filtrar(imagenFiltradaEnX, Canal.ROJO);
+        int[][] matrizVerdeEnX = filtroEnX.filtrar(imagenFiltradaEnX, Canal.VERDE);
+        int[][] matrizAzulEnX = filtroEnX.filtrar(imagenFiltradaEnX, Canal.AZUL);
         
         int[][] matrizRojoEnXTransformada = MatricesManager.aplicarTransformacionLineal(matrizRojoEnX);
         int[][] matrizVerdeEnXTransformada = MatricesManager.aplicarTransformacionLineal(matrizVerdeEnX);
@@ -210,7 +218,7 @@ public class DetectorDeBordes {
 	
 	public static BufferedImage mostrarMascaraDeSobelEnY(Imagen imagenOriginal){
 		
-		int[][] mascaraDeSobelEnY = calcularMascaraDeSobelEnY();
+		float[][] mascaraDeSobelEnY = calcularMascaraDeSobelEnY();
 		
 		Imagen imagenFiltradaEnY = new Imagen(imagenOriginal.getBufferedImage(), imagenOriginal.getFormato(), imagenOriginal.getNombre(), imagenOriginal.getMatriz(Canal.ROJO), imagenOriginal.getMatriz(Canal.VERDE), imagenOriginal.getMatriz(Canal.AZUL));
 		Imagen imagenResultante = new Imagen(imagenOriginal.getBufferedImage(), imagenOriginal.getFormato(), imagenOriginal.getNombre(), imagenOriginal.getMatriz(Canal.ROJO), imagenOriginal.getMatriz(Canal.VERDE), imagenOriginal.getMatriz(Canal.AZUL));
@@ -218,9 +226,9 @@ public class DetectorDeBordes {
         FiltroNuevo filtroEnY = new FiltroNuevo(mascaraDeSobelEnY);
         
         //Aplicamos filtros en X y en Y
-        int[][] matrizRojoEnY = filtroEnY.filtrar(imagenFiltradaEnY, mascaraDeSobelEnY, Canal.ROJO);
-        int[][] matrizVerdeEnY = filtroEnY.filtrar(imagenFiltradaEnY, mascaraDeSobelEnY, Canal.VERDE);
-        int[][] matrizAzulEnY = filtroEnY.filtrar(imagenFiltradaEnY, mascaraDeSobelEnY, Canal.AZUL);
+        int[][] matrizRojoEnY = filtroEnY.filtrar(imagenFiltradaEnY, Canal.ROJO);
+        int[][] matrizVerdeEnY = filtroEnY.filtrar(imagenFiltradaEnY, Canal.VERDE);
+        int[][] matrizAzulEnY = filtroEnY.filtrar(imagenFiltradaEnY, Canal.AZUL);
         
         int[][] matrizRojoEnYTransformada = MatricesManager.aplicarTransformacionLineal(matrizRojoEnY);
         int[][] matrizVerdeEnYTransformada = MatricesManager.aplicarTransformacionLineal(matrizVerdeEnY);
@@ -233,8 +241,10 @@ public class DetectorDeBordes {
 	}
 
 	
-	private static int[][] calcularMascaraDeLaplaciano() {
-		int[][] mascaraDeLaplaciano = new int [3][3];
+	private static float[][] calcularMascaraDeLaplaciano() {
+		
+		float[][] mascaraDeLaplaciano = new float [3][3];
+		
 		mascaraDeLaplaciano[0][0]= 0;
 		mascaraDeLaplaciano[0][1]= 1;
 		mascaraDeLaplaciano[0][2]= 0;
@@ -244,13 +254,14 @@ public class DetectorDeBordes {
 		mascaraDeLaplaciano[2][0]= 0;
 		mascaraDeLaplaciano[2][1]= 1;
 		mascaraDeLaplaciano[2][2]= 0;
+		
 		return mascaraDeLaplaciano;
 	}
 
 	
 	public static BufferedImage aplicarDetectorLaplaciano(Imagen imagenOriginal){
 		
-		int[][] mascaraDeLaplaciano = calcularMascaraDeLaplaciano();
+		float[][] mascaraDeLaplaciano = calcularMascaraDeLaplaciano();
 		int[][] matrizCrucesPorCerosRojo = new int [imagenOriginal.getBufferedImage().getWidth()][imagenOriginal.getBufferedImage().getHeight()];
 		int[][] matrizCrucesPorCerosVerde = new int [imagenOriginal.getBufferedImage().getWidth()][imagenOriginal.getBufferedImage().getHeight()];
 		int[][] matrizCrucesPorCerosAzul = new int [imagenOriginal.getBufferedImage().getWidth()][imagenOriginal.getBufferedImage().getHeight()];
@@ -269,9 +280,9 @@ public class DetectorDeBordes {
         FiltroNuevo filtroEnX = new FiltroNuevo(mascaraDeLaplaciano);
         
         //Aplicamos filtros en X y en Y
-        int[][] matrizRojo = filtroEnX.filtrar(imagenFiltradaEnX, mascaraDeLaplaciano, Canal.ROJO);
-        int[][] matrizVerde = filtroEnX.filtrar(imagenFiltradaEnX, mascaraDeLaplaciano, Canal.VERDE);
-        int[][] matrizAzul = filtroEnX.filtrar(imagenFiltradaEnX, mascaraDeLaplaciano, Canal.AZUL);
+        int[][] matrizRojo = filtroEnX.filtrar(imagenFiltradaEnX, Canal.ROJO);
+        int[][] matrizVerde = filtroEnX.filtrar(imagenFiltradaEnX, Canal.VERDE);
+        int[][] matrizAzul = filtroEnX.filtrar(imagenFiltradaEnX, Canal.AZUL);
         	
         for(int j = 0; j < matrizCrucesPorCerosRojo.length; j++){
            for(int i = 0; i < matrizCrucesPorCerosRojo[0].length; i++){
@@ -355,7 +366,7 @@ public class DetectorDeBordes {
 	
 	public static BufferedImage mostrarMascaraCrucesPorCeros(Imagen imagenOriginal){
 		
-	int[][] mascaraDeLaplaciano = calcularMascaraDeLaplaciano();
+	float[][] mascaraDeLaplaciano = calcularMascaraDeLaplaciano();
 	int[][] matrizCrucesPorCerosRojo = new int [imagenOriginal.getBufferedImage().getWidth()][imagenOriginal.getBufferedImage().getHeight()];
 	int[][] matrizCrucesPorCerosVerde = new int [imagenOriginal.getBufferedImage().getWidth()][imagenOriginal.getBufferedImage().getHeight()];
 	int[][] matrizCrucesPorCerosAzul = new int [imagenOriginal.getBufferedImage().getWidth()][imagenOriginal.getBufferedImage().getHeight()];
@@ -369,9 +380,9 @@ public class DetectorDeBordes {
 
 	
     //Aplicamos filtros en X y en Y
-    int[][] matrizRojo = filtroEnX.filtrar(imagenFiltradaEnX, mascaraDeLaplaciano, Canal.ROJO);
-    int[][] matrizVerde = filtroEnX.filtrar(imagenFiltradaEnX, mascaraDeLaplaciano, Canal.VERDE);
-    int[][] matrizAzul = filtroEnX.filtrar(imagenFiltradaEnX, mascaraDeLaplaciano, Canal.AZUL);
+    int[][] matrizRojo = filtroEnX.filtrar(imagenFiltradaEnX, Canal.ROJO);
+    int[][] matrizVerde = filtroEnX.filtrar(imagenFiltradaEnX, Canal.VERDE);
+    int[][] matrizAzul = filtroEnX.filtrar(imagenFiltradaEnX, Canal.AZUL);
 	
 	for(int j = 0; j < matrizCrucesPorCerosRojo.length; j++){
        for(int i = 0; i < matrizCrucesPorCerosRojo[0].length; i++){
@@ -445,7 +456,7 @@ public class DetectorDeBordes {
 	
 	public static BufferedImage mostrarMascaraDeLaplaciano(Imagen imagenOriginal){
 		
-		int[][] mascaraDeLaplaciano = calcularMascaraDeLaplaciano();
+		float[][] mascaraDeLaplaciano = calcularMascaraDeLaplaciano();
 		
 		Imagen imagenFiltrada = new Imagen(imagenOriginal.getBufferedImage(), imagenOriginal.getFormato(), imagenOriginal.getNombre(), imagenOriginal.getMatriz(Canal.ROJO), imagenOriginal.getMatriz(Canal.VERDE), imagenOriginal.getMatriz(Canal.AZUL));
 		Imagen imagenResultante = new Imagen(imagenOriginal.getBufferedImage(), imagenOriginal.getFormato(), imagenOriginal.getNombre(), imagenOriginal.getMatriz(Canal.ROJO), imagenOriginal.getMatriz(Canal.VERDE), imagenOriginal.getMatriz(Canal.AZUL));
@@ -453,9 +464,9 @@ public class DetectorDeBordes {
         FiltroNuevo filtro = new FiltroNuevo(mascaraDeLaplaciano);
         
         //Aplicamos filtros en X y en Y
-        int[][] matrizRojoEnX = filtro.filtrar(imagenFiltrada, mascaraDeLaplaciano, Canal.ROJO);
-        int[][] matrizVerdeEnX = filtro.filtrar(imagenFiltrada, mascaraDeLaplaciano, Canal.VERDE);
-        int[][] matrizAzulEnX = filtro.filtrar(imagenFiltrada, mascaraDeLaplaciano, Canal.AZUL);
+        int[][] matrizRojoEnX = filtro.filtrar(imagenFiltrada, Canal.ROJO);
+        int[][] matrizVerdeEnX = filtro.filtrar(imagenFiltrada, Canal.VERDE);
+        int[][] matrizAzulEnX = filtro.filtrar(imagenFiltrada, Canal.AZUL);
         
         int[][] matrizRojoEnXTransformada = MatricesManager.aplicarTransformacionLineal(matrizRojoEnX);
         int[][] matrizVerdeEnXTransformada = MatricesManager.aplicarTransformacionLineal(matrizVerdeEnX);
@@ -468,21 +479,15 @@ public class DetectorDeBordes {
 	}
 	
 	
-	private static int[][] calcularMascaraDeLaplacianoDelGaussiano(int longitudMascara, int sigma) {
+	private static float[][] calcularMascaraDeLaplacianoDelGaussiano(int longitudMascara, int sigma) {
 		
-		int[][] mascaraDeLaplacianoDeGaussiano = new int [longitudMascara][longitudMascara];
+		float[][] mascaraDeLaplacianoDeGaussiano = new float [longitudMascara][longitudMascara];
 		
-		for (int j = 0; j < longitudMascara; ++j) {
-			for (int i = 0; i < longitudMascara; ++i) {
+		for (int j = 0; j < longitudMascara; j++) {
+			for (int i = 0; i < longitudMascara; i++) {
 				
-				if (j == longitudMascara/2 && i == longitudMascara/2){
-					
-					mascaraDeLaplacianoDeGaussiano[i][j] = (int) (-2/((Math.sqrt(2*Math.PI))*Math.pow(sigma,3)));
-				} else {
-					
-					mascaraDeLaplacianoDeGaussiano[i][j] = (int) calcularValorMascaraLaplacianoDelGaussiano(i - (longitudMascara/2), j - 
-							(longitudMascara/2), sigma);
-				}
+				mascaraDeLaplacianoDeGaussiano[i][j] = (float) calcularValorMascaraLaplacianoDelGaussiano(i - (longitudMascara/2), j - 
+						(longitudMascara/2), sigma);
 			}
 		}
 		return mascaraDeLaplacianoDeGaussiano;
@@ -490,16 +495,16 @@ public class DetectorDeBordes {
 	
 	private static float calcularValorMascaraLaplacianoDelGaussiano(int indiceI, int indiceJ, int sigma){
 		
-		float termino1 = (float) ((-1/((Math.sqrt(2*Math.PI))*Math.pow(sigma,3))));
-		float termino2 = (float) (2-(Math.pow(indiceI, 2) + Math.pow(indiceJ, 2)/Math.pow(sigma, 2)));
-		float termino3 = (float) Math.pow(Math.E,(-1*((Math.pow(indiceI, 2) + Math.pow(indiceJ, 2))/(2*Math.pow(sigma, 2)))));
-		float valor = (termino1 * termino2 * termino3);
+		float termino1 = (float) ( (float) ( -1 / ((Math.sqrt(2*Math.PI))*Math.pow(sigma,3)) ) );
+		float termino2 = (float) ( 2 - ((float) ( ((float)(Math.pow(indiceI, 2) + Math.pow(indiceJ, 2))) / Math.pow(sigma, 2))) );
+		float termino3 = (float) Math.pow(Math.E, ( -1 * ( (float) (Math.pow(indiceI, 2) + Math.pow(indiceJ, 2)) / (2*Math.pow(sigma, 2))) ) );
+		float valor = termino1 * termino2 * termino3;
+		
 		return valor;
 	}
 		
 	public static BufferedImage aplicarDetectorLaplacianoDelGaussiano(Imagen imagenOriginal, int sigma, int umbral){
 		
-		Imagen imagenFiltrada = FiltroGaussiano.aplicarFiltroGaussiano(imagenOriginal, sigma);
 		int longitudMascara = sigma * 3;
 		
 		if (longitudMascara%2==0){
@@ -507,25 +512,25 @@ public class DetectorDeBordes {
 			longitudMascara = longitudMascara-1;
 		}
 		
-		int[][] mascaraLaplacianoDelGaussiano = calcularMascaraDeLaplacianoDelGaussiano(longitudMascara, sigma);
+		float[][] mascaraLaplacianoDelGaussiano = calcularMascaraDeLaplacianoDelGaussiano(longitudMascara, sigma);
 		
 		FiltroNuevo filtroLaplacianoDelGaussiano = new FiltroNuevo(mascaraLaplacianoDelGaussiano);
         
-        //Aplicamos filtro
-		int[][] matrizRojo = filtroLaplacianoDelGaussiano.filtrar(imagenFiltrada, mascaraLaplacianoDelGaussiano, Canal.ROJO);
-		int[][] matrizVerde = filtroLaplacianoDelGaussiano.filtrar(imagenFiltrada, mascaraLaplacianoDelGaussiano, Canal.VERDE);
-		int[][] matrizAzul = filtroLaplacianoDelGaussiano.filtrar(imagenFiltrada, mascaraLaplacianoDelGaussiano, Canal.AZUL);
+		Imagen imagenFiltrada = new Imagen(imagenOriginal.getBufferedImage(), imagenOriginal.getFormato(), imagenOriginal.getNombre() + "_filtroLoG", imagenOriginal.getMatriz(Canal.ROJO), imagenOriginal.getMatriz(Canal.VERDE), imagenOriginal.getMatriz(Canal.AZUL));
 		
-		int[][] matrizCrucesPorCerosRojo = new int [imagenOriginal.getBufferedImage().getWidth()][imagenOriginal.getBufferedImage().getHeight()];
-		int[][] matrizCrucesPorCerosVerde = new int [imagenOriginal.getBufferedImage().getWidth()][imagenOriginal.getBufferedImage().getHeight()];
-		int[][] matrizCrucesPorCerosAzul = new int [imagenOriginal.getBufferedImage().getWidth()][imagenOriginal.getBufferedImage().getHeight()];
+        //Aplicamos filtro
+		int[][] matrizRojo = filtroLaplacianoDelGaussiano.filtrar(imagenFiltrada, Canal.ROJO);
+		int[][] matrizVerde = filtroLaplacianoDelGaussiano.filtrar(imagenFiltrada, Canal.VERDE);
+		int[][] matrizAzul = filtroLaplacianoDelGaussiano.filtrar(imagenFiltrada, Canal.AZUL);
+		
+		int[][] matrizCrucesPorCerosRojo = new int [imagenFiltrada.getBufferedImage().getWidth()][imagenFiltrada.getBufferedImage().getHeight()];
+		int[][] matrizCrucesPorCerosVerde = new int [imagenFiltrada.getBufferedImage().getWidth()][imagenFiltrada.getBufferedImage().getHeight()];
+		int[][] matrizCrucesPorCerosAzul = new int [imagenFiltrada.getBufferedImage().getWidth()][imagenFiltrada.getBufferedImage().getHeight()];
 
-		int[][] matrizRojoTranspuesta = new int[imagenOriginal.getBufferedImage().getHeight()][imagenOriginal.getBufferedImage().getWidth()];
-		int[][] matrizVerdeTranspuesta = new int[imagenOriginal.getBufferedImage().getHeight()][imagenOriginal.getBufferedImage().getWidth()];
-		int[][] matrizAzulTranspuesta = new int[imagenOriginal.getBufferedImage().getHeight()][imagenOriginal.getBufferedImage().getWidth()];
+		int[][] matrizRojoTranspuesta = new int[imagenFiltrada.getBufferedImage().getHeight()][imagenFiltrada.getBufferedImage().getWidth()];
+		int[][] matrizVerdeTranspuesta = new int[imagenFiltrada.getBufferedImage().getHeight()][imagenFiltrada.getBufferedImage().getWidth()];
+		int[][] matrizAzulTranspuesta = new int[imagenFiltrada.getBufferedImage().getHeight()][imagenFiltrada.getBufferedImage().getWidth()];
 
-		Imagen imagenResultante = new Imagen(imagenFiltrada.getBufferedImage(), imagenOriginal.getFormato(), imagenOriginal.getNombre(), imagenFiltrada.getMatriz(Canal.ROJO), imagenFiltrada.getMatriz(Canal.VERDE), imagenFiltrada.getMatriz(Canal.AZUL));
-    
         for(int j = 0; j < matrizCrucesPorCerosRojo.length; j++){
 	           for(int i = 0; i < matrizCrucesPorCerosRojo[0].length; i++){
 	        	   matrizRojoTranspuesta[i][j] = matrizRojo[j][i];
@@ -537,9 +542,10 @@ public class DetectorDeBordes {
         calcularCrucesPorCero(imagenOriginal, matrizCrucesPorCerosRojo,
 				matrizCrucesPorCerosVerde, matrizCrucesPorCerosAzul,
 				matrizRojoTranspuesta, matrizVerdeTranspuesta,
-				matrizAzulTranspuesta, umbral, imagenResultante, matrizRojo,
+				matrizAzulTranspuesta, umbral, imagenFiltrada, matrizRojo,
 				matrizVerde, matrizAzul);
-        return imagenResultante.getBufferedImage();
+        
+        return imagenFiltrada.getBufferedImage();
 	}
 	
 
@@ -551,16 +557,16 @@ public class DetectorDeBordes {
 			longitudMascara = longitudMascara-1;
 		}
 		
-		int[][] mascaraDeLaplacianoDelGaussiano = calcularMascaraDeLaplacianoDelGaussiano(longitudMascara, sigma);
+		float[][] mascaraDeLaplacianoDelGaussiano = calcularMascaraDeLaplacianoDelGaussiano(longitudMascara, sigma);
 				
 		Imagen imagenFiltrada = FiltroGaussiano.aplicarFiltroGaussiano(imagenOriginal, sigma);
 
 		Imagen imagenResultante = new Imagen(imagenFiltrada.getBufferedImage(), imagenOriginal.getFormato(), imagenOriginal.getNombre(), imagenFiltrada.getMatriz(Canal.ROJO), imagenFiltrada.getMatriz(Canal.VERDE), imagenFiltrada.getMatriz(Canal.AZUL));
         FiltroNuevo filtro = new FiltroNuevo(mascaraDeLaplacianoDelGaussiano);
         
-        int[][] matrizRojo = filtro.filtrar(imagenFiltrada, mascaraDeLaplacianoDelGaussiano, Canal.ROJO);
-        int[][] matrizVerde = filtro.filtrar(imagenFiltrada, mascaraDeLaplacianoDelGaussiano, Canal.VERDE);
-        int[][] matrizAzul = filtro.filtrar(imagenFiltrada, mascaraDeLaplacianoDelGaussiano, Canal.AZUL);
+        int[][] matrizRojo = filtro.filtrar(imagenFiltrada, Canal.ROJO);
+        int[][] matrizVerde = filtro.filtrar(imagenFiltrada, Canal.VERDE);
+        int[][] matrizAzul = filtro.filtrar(imagenFiltrada, Canal.AZUL);
         
         int[][] matrizRojoEnXTransformada = MatricesManager.aplicarTransformacionLineal(matrizRojo);
         int[][] matrizVerdeEnXTransformada = MatricesManager.aplicarTransformacionLineal(matrizVerde);

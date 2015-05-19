@@ -5,13 +5,18 @@ import ar.com.untref.imagenes.modelo.Imagen;
 
 public class FiltroNuevo {
 
-	private int[][] mascara;
+	private float[][] mascara;
 	
-	public FiltroNuevo(int[][] mascara){
+	public FiltroNuevo(float[][] mascara){
 		
 		this.setMascara(mascara);
 	}
 	
+	private void setMascara(float[][] mascara) {
+
+		this.mascara = mascara;
+	}
+
 	/**
 	 * Filtra por el canal adecuado usando la matriz de la imagen por parametro. Se altera la matriz de la imagen
 	 * original, por eso no devuelve nada, porque ya queda modificada.
@@ -19,7 +24,7 @@ public class FiltroNuevo {
 	 * @param mascara
 	 * @param canal
 	 */
-	public int[][] filtrar(Imagen imagenOriginal, int[][] mascara, Canal canal){
+	public int[][] filtrar(Imagen imagenOriginal, Canal canal){
 		
 		int anchoMascara = mascara[0].length;
 		int altoMascara = mascara.length;
@@ -44,7 +49,7 @@ public class FiltroNuevo {
 			for (int j = altoMascara / 2; j < imagenSinCambios.getBufferedImage().getHeight()
 					- (altoMascara / 2); j++) {
 
-				int sumatoria = 0;
+				float sumatoria = 0f;
 				// Iterar la máscara
 				for (int iAnchoMascara = 0; iAnchoMascara < anchoMascara; iAnchoMascara++) {
 					for (int iAltoMascara = 0; iAltoMascara < altoMascara; iAltoMascara++) {
@@ -57,19 +62,15 @@ public class FiltroNuevo {
 					}
 				}
 
-				matriz[i][j] = sumatoria;
+				matriz[i][j] = (int) sumatoria;
 			}
 		}
 		
 		return matriz;
 	}
 
-	public int[][] getMascara() {
+	public float[][] getMascara() {
 		return mascara;
 	}
 
-	public void setMascara(int[][] mascara) {
-		this.mascara = mascara;
-	}
-	
 }
