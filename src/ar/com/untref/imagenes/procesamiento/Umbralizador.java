@@ -108,41 +108,53 @@ public class Umbralizador {
 		return sumatoria;
 	}
 	
-	public static Imagen generarUmbralizacionOtsu(Imagen imagen, int umbral) {
+	public static Imagen generarUmbralizacionOtsu(Imagen imagen) {
 				
 		float[] probabilidadesDeOcurrencia = Histograma.calcularHistogramaRojo(imagen.getBufferedImage());
-		
-		float w1 = 0;
-		float w2 = 0;
-		
-		for (int i = 0 ; i < probabilidadesDeOcurrencia.length ; i++) {
+		int sigmaMaximo = 0;
+		int umbralMaximo = 0;
+
+		for (int t=0; t<probabilidadesDeOcurrencia.length; t++){
+
+			float w1 = 0;
+			float w2 = 0;
+			float u1 = 0;
+			float u2 = 0;
+
+			for (int i = 0 ; i < probabilidadesDeOcurrencia.length ; i++) {
+				
+				if (i < t) {
+					w1 += probabilidadesDeOcurrencia[i];
+				} else {
+					w2 += probabilidadesDeOcurrencia[i];
+				}
+			}
 			
-			if (i < umbral) {
-				w1 += probabilidadesDeOcurrencia[i];
-			} else {
-				w2 += probabilidadesDeOcurrencia[i];
+			for (int i = 1 ; i <= probabilidadesDeOcurrencia.length ; i++) {
+				
+				if (i < t) {
+					
+					u1 += i * probabilidadesDeOcurrencia[i-1] / w1;
+				} else {
+					
+					u2 += i * probabilidadesDeOcurrencia[i-1] / w2;
+				}
+			}
+			
+			int ut = (int) (w1*u1 + w2*u2);
+			
+			int varianzaCuadrado = (int) ( (w1 * Math.pow( (u1-ut), 2) ) + (w2 * Math.pow( (u2-ut), 2) ));
+			
+			if (varianzaCuadrado > sigmaMaximo){
+				
+				sigmaMaximo = varianzaCuadrado;
+				umbralMaximo = t;
 			}
 		}
 		
-		float u1 = 0;
-		float u2 = 0;
-		for (int i = 0 ; i < probabilidadesDeOcurrencia.length ; i++) {
-			
-			if (i < umbral) {
-				
-				u1 += i * probabilidadesDeOcurrencia[i] / w1;
-			} else {
-				
-				u2 += i * probabilidadesDeOcurrencia[i] / w2;
-			}
-			
-		}
+		JOptionPane.showMessageDialog(null, "Umbral Calculado: " + String.valueOf(umbralMaximo));
 		
-		int umbralResultante = (int) (w1*u1 + w2*u2); 
-		
-		JOptionPane.showMessageDialog(null, "Umbral Calculado: " + String.valueOf(umbralResultante));
-		
-		return umbralizarImagen(imagen, umbralResultante);
+		return umbralizarImagen(imagen, umbralMaximo);
 	}
 	
 }
