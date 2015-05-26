@@ -487,7 +487,7 @@ public class DetectorDeBordes {
 			for (int i = 0; i < longitudMascara; i++) {
 				
 				mascaraDeLaplacianoDeGaussiano[i][j] = (float) calcularValorMascaraLaplacianoDelGaussiano(i - (longitudMascara/2), j - 
-						(longitudMascara/2), sigma);
+						(longitudMascara/2), 2);
 			}
 		}
 		return mascaraDeLaplacianoDeGaussiano;
@@ -503,9 +503,7 @@ public class DetectorDeBordes {
 		return valor;
 	}
 		
-	public static BufferedImage aplicarDetectorLaplacianoDelGaussiano(Imagen imagenOriginal, int sigma, int umbral){
-		
-		int longitudMascara = sigma * 3;
+	public static BufferedImage aplicarDetectorLaplacianoDelGaussiano(Imagen imagenOriginal, int sigma, int umbral, int longitudMascara){
 		
 		if (longitudMascara%2==0){
 			

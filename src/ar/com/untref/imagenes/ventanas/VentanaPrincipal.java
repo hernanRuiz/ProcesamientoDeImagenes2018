@@ -891,9 +891,10 @@ VentanaPrincipal.this.setExtendedState(VentanaPrincipal.this.getExtendedState() 
 		
 	}
 
-	public void aplicarLaplacianoDelGaussiano(int sigma, int umbral) {
+	public void aplicarLaplacianoDelGaussiano(int sigma, int umbral, int longitudMascara) {
+		
 		Imagen imagenAnterior = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
-		BufferedImage bufferedImage = DetectorDeBordes.aplicarDetectorLaplacianoDelGaussiano(imagenAnterior, sigma, umbral);
+		BufferedImage bufferedImage = DetectorDeBordes.aplicarDetectorLaplacianoDelGaussiano(imagenAnterior, sigma, umbral, longitudMascara);
 		Imagen nuevaImagenActual = new Imagen(bufferedImage,
 				imagenAnterior.getFormato(), imagenAnterior.getNombre());
 		ProcesadorDeImagenes.obtenerInstancia().setImagenActual(
@@ -904,6 +905,7 @@ VentanaPrincipal.this.setExtendedState(VentanaPrincipal.this.getExtendedState() 
 
 	private void cargarImagen(JLabel labelPrincipal,
 			JMenuItem menuItemGuardarComo) {
+		
 		Imagen imagenElegida = ProcesadorDeImagenes.obtenerInstancia()
 				.cargarUnaImagenDesdeArchivo();
 		int cantidadPixeles = imagenElegida.getBufferedImage().getWidth()

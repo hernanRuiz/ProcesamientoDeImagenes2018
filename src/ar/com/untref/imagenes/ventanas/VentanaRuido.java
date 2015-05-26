@@ -959,9 +959,10 @@ public class VentanaRuido extends JFrame {
 		this.dialogoEspera.ocultar();
 	}
 	
-	public void aplicarLaplacianoDelGaussiano(int sigma, int umbral) {
+	public void aplicarLaplacianoDelGaussiano(int sigma, int umbral, int longitudMascara) {
+		
 		Imagen imagenAnterior = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
-		BufferedImage bufferedImage = DetectorDeBordes.aplicarDetectorLaplacianoDelGaussiano(imagenAnterior, sigma, umbral);
+		BufferedImage bufferedImage = DetectorDeBordes.aplicarDetectorLaplacianoDelGaussiano(imagenAnterior, sigma, umbral, longitudMascara);
 		Imagen nuevaImagenActual = new Imagen(bufferedImage,
 				imagenAnterior.getFormato(), imagenAnterior.getNombre());
 		ProcesadorDeImagenes.obtenerInstancia().setImagenActual(

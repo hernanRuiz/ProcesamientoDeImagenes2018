@@ -20,9 +20,11 @@ public class LoGDialog extends JDialog {
 	private VentanaPrincipal ventana;
 	private JButton botonConfirmar;
 	private JLabel labelSigma;
-	private JTextField sigmaElegido;
+	private JLabel labelLongitudMascara;
 	private JLabel labelUmbral;
 	private JTextField umbralElegido;
+	private JTextField sigmaElegido;
+	private JTextField longitudElegida;
 	private VentanaRuido ventanaRuido;
 
 	public LoGDialog(VentanaPrincipal ventana) {
@@ -41,8 +43,10 @@ public class LoGDialog extends JDialog {
 
 		labelSigma = new JLabel("Sigma");
 		labelUmbral = new JLabel("Umbral");
+		labelLongitudMascara = new JLabel("Longitud de la máscara");
 		sigmaElegido = new JTextField();
 		umbralElegido = new JTextField();
+		longitudElegida = new JTextField();
 
 		createLayout();
 
@@ -60,20 +64,26 @@ public class LoGDialog extends JDialog {
 		botonConfirmar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 
-				if (!sigmaElegido.getText().toString().isEmpty() && !umbralElegido.getText().toString().isEmpty()) {
+				if (!sigmaElegido.getText().toString().isEmpty() && !umbralElegido.getText().toString().isEmpty()
+						&& !longitudElegida.getText().toString().isEmpty()) {
 					
 					try{
 						int sigma = Integer.valueOf(sigmaElegido.getText().toString());
 						int umbral = Integer.valueOf(umbralElegido.getText().toString());
+						int longitudMascara = Integer.valueOf(longitudElegida.getText().toString());
 						
 						if (ventana != null){
-						ventana.aplicarLaplacianoDelGaussiano(sigma, umbral);
+							
+							ventana.aplicarLaplacianoDelGaussiano(sigma, umbral, longitudMascara);
 						}
 						
 						if (ventanaRuido != null){
-							ventanaRuido.aplicarLaplacianoDelGaussiano(sigma, umbral);
+							
+							ventanaRuido.aplicarLaplacianoDelGaussiano(sigma, umbral, longitudMascara);
 						}
+						
 						LoGDialog.this.dispose();
+					
 					} catch (Exception ex){
 						
 						ex.printStackTrace();
@@ -91,12 +101,15 @@ public class LoGDialog extends JDialog {
 
 		gl.setHorizontalGroup(gl.createParallelGroup(Alignment.CENTER)
 				.addComponent(labelSigma).addComponent(labelUmbral)
+				.addComponent(labelLongitudMascara)
 				.addComponent(sigmaElegido).addComponent(umbralElegido)
+				.addComponent(longitudElegida)
 				.addComponent(botonConfirmar).addGap(200));
 
 		gl.setVerticalGroup(gl.createSequentialGroup().addGap(30)
 				.addComponent(labelSigma).addGap(20).addComponent(sigmaElegido).addGap(20)
 				.addComponent(labelUmbral).addGap(20).addComponent(umbralElegido)
+				.addGap(20).addComponent(labelLongitudMascara).addGap(20).addComponent(longitudElegida)
 				.addGap(20).addComponent(botonConfirmar).addGap(30));
 
 		pack();
