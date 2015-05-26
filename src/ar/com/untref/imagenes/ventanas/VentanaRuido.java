@@ -22,6 +22,7 @@ import javax.swing.SwingWorker;
 import javax.swing.border.EmptyBorder;
 
 import ar.com.untref.imagenes.bordes.DetectorDeBordes;
+import ar.com.untref.imagenes.bordes.DetectorDeBordesDeCanny;
 import ar.com.untref.imagenes.bordes.InterfaceDetectorDeBordes;
 import ar.com.untref.imagenes.dialogs.DifusionAnisotropicaDialog;
 import ar.com.untref.imagenes.dialogs.DifusionIsotropicaDialog;
@@ -565,6 +566,22 @@ public class VentanaRuido extends JFrame {
 		JMenu menuDeteccionDeBordes = new JMenu("Deteccion de Bordes");
 		menuItemEditar.add(menuDeteccionDeBordes);
 		
+		JMenu menuItemCanny = new JMenu("Detector De Bordes Canny");
+		menuDeteccionDeBordes.add(menuItemCanny);
+		
+		JMenuItem menuItemNoMaximos = new JMenuItem("Supresión no Máximos");
+		menuItemNoMaximos.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				Imagen imagenAnterior = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
+				Imagen nuevaImagenActual = DetectorDeBordesDeCanny.mostrarImagenNoMaximos(imagenAnterior);
+				ProcesadorDeImagenes.obtenerInstancia().setImagenActual(nuevaImagenActual);
+				
+				VentanaRuido.this.refrescarImagen();
+			}
+		});
+		menuItemCanny.add(menuItemNoMaximos);
+		
 		
 		JMenu menuDeteccionDePrewitt = new JMenu("Detector De Prewitt");
 		menuDeteccionDeBordes.add(menuDeteccionDePrewitt);
@@ -738,8 +755,6 @@ public class VentanaRuido extends JFrame {
 				VentanaRuido.this.refrescarImagen();
 			}
 		});
-		menuFiltros.add(menuItemUmbralOtsu);
-		
 		
 		JMenuItem menuItemUmbralGlobal = new JMenuItem("Umbral Global");
 		menuItemUmbralGlobal.addActionListener(new ActionListener() {
