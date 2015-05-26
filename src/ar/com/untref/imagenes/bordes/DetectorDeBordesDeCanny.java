@@ -95,7 +95,7 @@ public class DetectorDeBordesDeCanny {
 			
 			pixeles[0] = matrizDeMagnitud[x][y-1];
 			pixeles[1] = matrizDeMagnitud[x][y+1];
-		} else if (matrizAngulos[x][y] == 45 && x>0 && x<matrizDeMagnitud[0].length-1 && y>0 && y<matrizDeMagnitud.length-1){
+		} else if (matrizAngulos[x][y] == 135 && x>0 && x<matrizDeMagnitud[0].length-1 && y>0 && y<matrizDeMagnitud.length-1){
 			
 			pixeles[0] = matrizDeMagnitud[x-1][y+1];
 			pixeles[1] = matrizDeMagnitud[x+1][y-1];
@@ -142,6 +142,69 @@ public class DetectorDeBordesDeCanny {
 		}
 		
 		return anguloResultante;
+	}
+
+	public static int[][] aplicarUmbralizacionConHisteresis(int[][] matrizNoMaximos, int umbral1, int umbral2){
+		
+		int[][] matrizResultante = new int[matrizNoMaximos.length][matrizNoMaximos[0].length];
+		
+		for (int i=0; i<matrizNoMaximos.length ;i++){
+			for (int j=0; j<matrizNoMaximos[0].length ;j++){
+				
+				int valor = matrizNoMaximos[i][j];
+				
+				if (valor < umbral1){
+					
+					valor = 0;
+				} else if ( valor > umbral2 || esCuatroVecinoDeUnBorde(matrizNoMaximos, i, j)){
+					
+					valor = 255;
+				} else {
+					
+					valor = 0;
+				}
+				
+				matrizResultante[i][j] = valor;
+			}
+		}
+		
+		return matrizResultante;
+	}
+
+	private static boolean esCuatroVecinoDeUnBorde(int[][] matrizNoMaximos, int i, int j) {
+
+		boolean esBorde = false;
+		
+		if ( 	tieneVecinoDerechoBorde(matrizNoMaximos, i, j)
+			 || tieneVecinoIzquierdoBorde(matrizNoMaximos, i, j)
+			 || tieneVecinoSuperiorBorde(matrizNoMaximos, i, j)
+			 || tieneVecinoInferiorBorde(matrizNoMaximos, i, j)){
+			
+			
+			esBorde = true;
+		}
+		
+		return esBorde;
+	}
+
+	private static boolean tieneVecinoDerechoBorde(int[][] matrizNoMaximos, int i,
+			int j) {
+		return i < matrizNoMaximos[0].length-1 && matrizNoMaximos[i+1][j]>0;
+	}
+	
+	private static boolean tieneVecinoIzquierdoBorde(int[][] matrizNoMaximos, int i,
+			int j) {
+		return i > 0 && matrizNoMaximos[i-1][j] > 0;
+	}
+	
+	private static boolean tieneVecinoSuperiorBorde(int[][] matrizNoMaximos, int i,
+			int j) {
+		return j > 0 && matrizNoMaximos[i][j-1] > 0;
+	}
+	
+	private static boolean tieneVecinoInferiorBorde(int[][] matrizNoMaximos, int i,
+			int j) {
+		return j < matrizNoMaximos.length-1 && matrizNoMaximos[i][j+1] > 0;
 	}
 
 }

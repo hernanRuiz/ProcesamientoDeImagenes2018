@@ -487,7 +487,7 @@ public class DetectorDeBordes {
 			for (int i = 0; i < longitudMascara; i++) {
 				
 				mascaraDeLaplacianoDeGaussiano[i][j] = (float) calcularValorMascaraLaplacianoDelGaussiano(i - (longitudMascara/2), j - 
-						(longitudMascara/2), 2);
+						(longitudMascara/2), sigma);
 			}
 		}
 		return mascaraDeLaplacianoDeGaussiano;

@@ -27,6 +27,7 @@ import ar.com.untref.imagenes.bordes.InterfaceDetectorDeBordes;
 import ar.com.untref.imagenes.dialogs.DifusionAnisotropicaDialog;
 import ar.com.untref.imagenes.dialogs.DifusionIsotropicaDialog;
 import ar.com.untref.imagenes.dialogs.EspereDialog;
+import ar.com.untref.imagenes.dialogs.HisteresisDialog;
 import ar.com.untref.imagenes.dialogs.LoGDialog;
 import ar.com.untref.imagenes.dialogs.MascaraGaussianaDialog;
 import ar.com.untref.imagenes.dialogs.MedidaMascaraDialog;
@@ -40,7 +41,9 @@ import ar.com.untref.imagenes.filtros.FiltroPasaAltos;
 import ar.com.untref.imagenes.helpers.DialogsHelper;
 import ar.com.untref.imagenes.listeners.GuardarComoListener;
 import ar.com.untref.imagenes.modelo.Imagen;
+import ar.com.untref.imagenes.modelo.MatrizDeColores;
 import ar.com.untref.imagenes.procesamiento.Difuminador;
+import ar.com.untref.imagenes.procesamiento.MatricesManager;
 import ar.com.untref.imagenes.procesamiento.ProcesadorDeImagenes;
 import ar.com.untref.imagenes.procesamiento.Umbralizador;
 import ar.com.untref.imagenes.ruido.GeneradorDeRuido;
@@ -582,6 +585,16 @@ public class VentanaRuido extends JFrame {
 		});
 		menuItemCanny.add(menuItemNoMaximos);
 		
+		JMenuItem menuItemHisteresis = new JMenuItem("Umbralización con Histéresis");
+		menuItemHisteresis.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				HisteresisDialog dialog = new HisteresisDialog(VentanaRuido.this, contentPane);
+				dialog.setVisible(true);
+			}
+		});
+		menuItemCanny.add(menuItemHisteresis);
+		
 		
 		JMenu menuDeteccionDePrewitt = new JMenu("Detector De Prewitt");
 		menuDeteccionDeBordes.add(menuDeteccionDePrewitt);
@@ -808,6 +821,26 @@ public class VentanaRuido extends JFrame {
 		});
 		menuDifusion.add(menuItemDifusionAnisotropica);
 		
+	}
+	
+	public void umbralizarConHisteresis(int umbral1, int umbral2) {
+		
+		Imagen imagenAnterior = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
+		MatrizDeColores matrizDeColores = DetectorDeBordesDeCanny.calcularSupresionNoMaximos(imagenAnterior);
+		
+		int[][] matrizRojos = matrizDeColores.getMatrizRojos();
+		int[][] matrizVerdes = matrizDeColores.getMatrizVerdes();
+		int[][] matrizAzules = matrizDeColores.getMatrizAzules();
+		
+		int[][] matrizHisteresisRojo = MatricesManager.aplicarTransformacionLineal(DetectorDeBordesDeCanny.aplicarUmbralizacionConHisteresis(matrizRojos, umbral1, umbral2));
+		int[][] matrizHisteresisVerde = MatricesManager.aplicarTransformacionLineal(DetectorDeBordesDeCanny.aplicarUmbralizacionConHisteresis(matrizVerdes, umbral1, umbral2));
+		int[][] matrizHisteresisAzul = MatricesManager.aplicarTransformacionLineal(DetectorDeBordesDeCanny.aplicarUmbralizacionConHisteresis(matrizAzules, umbral1, umbral2));
+		
+		BufferedImage bufferedNuevo = MatricesManager.obtenerImagenDeMatrices(matrizHisteresisRojo, matrizHisteresisVerde, matrizHisteresisAzul);
+		Imagen imagenNueva = new Imagen(bufferedNuevo, imagenAnterior.getFormato(), imagenAnterior.getNombre()+"_histeresis");
+		ProcesadorDeImagenes.obtenerInstancia().setImagenActual(imagenNueva);
+		
+		VentanaRuido.this.refrescarImagen();
 	}
 		
 	private void cargarImagen(JLabel labelPrincipal,
