@@ -28,6 +28,7 @@ import javax.swing.border.EmptyBorder;
 
 import ar.com.untref.imagenes.bordes.DetectarBordesDireccionales;
 import ar.com.untref.imagenes.bordes.DetectorDeBordes;
+import ar.com.untref.imagenes.bordes.DetectorDeBordesDeCanny;
 import ar.com.untref.imagenes.bordes.InterfaceDetectorDeBordes;
 import ar.com.untref.imagenes.dialogs.DifusionAnisotropicaDialog;
 import ar.com.untref.imagenes.dialogs.DifusionIsotropicaDialog;
@@ -609,6 +610,21 @@ VentanaPrincipal.this.setExtendedState(VentanaPrincipal.this.getExtendedState() 
 		JMenu menuDeteccionDeBordes = new JMenu("Deteccion de Bordes");
 		menuItemEditar.add(menuDeteccionDeBordes);
 		
+		JMenu menuCanny = new JMenu("Detector de Canny");
+		menuDeteccionDeBordes.add(menuCanny);
+		
+		JMenuItem mntmSupresionNoMaximosItem = new JMenuItem("Supresi\u00F3n No M\u00E1ximos");
+		mntmSupresionNoMaximosItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				Imagen imagenAnterior = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
+				Imagen nuevaImagenActual = DetectorDeBordesDeCanny.mostrarImagenNoMaximos(imagenAnterior);
+				ProcesadorDeImagenes.obtenerInstancia().setImagenActual(nuevaImagenActual);
+				
+				VentanaPrincipal.this.refrescarImagen();
+			}
+		});
+		menuCanny.add(mntmSupresionNoMaximosItem);
 		
 		JMenu menuDeteccionDePrewitt = new JMenu("Detector De Prewitt");
 		menuDeteccionDeBordes.add(menuDeteccionDePrewitt);

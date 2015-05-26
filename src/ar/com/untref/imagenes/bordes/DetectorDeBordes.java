@@ -125,7 +125,7 @@ public class DetectorDeBordes {
 	}
 
 	
-	private static float[][] calcularMascaraDeSobelEnY() {
+	public static float[][] calcularMascaraDeSobelEnY() {
 		
 		float[][] mascaraDeSobelEnY = new float [3][3];
 		
@@ -142,7 +142,7 @@ public class DetectorDeBordes {
 		return mascaraDeSobelEnY;
 	}
 	
-	private static float[][] calcularMascaraDeSobelEnX() {
+	public static float[][] calcularMascaraDeSobelEnX() {
 		
 		float[][] mascaraDeSobelEnX = new float [3][3];
 		
@@ -615,7 +615,7 @@ public class DetectorDeBordes {
 		return false;
 	}
 		
-	private static int[][] sintetizar(int[][] matrizEnX, int[][] matrizEnY) {
+	public static int[][] sintetizar(int[][] matrizEnX, int[][] matrizEnY) {
 		
 		int[][] matrizFinal  = new int[matrizEnX.length][matrizEnX[0].length]; 
 		
