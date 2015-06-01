@@ -5,8 +5,8 @@ import ar.com.untref.imagenes.modelo.Imagen;
 
 public class DetectorDeSusan {
 
-	private static float[][] calcularMascaraDeSusan() {
-		float[][] mascaraDeSusan = new float [7][7];
+	private static int[][] calcularMascaraDeSusan() {
+		int[][] mascaraDeSusan = new int [7][7];
 
 		mascaraDeSusan[0][0]= 0;
 		mascaraDeSusan[0][1]= 0;
@@ -67,36 +67,30 @@ public class DetectorDeSusan {
 		return mascaraDeSusan;
 	}
 	
-	public void aplicarMascaraDeSusan(Imagen imagenActual){
+	public void aplicarMascaraDeSusan(int[][] mascaraSusan, Imagen imagenActual, int indiceI, int indiceJ){
 		
-		float[][] mascaraSusan = calcularMascaraDeSusan();
 		int longitudMascara = mascaraSusan.length;
 		
 		int[][] matrizRojo = imagenActual.getMatriz(Canal.ROJO);
-		
-		for (int i = 0; i < longitudMascara; i++) {
-			for (int j = 0; j < longitudMascara; j++) {
 				
-				int coordenadaI = i - (longitudMascara/2);
-				int coordenadaJ = j - (longitudMascara/2);
+			int coordenadaI = indiceI - (longitudMascara/2);
+			int coordenadaJ = indiceJ - (longitudMascara/2);
 				
-				if (coordenadaI > 0 && coordenadaI < longitudMascara && coordenadaI > 0 && coordenadaJ < longitudMascara){
+			if (coordenadaI > 0 && coordenadaI < longitudMascara && coordenadaI > 0 && coordenadaJ < longitudMascara){
 
-						mascaraSusan[coordenadaI][coordenadaJ] = (mascaraSusan[coordenadaI][coordenadaJ] * matrizRojo[i][j]);
-				}else{
+				mascaraSusan[coordenadaI][coordenadaJ] = (mascaraSusan[coordenadaI][coordenadaJ] * matrizRojo[indiceI][indiceJ]);
+			}else{
 						
-						mascaraSusan[coordenadaI][coordenadaJ] = 0;
-					}
-				}
-				
+				mascaraSusan[coordenadaI][coordenadaJ] = 0;
 			}
-		}
+	}
+				
 	
-	public int evaluarMascara(float[][] mascaraSusan){
+	public int[][] evaluarMascara(int[][] mascaraSusan){
 		
 		int longitudMascara = mascaraSusan.length;
 		
-		int acumulador = 0;
+		int[][] matrizResultado = new int[7][7];
 		
 		for (int i = 0; i < longitudMascara; i++) {
 			for (int j = 0; j < longitudMascara; j++) {
@@ -105,13 +99,31 @@ public class DetectorDeSusan {
 				
 				if (Math.abs(mascaraSusan[i][j] - centro) < 27){
 					
-					acumulador += 1;
+					matrizResultado[i][j] = 1;
+				}else{
+					
+					matrizResultado[i][j] = 0;
 				}
-				
 			}
-		}
 		
-		return acumulador;
+		}
+		return matrizResultado;
 	}
 	
+	public int aplicarDetectorDeSusan(Imagen imagenActual){
+		
+		int[][] mascaraSusan = calcularMascaraDeSusan();
+		int sumatoria = 0;
+				
+		for (int i = 0; i < imagenActual.getBufferedImage().getWidth(); i++) {
+			for (int j = 0; j < imagenActual.getBufferedImage().getHeight(); j++) {
+			
+				aplicarMascaraDeSusan(mascaraSusan, imagenActual, i, j);
+				int[][] matrizResultado = evaluarMascara(mascaraSusan);
+				sumatoria += matrizResultado[i][j];
+			}
+		}
+		return sumatoria;
+	}
+
 }
