@@ -1,6 +1,7 @@
 package ar.com.untref.imagenes.bordes;
 
 import ar.com.untref.imagenes.enums.Canal;
+import ar.com.untref.imagenes.filtros.FiltroGaussiano;
 import ar.com.untref.imagenes.filtros.FiltroNuevo;
 import ar.com.untref.imagenes.modelo.Imagen;
 import ar.com.untref.imagenes.modelo.MatrizDeColores;
@@ -151,17 +152,17 @@ public class DetectorDeBordesDeCanny {
 
 	public static int[][] aplicarUmbralizacionConHisteresis(int[][] matrizNoMaximos, int umbral1, int umbral2){
 		
-		int[][] matrizResultante = new int[matrizNoMaximos.length][matrizNoMaximos[0].length];
+		int[][] matrizResultante = new int[matrizNoMaximos[0].length][matrizNoMaximos.length];
 		
-		for (int i=0; i<matrizNoMaximos.length ;i++){
-			for (int j=0; j<matrizNoMaximos[0].length ;j++){
+		for (int i=0; i<matrizNoMaximos[0].length ;i++){
+			for (int j=0; j<matrizNoMaximos.length ;j++){
 				
-				int valor = matrizNoMaximos[i][j];
+				int valor = matrizNoMaximos[j][i];
 				
 				if (valor < umbral1){
 					
 					valor = 0;
-				} else if ( valor > umbral2 || esCuatroVecinoDeUnBorde(matrizNoMaximos, i, j)){
+				} else if ( valor > umbral2 || esCuatroVecinoDeUnBorde(matrizNoMaximos, j, i)){
 					
 					valor = 255;
 				} else {
@@ -174,6 +175,19 @@ public class DetectorDeBordesDeCanny {
 		}
 		
 		return matrizResultante;
+	}
+
+	public static MatrizDeColores calcularMatrizConFiltrosGauss(Imagen imagenOriginal, int sigma) {
+		
+		Imagen imagenConFiltroGauss = FiltroGaussiano.aplicarFiltroGaussiano(imagenOriginal, sigma);
+		
+		int[][] matrizRojoImagenGauss = imagenConFiltroGauss.getMatriz(Canal.ROJO);
+		int[][] matrizVerdeImagenGauss = imagenConFiltroGauss.getMatriz(Canal.VERDE);
+		int[][] matrizAzulImagenGauss = imagenConFiltroGauss.getMatriz(Canal.AZUL);
+		
+		MatrizDeColores matricesFiltradasResultantes = new MatrizDeColores (matrizRojoImagenGauss, matrizVerdeImagenGauss, matrizAzulImagenGauss); 
+	
+		return matricesFiltradasResultantes;
 	}
 
 	private static boolean esCuatroVecinoDeUnBorde(int[][] matrizNoMaximos, int i, int j) {

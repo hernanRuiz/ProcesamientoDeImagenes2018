@@ -24,6 +24,7 @@ import javax.swing.border.EmptyBorder;
 import ar.com.untref.imagenes.bordes.DetectorDeBordes;
 import ar.com.untref.imagenes.bordes.DetectorDeBordesDeCanny;
 import ar.com.untref.imagenes.bordes.InterfaceDetectorDeBordes;
+import ar.com.untref.imagenes.dialogs.DetectorDeCannyDialog;
 import ar.com.untref.imagenes.dialogs.DifusionAnisotropicaDialog;
 import ar.com.untref.imagenes.dialogs.DifusionIsotropicaDialog;
 import ar.com.untref.imagenes.dialogs.EspereDialog;
@@ -595,6 +596,17 @@ public class VentanaRuido extends JFrame {
 		});
 		menuItemCanny.add(menuItemHisteresis);
 		
+		JMenuItem menuItemDetectorCanny = new JMenuItem("Aplicar Detector de Canny");
+		menuItemDetectorCanny.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				DetectorDeCannyDialog dialog = new DetectorDeCannyDialog(VentanaRuido.this, contentPane);
+				dialog.setVisible(true);
+			}
+		});
+		menuItemCanny.add(menuItemDetectorCanny);
+		
+		
 		
 		JMenu menuDeteccionDePrewitt = new JMenu("Detector De Prewitt");
 		menuDeteccionDeBordes.add(menuDeteccionDePrewitt);
@@ -843,6 +855,62 @@ public class VentanaRuido extends JFrame {
 		VentanaRuido.this.refrescarImagen();
 	}
 		
+public void aplicarDetectorCanny(int umbral1, int umbral2, int sigma1, int sigma2) {
+		
+		Imagen imagenAnterior = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
+		MatrizDeColores matrizDeColores1 = DetectorDeBordesDeCanny.calcularMatrizConFiltrosGauss(imagenAnterior, sigma1);
+		MatrizDeColores matrizDeColores2 = DetectorDeBordesDeCanny.calcularMatrizConFiltrosGauss(imagenAnterior, sigma2);
+		
+		int[][] matrizRojos1 = matrizDeColores1.getMatrizRojos();
+		int[][] matrizVerdes1 = matrizDeColores1.getMatrizVerdes();
+		int[][] matrizAzules1 = matrizDeColores1.getMatrizAzules();
+		
+		int[][] matrizRojos2 = matrizDeColores2.getMatrizRojos();
+		int[][] matrizVerdes2 = matrizDeColores2.getMatrizVerdes();
+		int[][] matrizAzules2 = matrizDeColores2.getMatrizAzules();
+		
+		int[][] matrizResultanteRojo = new int[matrizRojos1[0].length][matrizRojos1.length];
+		int[][] matrizResultanteVerde = new int[matrizRojos1[0].length][matrizRojos1.length];
+		int[][] matrizResultanteAzul = new int[matrizRojos1[0].length][matrizRojos1.length];
+		
+		for (int i=0; i<imagenAnterior.getBufferedImage().getWidth() ;i++){
+			for (int j=0; j<imagenAnterior.getBufferedImage().getHeight() ;j++){
+				
+				if (matrizRojos1[i][j] > matrizRojos2[i][j]){
+					
+					matrizResultanteRojo[i][j] = matrizRojos1[i][j];
+				}else{
+					matrizResultanteRojo[i][j] = matrizRojos2[i][j];
+				}
+				
+				if (matrizVerdes1[i][j] > matrizVerdes2[i][j]){
+					
+					matrizResultanteVerde[i][j] = matrizVerdes1[i][j];
+				}else{
+					matrizResultanteVerde[i][j] = matrizVerdes2[i][j];
+				}
+				
+				if (matrizAzules1[i][j] > matrizAzules2[i][j]){
+					
+					matrizResultanteAzul[i][j] = matrizAzules1[i][j];
+				}else{
+					matrizResultanteAzul[i][j] = matrizAzules2[i][j];
+				}
+			}
+		}
+		
+		int[][] matrizHisteresisRojo = MatricesManager.aplicarTransformacionLineal(DetectorDeBordesDeCanny.aplicarUmbralizacionConHisteresis(matrizResultanteRojo, umbral1, umbral2));
+		int[][] matrizHisteresisVerde = MatricesManager.aplicarTransformacionLineal(DetectorDeBordesDeCanny.aplicarUmbralizacionConHisteresis(matrizResultanteVerde, umbral1, umbral2));
+		int[][] matrizHisteresisAzul = MatricesManager.aplicarTransformacionLineal(DetectorDeBordesDeCanny.aplicarUmbralizacionConHisteresis(matrizResultanteAzul, umbral1, umbral2));
+		
+		BufferedImage bufferedNuevo = MatricesManager.obtenerImagenDeMatrices(matrizHisteresisRojo, matrizHisteresisVerde, matrizHisteresisAzul);
+		Imagen imagenNueva = new Imagen(bufferedNuevo, imagenAnterior.getFormato(), imagenAnterior.getNombre()+"_histeresis");
+		ProcesadorDeImagenes.obtenerInstancia().setImagenActual(imagenNueva);
+		
+		VentanaRuido.this.refrescarImagen();
+	}
+	
+	
 	private void cargarImagen(JLabel labelPrincipal,
 			JMenuItem menuItemGuardarComo) {
 		Imagen imagenElegida = ProcesadorDeImagenes.obtenerInstancia().cargarUnaImagenDesdeArchivo();
