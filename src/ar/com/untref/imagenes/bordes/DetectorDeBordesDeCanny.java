@@ -111,7 +111,12 @@ public class DetectorDeBordesDeCanny {
 		for (int i=0; i<matrizX.length ;i++){
 			for (int j=0; j<matrizX[0].length ;j++){
 				
-				float arcTan = (float) Math.atan((float) matrizX[i][j] / matrizY[i][j]);
+				float arcTan = 0;
+				if(matrizX[i][j] != 0){
+					
+					arcTan = (float) Math.atan((float) matrizY[i][j] / matrizX[i][j]);
+				}
+				
                 double grados = Math.toDegrees(arcTan);
                 
                 if ( grados < 0){

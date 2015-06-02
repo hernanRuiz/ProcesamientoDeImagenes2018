@@ -1,14 +1,15 @@
 package ar.com.untref.imagenes.procesamiento;
 
 import java.awt.Color;
+import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.LinkedList;
+import java.util.List;
 
 import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
-import javax.swing.JLabel;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import ar.com.untref.imagenes.enums.Canal;
@@ -25,7 +26,6 @@ public class ProcesadorDeImagenes {
 	private Archivo archivoActual;
 	private static Imagen imagenActual;
 	private static Imagen imagenOriginal;
-	private static JLabel labelImagenMarcada;
 	private Integer x1;
 	private Integer x2;
 	private Integer y1;
@@ -533,7 +533,7 @@ public class ProcesadorDeImagenes {
 		return imagenTransformada;
 	}
 
-	public JLabel marcarImagenActual(Integer x1, Integer y1, Integer x2,
+	public void marcarImagenActual(Integer x1, Integer y1, Integer x2,
 			Integer y2, VentanaPrincipal ventana) {
 
 		this.x1 = x1;
@@ -541,33 +541,29 @@ public class ProcesadorDeImagenes {
 		this.y1 = y1;
 		this.y2 = y2;
 		
-		int cantidadPixeles = 0;
 		if (imagenActual != null) {
 
-			int ancho = x2 - x1;
-			int alto = y2 - y1;
-			/*int[][] matrizRecortada = new int[ancho + 1][alto + 1];
+			List<Point> pixeles = new LinkedList<Point>();
 
-			for (int i = 0; i <= ancho; i++) {
-				for (int j = 0; j <= alto; j++) {
-					int valorDelPixel = imagenActual.getBufferedImage().getRGB(
-							i + x1, j + y1);
-
-					matrizRecortada[i][j] = valorDelPixel;
-				}
-			}*/
+			for (int i = x1; i<= x2; i++){
+				
+				pixeles.add(new Point(i,y1));
+				pixeles.add(new Point(i,y2));
+			}
 			
-			//BufferedImage imagenRecortada = getBufferedImageDeMatriz(matrizRecortada, ancho+1, alto+1);
-			BufferedImage imagenRecortada = imagenActual.getBufferedImage().getSubimage(x1, y1, ancho, alto);
-			cantidadPixeles = imagenRecortada.getWidth()* imagenRecortada.getHeight();
-			Imagen nuevaImagenRecortada = new Imagen(imagenRecortada, imagenActual.getFormato(), imagenActual.getNombre());
-			imagenActual = nuevaImagenRecortada;
-			labelImagenMarcada = new JLabel(new ImageIcon(imagenActual.getBufferedImage()));
+			for (int j = y1; j<= y2; j++){
+				
+				pixeles.add(new Point(x1,j));
+				pixeles.add(new Point(x2,j));
+			}
 			
-			ventana.mostrarImagenMarcada();
-			ventana.refrescarCantidadPixeles(cantidadPixeles);
+			for (Point pixel: pixeles){
+				
+				imagenActual.getBufferedImage().setRGB(pixel.x, pixel.y, Color.RED.getRGB());
+			}
+			
+			ventana.refrescarImagen();
 		}
-		return labelImagenMarcada;
 	}
 	
 	public Integer[] getXEY(){

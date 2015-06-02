@@ -113,12 +113,7 @@ public class VentanaPrincipal extends JFrame {
 		botonSeleccionar.setVisible(false);
 		botonSeleccionar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				Imagen imagen = ProcesadorDeImagenes.obtenerInstancia().getImagenOriginal();
-				int cantidadPixeles = imagen.getBufferedImage().getHeight() * imagen.getBufferedImage().getWidth();
-				ProcesadorDeImagenes.obtenerInstancia().setImagenActual(imagen);
-				VentanaPrincipal.this.refrescarImagen();
-				VentanaPrincipal.this.refrescarCantidadPixeles(cantidadPixeles);
-				
+
 				DialogsHelper.mostarMensaje(contentPane, "Cliquea en la esquina superior izquierda y la inferior derecha que formarán el cuadrado para marcar una región en la imagen");
 				labelPrincipal.addMouseListener(new MarcarImagenListener(VentanaPrincipal.this));
 			}
@@ -587,7 +582,7 @@ public class VentanaPrincipal extends JFrame {
 		JMenuItem menuItemPromedioGrises = new JMenuItem("Valores Promedio");
 		menuItemPromedioGrises.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-VentanaPrincipal.this.setExtendedState(VentanaPrincipal.this.getExtendedState() | JFrame.MAXIMIZED_BOTH);
+				VentanaPrincipal.this.setExtendedState(VentanaPrincipal.this.getExtendedState() | JFrame.MAXIMIZED_BOTH);
 				
 				botonSeleccionar.setVisible(true);
 				cantidadPixeles.setVisible(true);
@@ -1121,6 +1116,10 @@ VentanaPrincipal.this.setExtendedState(VentanaPrincipal.this.getExtendedState() 
 		ProcesadorDeImagenes.obtenerInstancia().setImagenActual(nuevaImagenActual);
 
 		VentanaPrincipal.this.refrescarImagen();
+	}
+	
+	public JLabel getPanelDeImagen(){
+		return labelPrincipal;
 	}
 	
 }
