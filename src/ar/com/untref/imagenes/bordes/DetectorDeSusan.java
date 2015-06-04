@@ -1,5 +1,7 @@
 package ar.com.untref.imagenes.bordes;
 
+import java.awt.Color;
+
 import ar.com.untref.imagenes.enums.Canal;
 import ar.com.untref.imagenes.modelo.Imagen;
 
@@ -67,63 +69,159 @@ public class DetectorDeSusan {
 		return mascaraDeSusan;
 	}
 	
-	public void aplicarMascaraDeSusan(int[][] mascaraSusan, Imagen imagenActual, int indiceI, int indiceJ){
+	private static void aplicarMascaraDeSusan(int[][] mascaraSusan, int[][] matriz, int indiceK, int indiceL){
 		
 		int longitudMascara = mascaraSusan.length;
-		
-		int[][] matrizRojo = imagenActual.getMatriz(Canal.ROJO);
 				
-			int coordenadaI = indiceI - (longitudMascara/2);
-			int coordenadaJ = indiceJ - (longitudMascara/2);
+			int coordenadaI = (longitudMascara/2);
+			int coordenadaJ = (longitudMascara/2);
+			mascaraSusan[coordenadaI][coordenadaJ] = (mascaraSusan[coordenadaI][coordenadaJ] * matriz[indiceK][indiceL]);
 				
-			if (coordenadaI > 0 && coordenadaI < longitudMascara && coordenadaI > 0 && coordenadaJ < longitudMascara){
-
-				mascaraSusan[coordenadaI][coordenadaJ] = (mascaraSusan[coordenadaI][coordenadaJ] * matrizRojo[indiceI][indiceJ]);
-			}else{
+			
+			//Con la mascara de Susan centrada en el pixel en cuestion
+			//calculo los valores en la mascara para todos sus vecinos, si
+			//es que existen
+			for(int i = 0 ; (coordenadaI + i)< longitudMascara; i++){
+				for(int j = 0 ; (coordenadaJ + j)< longitudMascara; j++){
+					
+					//Valores arriba y abajo del centro de la mascara
+					if(indiceL+j>0 && indiceL+j < matriz.length){
 						
-				mascaraSusan[coordenadaI][coordenadaJ] = 0;
-			}
+						mascaraSusan[coordenadaI][coordenadaJ+j] = mascaraSusan[coordenadaI][coordenadaJ+j]; 
+					}else{
+						mascaraSusan[coordenadaI][coordenadaJ+j] = 0; 
+
+					}
+					if(indiceL-j>0 && indiceL-j < matriz.length){
+						
+						mascaraSusan[coordenadaI][coordenadaJ-j] = mascaraSusan[coordenadaI][coordenadaJ-j]; 
+					}else{
+						mascaraSusan[coordenadaI][coordenadaJ-j] = 0; 
+
+					}
+					
+					//Valores a la izquierda
+					if (indiceK+i>0 && indiceK+i < matriz[0].length){
+						
+						mascaraSusan[coordenadaI+i][coordenadaJ] = mascaraSusan[coordenadaI+i][coordenadaJ]; 
+
+						if(indiceL+j>0 && indiceL+j < matriz.length){
+							
+							mascaraSusan[coordenadaI+i][coordenadaJ+j] = mascaraSusan[coordenadaI+i][coordenadaJ+j]; 
+						}else{
+							
+							mascaraSusan[coordenadaI+i][coordenadaJ+j] = 0; 
+						}
+						
+						if(indiceL-j>0 && indiceL-j < matriz.length){
+							
+							mascaraSusan[coordenadaI+i][coordenadaJ-j] = mascaraSusan[coordenadaI+i][coordenadaJ-j]; 
+						}else{
+							mascaraSusan[coordenadaI+i][coordenadaJ-j] = 0; 
+
+						}
+					}else{
+						
+						mascaraSusan[coordenadaI+i][coordenadaJ] = 0; 
+					}
+					
+					//valores a la derecha
+					if (indiceK-i>0 && indiceK-i < matriz[0].length){
+						
+						mascaraSusan[coordenadaI-i][coordenadaJ] = mascaraSusan[coordenadaI-i][coordenadaJ]; 
+						
+						if(indiceL+j>0 && indiceL+j < matriz.length){
+							
+							mascaraSusan[coordenadaI-i][coordenadaJ+j] = mascaraSusan[coordenadaI-i][coordenadaJ+j]; 
+						}else{
+							
+							mascaraSusan[coordenadaI-i][coordenadaJ+j] = 0; 
+						}
+						
+						if(indiceL-j>0 && indiceL-j < matriz.length){
+							
+							mascaraSusan[coordenadaI-i][coordenadaJ-j] = mascaraSusan[coordenadaI-i][coordenadaJ-j]; 
+						}else{
+							
+							mascaraSusan[coordenadaI-i][coordenadaJ-j] = 0; 
+						}
+					}else{
+						
+						mascaraSusan[coordenadaI-i][coordenadaJ] = 0; 
+					}
+						
+					mascaraSusan[coordenadaI-i][coordenadaJ] = 0; 	
+				}
+			}	
 	}
-				
-	
-	public int[][] evaluarMascara(int[][] mascaraSusan){
+		
+	private static boolean evaluarMascaraenIJ(int[][] mascaraSusan){
 		
 		int longitudMascara = mascaraSusan.length;
-		
-		int[][] matrizResultado = new int[7][7];
+		int[][] matrizResultado = new int[longitudMascara][longitudMascara];
+		boolean pintarPixel = false;
+		int sumatoria = 0;
 		
 		for (int i = 0; i < longitudMascara; i++) {
 			for (int j = 0; j < longitudMascara; j++) {
 				
-				float centro = mascaraSusan[i - longitudMascara/2][j - longitudMascara/2];
+				float centro = mascaraSusan[longitudMascara/2][longitudMascara/2];
 				
 				if (Math.abs(mascaraSusan[i][j] - centro) < 27){
 					
 					matrizResultado[i][j] = 1;
+					sumatoria += matrizResultado[i][j];
 				}else{
 					
 					matrizResultado[i][j] = 0;
 				}
 			}
-		
 		}
-		return matrizResultado;
+		
+		float valorSr0 = 1 - (sumatoria/37);
+		
+		if (esEsquina(valorSr0)){
+			
+			pintarPixel = true;
+		}
+		
+		return pintarPixel;
 	}
 	
-	public int aplicarDetectorDeSusan(Imagen imagenActual){
+	public static void aplicarDetectorDeSusan(Imagen imagen){
 		
+		int[][] matriz = imagen.getMatriz(Canal.ROJO);
 		int[][] mascaraSusan = calcularMascaraDeSusan();
-		int sumatoria = 0;
+		
+		@SuppressWarnings("unused")
+		boolean pintarPixel = false;
 				
-		for (int i = 0; i < imagenActual.getBufferedImage().getWidth(); i++) {
-			for (int j = 0; j < imagenActual.getBufferedImage().getHeight(); j++) {
+		for (int i = 0; i < matriz[0].length; i++) {
+			for (int j = 0; j < matriz.length; j++) {
 			
-				aplicarMascaraDeSusan(mascaraSusan, imagenActual, i, j);
-				int[][] matrizResultado = evaluarMascara(mascaraSusan);
-				sumatoria += matrizResultado[i][j];
+				aplicarMascaraDeSusan(mascaraSusan, matriz, i, j);
+				pintarPixel = evaluarMascaraenIJ(mascaraSusan);
+				
+				if(pintarPixel = true){
+					
+					Color color = new Color(0,255,0);
+					imagen.getBufferedImage().setRGB(i, j, color.getRGB());
+				}
 			}
 		}
-		return sumatoria;
 	}
 
+	private static boolean esBorde(float s_ro) {
+		float limiteInferior = (float) (0.5 - (0.75 - 0.5) / 2);
+		float limiteSuperior = (float) (0.5 + (0.75 - 0.5) / 2);
+
+		return s_ro > limiteInferior && s_ro <= limiteSuperior;
+	}
+	
+	private static boolean esEsquina(float s_ro) {
+		float limiteInferior = (float) (0.75 - (0.75 - 0.5) / 2);
+		float limiteSuperior = (float) (0.75 + (0.75 - 0.5) / 2);
+
+		return s_ro > limiteInferior && s_ro <= limiteSuperior;
+	}
 }

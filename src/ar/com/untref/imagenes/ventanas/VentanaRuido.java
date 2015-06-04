@@ -835,7 +835,7 @@ public class VentanaRuido extends JFrame {
 		
 	}
 	
-	public void umbralizarConHisteresis(int umbral1, int umbral2) {
+public void umbralizarConHisteresis(int umbral1, int umbral2) {
 		
 		Imagen imagenAnterior = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
 		MatrizDeColores matrizDeColores = DetectorDeBordesDeCanny.calcularSupresionNoMaximos(imagenAnterior);
@@ -844,9 +844,22 @@ public class VentanaRuido extends JFrame {
 		int[][] matrizVerdes = matrizDeColores.getMatrizVerdes();
 		int[][] matrizAzules = matrizDeColores.getMatrizAzules();
 		
-		int[][] matrizHisteresisRojo = MatricesManager.aplicarTransformacionLineal(DetectorDeBordesDeCanny.aplicarUmbralizacionConHisteresis(matrizRojos, umbral1, umbral2));
-		int[][] matrizHisteresisVerde = MatricesManager.aplicarTransformacionLineal(DetectorDeBordesDeCanny.aplicarUmbralizacionConHisteresis(matrizVerdes, umbral1, umbral2));
-		int[][] matrizHisteresisAzul = MatricesManager.aplicarTransformacionLineal(DetectorDeBordesDeCanny.aplicarUmbralizacionConHisteresis(matrizAzules, umbral1, umbral2));
+		int[][] matrizRojoTrasnpuesta = new int[matrizRojos[0].length][matrizRojos.length];
+		int[][] matrizVerdeTranspuesta = new int[matrizRojos[0].length][matrizRojos.length];
+		int[][] matrizAzulTranspuesta = new int[matrizRojos[0].length][matrizRojos.length];
+		
+		
+		   for(int j = 0; j < matrizRojos.length; j++){
+	           for(int i = 0; i < matrizRojos[0].length; i++){
+	        	   matrizRojoTrasnpuesta[i][j] = matrizRojos[j][i];
+	        	   matrizVerdeTranspuesta[i][j] = matrizVerdes[j][i];
+	        	   matrizAzulTranspuesta[i][j] = matrizAzules[j][i];
+	           }
+	        }
+		
+		int[][] matrizHisteresisRojo = MatricesManager.aplicarTransformacionLineal(DetectorDeBordesDeCanny.aplicarUmbralizacionConHisteresis(matrizRojoTrasnpuesta, umbral1, umbral2));
+		int[][] matrizHisteresisVerde = MatricesManager.aplicarTransformacionLineal(DetectorDeBordesDeCanny.aplicarUmbralizacionConHisteresis(matrizVerdeTranspuesta, umbral1, umbral2));
+		int[][] matrizHisteresisAzul = MatricesManager.aplicarTransformacionLineal(DetectorDeBordesDeCanny.aplicarUmbralizacionConHisteresis(matrizAzulTranspuesta, umbral1, umbral2));
 		
 		BufferedImage bufferedNuevo = MatricesManager.obtenerImagenDeMatrices(matrizHisteresisRojo, matrizHisteresisVerde, matrizHisteresisAzul);
 		Imagen imagenNueva = new Imagen(bufferedNuevo, imagenAnterior.getFormato(), imagenAnterior.getNombre()+"_histeresis");
@@ -854,12 +867,14 @@ public class VentanaRuido extends JFrame {
 		
 		VentanaRuido.this.refrescarImagen();
 	}
-		
-public void aplicarDetectorCanny(int umbral1, int umbral2, int sigma1, int sigma2) {
+	
+	public void aplicarDetectorCanny(int umbral1, int umbral2, int sigma1, int sigma2) {
 		
 		Imagen imagenAnterior = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
+		Imagen imagenAnterior2 = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
+
 		MatrizDeColores matrizDeColores1 = DetectorDeBordesDeCanny.calcularMatrizConFiltrosGauss(imagenAnterior, sigma1);
-		MatrizDeColores matrizDeColores2 = DetectorDeBordesDeCanny.calcularMatrizConFiltrosGauss(imagenAnterior, sigma2);
+		MatrizDeColores matrizDeColores2 = DetectorDeBordesDeCanny.calcularMatrizConFiltrosGauss(imagenAnterior2, sigma2);
 		
 		int[][] matrizRojos1 = matrizDeColores1.getMatrizRojos();
 		int[][] matrizVerdes1 = matrizDeColores1.getMatrizVerdes();
@@ -873,42 +888,52 @@ public void aplicarDetectorCanny(int umbral1, int umbral2, int sigma1, int sigma
 		int[][] matrizResultanteVerde = new int[matrizRojos1[0].length][matrizRojos1.length];
 		int[][] matrizResultanteAzul = new int[matrizRojos1[0].length][matrizRojos1.length];
 		
-		for (int i=0; i<imagenAnterior.getBufferedImage().getWidth() ;i++){
-			for (int j=0; j<imagenAnterior.getBufferedImage().getHeight() ;j++){
+		int[][] matrizHisteresisRojo1 = DetectorDeBordesDeCanny.aplicarUmbralizacionConHisteresis(matrizRojos1, umbral1, umbral2);
+		int[][] matrizHisteresisVerde1 = DetectorDeBordesDeCanny.aplicarUmbralizacionConHisteresis(matrizVerdes1, umbral1, umbral2);
+		int[][] matrizHisteresisAzul1 = DetectorDeBordesDeCanny.aplicarUmbralizacionConHisteresis(matrizAzules1, umbral1, umbral2);
+		
+		int[][] matrizHisteresisRojo2 = DetectorDeBordesDeCanny.aplicarUmbralizacionConHisteresis(matrizRojos2, umbral1, umbral2);
+		int[][] matrizHisteresisVerde2 = DetectorDeBordesDeCanny.aplicarUmbralizacionConHisteresis(matrizVerdes2, umbral1, umbral2);
+		int[][] matrizHisteresisAzul2 = DetectorDeBordesDeCanny.aplicarUmbralizacionConHisteresis(matrizAzules2, umbral1, umbral2);
+		
+		
+		for (int i=0; i < matrizRojos1[0].length ;i++){
+			for (int j=0; j < matrizRojos1.length ;j++){
 				
-				if (matrizRojos1[i][j] > matrizRojos2[i][j]){
+				if (matrizHisteresisRojo1[i][j] > matrizHisteresisRojo2[i][j]){
 					
-					matrizResultanteRojo[i][j] = matrizRojos1[i][j];
+					matrizResultanteRojo[i][j] = matrizHisteresisRojo1[i][j];
 				}else{
-					matrizResultanteRojo[i][j] = matrizRojos2[i][j];
+					matrizResultanteRojo[i][j] = matrizHisteresisRojo2[i][j];
 				}
 				
-				if (matrizVerdes1[i][j] > matrizVerdes2[i][j]){
+				if (matrizHisteresisVerde1[i][j] > matrizHisteresisVerde2[i][j]){
 					
-					matrizResultanteVerde[i][j] = matrizVerdes1[i][j];
+					matrizResultanteVerde[i][j] = matrizHisteresisVerde1[i][j];
 				}else{
-					matrizResultanteVerde[i][j] = matrizVerdes2[i][j];
+					matrizResultanteVerde[i][j] = matrizHisteresisVerde2[i][j];
 				}
 				
-				if (matrizAzules1[i][j] > matrizAzules2[i][j]){
+				if (matrizHisteresisAzul1[i][j] > matrizHisteresisAzul2[i][j]){
 					
-					matrizResultanteAzul[i][j] = matrizAzules1[i][j];
+					matrizResultanteAzul[i][j] = matrizHisteresisAzul1[i][j];
 				}else{
-					matrizResultanteAzul[i][j] = matrizAzules2[i][j];
+					matrizResultanteAzul[i][j] = matrizHisteresisAzul2[i][j];
 				}
 			}
 		}
 		
-		int[][] matrizHisteresisRojo = MatricesManager.aplicarTransformacionLineal(DetectorDeBordesDeCanny.aplicarUmbralizacionConHisteresis(matrizResultanteRojo, umbral1, umbral2));
-		int[][] matrizHisteresisVerde = MatricesManager.aplicarTransformacionLineal(DetectorDeBordesDeCanny.aplicarUmbralizacionConHisteresis(matrizResultanteVerde, umbral1, umbral2));
-		int[][] matrizHisteresisAzul = MatricesManager.aplicarTransformacionLineal(DetectorDeBordesDeCanny.aplicarUmbralizacionConHisteresis(matrizResultanteAzul, umbral1, umbral2));
-		
-		BufferedImage bufferedNuevo = MatricesManager.obtenerImagenDeMatrices(matrizHisteresisRojo, matrizHisteresisVerde, matrizHisteresisAzul);
+		int[][] matrizRojoFinal = MatricesManager.aplicarTransformacionLineal(matrizResultanteRojo);
+		int[][] matrizVerdeFinal = MatricesManager.aplicarTransformacionLineal(matrizResultanteVerde);
+		int[][] matrizAzulFinal = MatricesManager.aplicarTransformacionLineal(matrizResultanteAzul);
+
+		BufferedImage bufferedNuevo = MatricesManager.obtenerImagenDeMatrices(matrizRojoFinal, matrizVerdeFinal, matrizAzulFinal);
 		Imagen imagenNueva = new Imagen(bufferedNuevo, imagenAnterior.getFormato(), imagenAnterior.getNombre()+"_histeresis");
 		ProcesadorDeImagenes.obtenerInstancia().setImagenActual(imagenNueva);
 		
 		VentanaRuido.this.refrescarImagen();
 	}
+
 	
 	
 	private void cargarImagen(JLabel labelPrincipal,

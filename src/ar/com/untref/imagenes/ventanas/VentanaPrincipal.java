@@ -29,6 +29,7 @@ import javax.swing.border.EmptyBorder;
 import ar.com.untref.imagenes.bordes.DetectarBordesDireccionales;
 import ar.com.untref.imagenes.bordes.DetectorDeBordes;
 import ar.com.untref.imagenes.bordes.DetectorDeBordesDeCanny;
+import ar.com.untref.imagenes.bordes.DetectorDeSusan;
 import ar.com.untref.imagenes.bordes.InterfaceDetectorDeBordes;
 import ar.com.untref.imagenes.dialogs.DetectorDeCannyDialog;
 import ar.com.untref.imagenes.dialogs.DifusionAnisotropicaDialog;
@@ -608,6 +609,16 @@ public class VentanaPrincipal extends JFrame {
 		
 		JMenu menuDeteccionDeBordes = new JMenu("Deteccion de Bordes");
 		menuItemEditar.add(menuDeteccionDeBordes);
+		
+		JMenuItem menuItemDetectorDeSusan = new JMenuItem("Detector de Susan");
+		menuItemDetectorDeSusan.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			
+				Imagen imagenActual = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
+				DetectorDeSusan.aplicarDetectorDeSusan(imagenActual);
+			}
+		});
+		menuDeteccionDeBordes.add(menuItemDetectorDeSusan);
 		
 		JMenu menuCanny = new JMenu("Detector de Canny");
 		menuDeteccionDeBordes.add(menuCanny);
