@@ -75,6 +75,8 @@ public class DetectorDeSusan {
 				
 			int coordenadaI = (longitudMascara/2);
 			int coordenadaJ = (longitudMascara/2);
+			
+			//ubico el pixel en cuestión en el centro de la mascara
 			mascaraSusan[coordenadaI][coordenadaJ] = (mascaraSusan[coordenadaI][coordenadaJ] * matriz[indiceK][indiceL]);
 				
 			
@@ -89,15 +91,15 @@ public class DetectorDeSusan {
 						
 						mascaraSusan[coordenadaI][coordenadaJ+j] = mascaraSusan[coordenadaI][coordenadaJ+j]; 
 					}else{
+						
 						mascaraSusan[coordenadaI][coordenadaJ+j] = 0; 
-
 					}
 					if(indiceL-j>0 && indiceL-j < matriz.length){
 						
 						mascaraSusan[coordenadaI][coordenadaJ-j] = mascaraSusan[coordenadaI][coordenadaJ-j]; 
 					}else{
-						mascaraSusan[coordenadaI][coordenadaJ-j] = 0; 
-
+						
+						mascaraSusan[coordenadaI][coordenadaJ-j] = 0;
 					}
 					
 					//Valores a la izquierda
@@ -148,19 +150,15 @@ public class DetectorDeSusan {
 					}else{
 						
 						mascaraSusan[coordenadaI-i][coordenadaJ] = 0; 
-					}
-						
-					mascaraSusan[coordenadaI-i][coordenadaJ] = 0; 	
+					}	
 				}
 			}	
 	}
 		
-	private static boolean evaluarMascaraenIJ(int[][] mascaraSusan){
+	private static float evaluarMascaraEnIJ(int[][] mascaraSusan){
 		
 		int longitudMascara = mascaraSusan.length;
-		int[][] matrizResultado = new int[longitudMascara][longitudMascara];
-		boolean pintarPixel = false;
-		int sumatoria = 0;
+		int contador = 0;
 		
 		for (int i = 0; i < longitudMascara; i++) {
 			for (int j = 0; j < longitudMascara; j++) {
@@ -169,40 +167,32 @@ public class DetectorDeSusan {
 				
 				if (Math.abs(mascaraSusan[i][j] - centro) < 27){
 					
-					matrizResultado[i][j] = 1;
-					sumatoria += matrizResultado[i][j];
-				}else{
-					
-					matrizResultado[i][j] = 0;
+					contador += 1;
 				}
 			}
 		}
 		
-		float valorSr0 = 1 - (sumatoria/37);
+		float valorSr0 = 1 - (contador/37);
 		
-		if (esEsquina(valorSr0)){
-			
-			pintarPixel = true;
-		}
-		
-		return pintarPixel;
+		return valorSr0;
 	}
 	
 	public static void aplicarDetectorDeSusan(Imagen imagen){
 		
 		int[][] matriz = imagen.getMatriz(Canal.ROJO);
 		int[][] mascaraSusan = calcularMascaraDeSusan();
+		float valorSr0 = 0;
 		
 		@SuppressWarnings("unused")
 		boolean pintarPixel = false;
 				
-		for (int i = 0; i < matriz[0].length; i++) {
-			for (int j = 0; j < matriz.length; j++) {
+		for (int i = 0; i < matriz.length; i++) {
+			for (int j = 0; j < matriz[0].length; j++) {
 			
 				aplicarMascaraDeSusan(mascaraSusan, matriz, i, j);
-				pintarPixel = evaluarMascaraenIJ(mascaraSusan);
+				valorSr0 = evaluarMascaraEnIJ(mascaraSusan);
 				
-				if(pintarPixel = true){
+				if(esEsquina(valorSr0) || esBorde(valorSr0)){
 					
 					Color color = new Color(0,255,0);
 					imagen.getBufferedImage().setRGB(i, j, color.getRGB());
@@ -212,8 +202,8 @@ public class DetectorDeSusan {
 	}
 
 	private static boolean esBorde(float s_ro) {
-		float limiteInferior = (float) (0.5 - (0.75 - 0.5) / 2);
-		float limiteSuperior = (float) (0.5 + (0.75 - 0.5) / 2);
+		float limiteInferior = (float) (0.5 - ((0.75 - 0.5) / 2));
+		float limiteSuperior = (float) (0.5 + ((0.75 - 0.5) / 2));
 
 		return s_ro > limiteInferior && s_ro <= limiteSuperior;
 	}
