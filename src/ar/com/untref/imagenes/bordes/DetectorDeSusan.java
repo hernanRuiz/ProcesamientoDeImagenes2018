@@ -72,14 +72,14 @@ public class DetectorDeSusan {
 	private static void aplicarMascaraDeSusan(int[][] mascaraSusan, int[][] matriz, int indiceK, int indiceL){
 		
 		int longitudMascara = mascaraSusan.length;
+		int[][] mascaraDeSusanAplicada = new int[7][7];
 				
 			int coordenadaI = (longitudMascara/2);
 			int coordenadaJ = (longitudMascara/2);
 			
 			//ubico el pixel en cuestión en el centro de la mascara
-			mascaraSusan[coordenadaI][coordenadaJ] = (mascaraSusan[coordenadaI][coordenadaJ] * matriz[indiceK][indiceL]);
+			mascaraDeSusanAplicada[coordenadaI][coordenadaJ] = (mascaraSusan[coordenadaI][coordenadaJ] * matriz[indiceK][indiceL]);
 				
-			
 			//Con la mascara de Susan centrada en el pixel en cuestion
 			//calculo los valores en la mascara para todos sus vecinos, si
 			//es que existen
@@ -87,69 +87,69 @@ public class DetectorDeSusan {
 				for(int j = 0 ; (coordenadaJ + j)< longitudMascara; j++){
 					
 					//Valores arriba y abajo del centro de la mascara
-					if(indiceL+j>0 && indiceL+j < matriz.length){
+					if(indiceL+j>0 && indiceL+j < matriz[0].length){
 						
-						mascaraSusan[coordenadaI][coordenadaJ+j] = mascaraSusan[coordenadaI][coordenadaJ+j]; 
+						mascaraDeSusanAplicada[coordenadaI][coordenadaJ+j] = mascaraSusan[coordenadaI][coordenadaJ+j] * matriz[indiceK][indiceL+j]; 
 					}else{
 						
-						mascaraSusan[coordenadaI][coordenadaJ+j] = 0; 
+						mascaraDeSusanAplicada[coordenadaI][coordenadaJ+j] = 0; 
 					}
 					if(indiceL-j>0 && indiceL-j < matriz.length){
 						
-						mascaraSusan[coordenadaI][coordenadaJ-j] = mascaraSusan[coordenadaI][coordenadaJ-j]; 
+						mascaraDeSusanAplicada[coordenadaI][coordenadaJ-j] = mascaraSusan[coordenadaI][coordenadaJ-j] * matriz[indiceK][indiceL-j]; 
 					}else{
 						
-						mascaraSusan[coordenadaI][coordenadaJ-j] = 0;
+						mascaraDeSusanAplicada[coordenadaI][coordenadaJ-j] = 0;
 					}
 					
 					//Valores a la izquierda
-					if (indiceK+i>0 && indiceK+i < matriz[0].length){
+					if (indiceK+i>0 && indiceK+i < matriz.length){
 						
-						mascaraSusan[coordenadaI+i][coordenadaJ] = mascaraSusan[coordenadaI+i][coordenadaJ]; 
+						mascaraDeSusanAplicada[coordenadaI+i][coordenadaJ] = mascaraSusan[coordenadaI+i][coordenadaJ] * matriz[indiceK+i][indiceL]; 
 
 						if(indiceL+j>0 && indiceL+j < matriz.length){
 							
-							mascaraSusan[coordenadaI+i][coordenadaJ+j] = mascaraSusan[coordenadaI+i][coordenadaJ+j]; 
+							mascaraDeSusanAplicada[coordenadaI+i][coordenadaJ+j] = mascaraSusan[coordenadaI+i][coordenadaJ+j] * matriz[indiceK+i][indiceL+j]; 
 						}else{
 							
-							mascaraSusan[coordenadaI+i][coordenadaJ+j] = 0; 
+							mascaraDeSusanAplicada[coordenadaI+i][coordenadaJ+j] = 0; 
 						}
 						
 						if(indiceL-j>0 && indiceL-j < matriz.length){
 							
-							mascaraSusan[coordenadaI+i][coordenadaJ-j] = mascaraSusan[coordenadaI+i][coordenadaJ-j]; 
+							mascaraDeSusanAplicada[coordenadaI+i][coordenadaJ-j] = mascaraSusan[coordenadaI+i][coordenadaJ-j] * matriz[indiceK+i][indiceL-j]; 
 						}else{
-							mascaraSusan[coordenadaI+i][coordenadaJ-j] = 0; 
-
+							
+							mascaraDeSusanAplicada[coordenadaI+i][coordenadaJ-j] = 0; 
 						}
 					}else{
 						
-						mascaraSusan[coordenadaI+i][coordenadaJ] = 0; 
+						mascaraDeSusanAplicada[coordenadaI+i][coordenadaJ] = 0; 
 					}
 					
 					//valores a la derecha
 					if (indiceK-i>0 && indiceK-i < matriz[0].length){
 						
-						mascaraSusan[coordenadaI-i][coordenadaJ] = mascaraSusan[coordenadaI-i][coordenadaJ]; 
+						mascaraDeSusanAplicada[coordenadaI-i][coordenadaJ] = mascaraSusan[coordenadaI-i][coordenadaJ] * matriz[indiceK-i][indiceL]; 
 						
 						if(indiceL+j>0 && indiceL+j < matriz.length){
 							
-							mascaraSusan[coordenadaI-i][coordenadaJ+j] = mascaraSusan[coordenadaI-i][coordenadaJ+j]; 
+							mascaraDeSusanAplicada[coordenadaI-i][coordenadaJ+j] = mascaraSusan[coordenadaI-i][coordenadaJ+j] * matriz[indiceK-i][indiceL+j]; 
 						}else{
 							
-							mascaraSusan[coordenadaI-i][coordenadaJ+j] = 0; 
+							mascaraDeSusanAplicada[coordenadaI-i][coordenadaJ+j] = 0; 
 						}
 						
 						if(indiceL-j>0 && indiceL-j < matriz.length){
 							
-							mascaraSusan[coordenadaI-i][coordenadaJ-j] = mascaraSusan[coordenadaI-i][coordenadaJ-j]; 
+							mascaraDeSusanAplicada[coordenadaI-i][coordenadaJ-j] = mascaraSusan[coordenadaI-i][coordenadaJ-j] * matriz[indiceK-i][indiceL-j]; 
 						}else{
 							
-							mascaraSusan[coordenadaI-i][coordenadaJ-j] = 0; 
+							mascaraDeSusanAplicada[coordenadaI-i][coordenadaJ-j] = 0; 
 						}
 					}else{
 						
-						mascaraSusan[coordenadaI-i][coordenadaJ] = 0; 
+						mascaraDeSusanAplicada[coordenadaI-i][coordenadaJ] = 0; 
 					}	
 				}
 			}	
@@ -158,7 +158,7 @@ public class DetectorDeSusan {
 	private static float evaluarMascaraEnIJ(int[][] mascaraSusan){
 		
 		int longitudMascara = mascaraSusan.length;
-		int contador = 0;
+		float contador = 0;
 		
 		for (int i = 0; i < longitudMascara; i++) {
 			for (int j = 0; j < longitudMascara; j++) {
@@ -172,7 +172,7 @@ public class DetectorDeSusan {
 			}
 		}
 		
-		float valorSr0 = 1 - (contador/37);
+		float valorSr0 = 1 - (float)((contador/37f));
 		
 		return valorSr0;
 	}
@@ -182,36 +182,33 @@ public class DetectorDeSusan {
 		int[][] matriz = imagen.getMatriz(Canal.ROJO);
 		int[][] mascaraSusan = calcularMascaraDeSusan();
 		float valorSr0 = 0;
-		
-		@SuppressWarnings("unused")
-		boolean pintarPixel = false;
 				
-		for (int i = 0; i < matriz.length; i++) {
-			for (int j = 0; j < matriz[0].length; j++) {
+		for (int i = 0; i < matriz[0].length; i++) {
+			for (int j = 0; j < matriz.length; j++) {
 			
 				aplicarMascaraDeSusan(mascaraSusan, matriz, i, j);
 				valorSr0 = evaluarMascaraEnIJ(mascaraSusan);
-				
+								
 				if(esEsquina(valorSr0) || esBorde(valorSr0)){
 					
 					Color color = new Color(0,255,0);
 					imagen.getBufferedImage().setRGB(i, j, color.getRGB());
 				}
 			}
-		}
+		} 
 	}
 
 	private static boolean esBorde(float s_ro) {
 		float limiteInferior = (float) (0.5 - ((0.75 - 0.5) / 2));
 		float limiteSuperior = (float) (0.5 + ((0.75 - 0.5) / 2));
 
-		return s_ro > limiteInferior && s_ro <= limiteSuperior;
+		return Math.abs(s_ro) > limiteInferior && Math.abs(s_ro) <= limiteSuperior;
 	}
 	
 	private static boolean esEsquina(float s_ro) {
 		float limiteInferior = (float) (0.75 - (0.75 - 0.5) / 2);
 		float limiteSuperior = (float) (0.75 + (0.75 - 0.5) / 2);
 
-		return s_ro > limiteInferior && s_ro <= limiteSuperior;
+		return Math.abs(s_ro) > limiteInferior && Math.abs(s_ro) <= limiteSuperior;
 	}
 }
