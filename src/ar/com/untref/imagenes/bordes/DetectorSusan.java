@@ -12,7 +12,7 @@ public class DetectorSusan {
  	
  	private static double umbralT = 27.0;
 	private static int pixelNegro = new Color(0, 0, 0).getRGB();
-	private static int pixelBlanco = new Color(255, 0, 0).getRGB();
+	private static int pixelRojo = new Color(255, 0, 0).getRGB();
  	
  	/**
  	 * Si el resultado es aprox 0, no corresponde a borde ni esquina.
@@ -148,7 +148,7 @@ public class DetectorSusan {
  				
  				if (s > criterioDeBordeBordeOEsquina) {
  					
- 					resultado.setRGB(i, j, pixelBlanco);
+ 					resultado.setRGB(i, j, pixelRojo);
  				} else {
  					
  					resultado.setRGB(i, j, pixelNegro);
