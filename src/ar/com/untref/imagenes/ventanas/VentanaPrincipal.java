@@ -615,7 +615,7 @@ public class VentanaPrincipal extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 			
 				Imagen imagenActual = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
-				Imagen imagenResultante = new Imagen(DetectorSusan.aplicar(imagenActual.getBufferedImage()), imagenActual.getFormato(), imagenActual.getNombre()+"_susan");
+				Imagen imagenResultante = new Imagen(DetectorSusan.aplicar(imagenActual), imagenActual.getFormato(), imagenActual.getNombre()+"_susan");
 				ProcesadorDeImagenes.obtenerInstancia().setImagenActual(imagenResultante);
 				VentanaPrincipal.this.refrescarImagen();
 			}

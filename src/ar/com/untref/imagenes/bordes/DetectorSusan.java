@@ -3,6 +3,8 @@ package ar.com.untref.imagenes.bordes;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 
+import ar.com.untref.imagenes.modelo.Imagen;
+
 public class DetectorSusan {
 	 
  	private static final int TAMANIO_MASCARA = 7;
@@ -97,30 +99,23 @@ public class DetectorSusan {
  	/**
  	 * @return imagen binaria que detecta los bordes y esquinas de la imagen original
  	 */
- 	public static BufferedImage aplicar(BufferedImage imagenOriginal) {
+ 	public static BufferedImage aplicar(Imagen imagenOriginal) {
  		
  		int[][] mascaraSusan = calcularMascaraDeSusan();
  		
- 		BufferedImage resultado = new BufferedImage(imagenOriginal.getWidth(), imagenOriginal.getHeight(), imagenOriginal.getType());
- 		
- 		for (int i = 0; i < imagenOriginal.getWidth() ; i++) {
- 			for (int j = 0; j < imagenOriginal.getHeight() ; j++) {
- 				
- 				resultado.setRGB(i, j, pixelNegro);
- 			}
- 		}
+ 		Imagen imagenResultante = new Imagen(imagenOriginal.getBufferedImage(), imagenOriginal.getFormato(), imagenOriginal.getNombre()+"_susan");
  		
  		int sumarEnAncho = (-1) * (TAMANIO_MASCARA / 2);
  		int sumarEnAlto = (-1) * (TAMANIO_MASCARA / 2);
  		
  		// Iterar la imagen, sacando los bordes.
- 		for (int i = TAMANIO_MASCARA / 2; i < imagenOriginal.getWidth() - (TAMANIO_MASCARA / 2); i++) {
- 			for (int j = TAMANIO_MASCARA / 2; j < imagenOriginal.getHeight() - (TAMANIO_MASCARA / 2); j++) {
+ 		for (int i = TAMANIO_MASCARA / 2; i < imagenOriginal.getBufferedImage().getWidth() - (TAMANIO_MASCARA / 2); i++) {
+ 			for (int j = TAMANIO_MASCARA / 2; j < imagenOriginal.getBufferedImage().getHeight() - (TAMANIO_MASCARA / 2); j++) {
  
  				// Tomo el valor del píxel central de la máscara (el (3,3) de la máscara)
  				int indiceICentralDeLaImagen = i + sumarEnAncho + (TAMANIO_MASCARA / 2);
  				int indiceJCentralDeLaImagen = j + sumarEnAlto + (TAMANIO_MASCARA / 2);
- 				double valorCentral = new Color(imagenOriginal.getRGB(indiceICentralDeLaImagen, indiceJCentralDeLaImagen)).getRed();
+ 				double valorCentral = new Color(imagenOriginal.getBufferedImage().getRGB(indiceICentralDeLaImagen, indiceJCentralDeLaImagen)).getRed();
  				
  				int cantidadDePixelesSimilaresAlCentral = 0;
 
@@ -131,7 +126,7 @@ public class DetectorSusan {
  						int indiceIDeLaImagen = i + sumarEnAncho + iAnchoMascara;
  						int indiceJDeLaImagen = j + sumarEnAlto + iAltoMascara;
  
- 						double valor = new Color(imagenOriginal.getRGB(indiceIDeLaImagen, indiceJDeLaImagen)).getRed();
+ 						double valor = new Color(imagenOriginal.getBufferedImage().getRGB(indiceIDeLaImagen, indiceJDeLaImagen)).getRed();
  						
  						// Se multiplica el valor leído por la máscara, para sacar los que no pertenezcan a la parte circular.
  						valor = valor * mascaraSusan[iAnchoMascara][iAltoMascara];
@@ -148,13 +143,13 @@ public class DetectorSusan {
  				
  				if (s > criterioDeBordeBordeOEsquina) {
  					
- 					resultado.setRGB(i, j, pixelRojo);
+ 					imagenResultante.getBufferedImage().setRGB(i, j, pixelRojo);
  				} else {
  					
- 					resultado.setRGB(i, j, pixelNegro);
+ 					imagenResultante.getBufferedImage().setRGB(i, j, pixelNegro);
  				}				
  			}
  		}
- 		return resultado;
+ 		return imagenResultante.getBufferedImage();
  	}
 }
