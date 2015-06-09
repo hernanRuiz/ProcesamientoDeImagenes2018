@@ -1,5 +1,7 @@
 package ar.com.untref.imagenes.bordes;
 
+import java.awt.image.BufferedImage;
+
 import ar.com.untref.imagenes.enums.Canal;
 import ar.com.untref.imagenes.filtros.FiltroGaussiano;
 import ar.com.untref.imagenes.filtros.FiltroNuevo;
@@ -224,6 +226,75 @@ public class DetectorDeBordesDeCanny {
 	private static boolean tieneVecinoInferiorBorde(int[][] matrizNoMaximos, int i,
 			int j) {
 		return j < matrizNoMaximos.length-1 && matrizNoMaximos[i][j+1] > 0;
+	}
+	
+	public static Imagen aplicarDetectorDeCanny(Imagen imagenActual, int sigma1, int sigma2, int umbral1, int umbral2){
+		
+		MatrizDeColores matrizDeColores1 = DetectorDeBordesDeCanny.calcularMatrizConFiltrosGauss(imagenActual, sigma1);
+		MatrizDeColores matrizDeColores2 = DetectorDeBordesDeCanny.calcularMatrizConFiltrosGauss(imagenActual, sigma2);
+		
+		Imagen imagen1 = new Imagen((MatricesManager.obtenerImagenDeMatrices(matrizDeColores1.getMatrizRojos(), matrizDeColores1.getMatrizVerdes(), matrizDeColores1.getMatrizAzules())), imagenActual.getFormato(), imagenActual.getNombre());
+		Imagen imagen2 = new Imagen((MatricesManager.obtenerImagenDeMatrices(matrizDeColores2.getMatrizRojos(), matrizDeColores2.getMatrizVerdes(), matrizDeColores2.getMatrizAzules())), imagenActual.getFormato(), imagenActual.getNombre());
+		
+		MatrizDeColores noMaximos1 = DetectorDeBordesDeCanny.calcularSupresionNoMaximos(imagen1);
+		MatrizDeColores noMaximos2 = DetectorDeBordesDeCanny.calcularSupresionNoMaximos(imagen2);
+		
+		int[][] matrizRojos1 = noMaximos1.getMatrizRojos();
+		int[][] matrizVerdes1 = noMaximos1.getMatrizVerdes();
+		int[][] matrizAzules1 = noMaximos1.getMatrizAzules();
+		
+		int[][] matrizRojos2 = noMaximos2.getMatrizRojos();
+		int[][] matrizVerdes2 = noMaximos2.getMatrizVerdes();
+		int[][] matrizAzules2 = noMaximos2.getMatrizAzules();
+		
+		int[][] matrizResultanteRojo = new int[matrizRojos1[0].length][matrizRojos1.length];
+		int[][] matrizResultanteVerde = new int[matrizRojos1[0].length][matrizRojos1.length];
+		int[][] matrizResultanteAzul = new int[matrizRojos1[0].length][matrizRojos1.length];
+		
+		int[][] matrizHisteresisRojo1 = DetectorDeBordesDeCanny.aplicarUmbralizacionConHisteresis(matrizRojos1, umbral1, umbral2);
+		int[][] matrizHisteresisVerde1 = DetectorDeBordesDeCanny.aplicarUmbralizacionConHisteresis(matrizVerdes1, umbral1, umbral2);
+		int[][] matrizHisteresisAzul1 = DetectorDeBordesDeCanny.aplicarUmbralizacionConHisteresis(matrizAzules1, umbral1, umbral2);
+		
+		int[][] matrizHisteresisRojo2 = DetectorDeBordesDeCanny.aplicarUmbralizacionConHisteresis(matrizRojos2, umbral1, umbral2);
+		int[][] matrizHisteresisVerde2 = DetectorDeBordesDeCanny.aplicarUmbralizacionConHisteresis(matrizVerdes2, umbral1, umbral2);
+		int[][] matrizHisteresisAzul2 = DetectorDeBordesDeCanny.aplicarUmbralizacionConHisteresis(matrizAzules2, umbral1, umbral2);
+		
+		
+		for (int i=0; i < matrizRojos1[0].length ;i++){
+			for (int j=0; j < matrizRojos1.length ;j++){
+				
+				if (matrizHisteresisRojo1[i][j] > matrizHisteresisRojo2[i][j]){
+					
+					matrizResultanteRojo[i][j] = matrizHisteresisRojo1[i][j];
+				}else{
+					matrizResultanteRojo[i][j] = matrizHisteresisRojo2[i][j];
+				}
+				
+				if (matrizHisteresisVerde1[i][j] > matrizHisteresisVerde2[i][j]){
+					
+					matrizResultanteVerde[i][j] = matrizHisteresisVerde1[i][j];
+				}else{
+					matrizResultanteVerde[i][j] = matrizHisteresisVerde2[i][j];
+				}
+				
+				if (matrizHisteresisAzul1[i][j] > matrizHisteresisAzul2[i][j]){
+					
+					matrizResultanteAzul[i][j] = matrizHisteresisAzul1[i][j];
+				}else{
+					matrizResultanteAzul[i][j] = matrizHisteresisAzul2[i][j];
+				}
+				
+			}
+		}
+		
+		int[][] matrizRojoFinal = MatricesManager.aplicarTransformacionLineal(matrizResultanteRojo);
+		int[][] matrizVerdeFinal = MatricesManager.aplicarTransformacionLineal(matrizResultanteVerde);
+		int[][] matrizAzulFinal = MatricesManager.aplicarTransformacionLineal(matrizResultanteAzul);
+
+		BufferedImage bufferedNuevo = MatricesManager.obtenerImagenDeMatrices(matrizRojoFinal, matrizVerdeFinal, matrizAzulFinal);
+		Imagen imagenNueva = new Imagen(bufferedNuevo, imagenActual.getFormato(), imagenActual.getNombre()+"_histeresis");
+		
+		return imagenNueva;	
 	}
 
 }

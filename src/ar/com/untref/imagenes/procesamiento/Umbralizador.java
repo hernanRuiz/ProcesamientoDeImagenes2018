@@ -9,7 +9,6 @@ import javax.swing.JOptionPane;
 
 import ar.com.untref.imagenes.modelo.Histograma;
 import ar.com.untref.imagenes.modelo.Imagen;
-import ar.com.untref.imagenes.modelo.MatrizDeColores;
 
 public class Umbralizador {
 
