@@ -38,6 +38,7 @@ import ar.com.untref.imagenes.dialogs.DifusionIsotropicaDialog;
 import ar.com.untref.imagenes.dialogs.HisteresisDialog;
 import ar.com.untref.imagenes.dialogs.LoGDialog;
 import ar.com.untref.imagenes.dialogs.OperacionesMatricesDialog;
+import ar.com.untref.imagenes.dialogs.SegmentacionDialog;
 import ar.com.untref.imagenes.dialogs.SigmaDialog;
 import ar.com.untref.imagenes.enums.FormatoDeImagen;
 import ar.com.untref.imagenes.enums.NivelMensaje;
@@ -133,19 +134,8 @@ public class VentanaPrincipal extends JFrame {
 		botonSegmentar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
-				ProcesadorDeImagenes procesador = ProcesadorDeImagenes.obtenerInstancia();
-				
-				BufferedImage imagenSinCambio = procesador.clonarBufferedImage(procesador.getImagenOriginal().getBufferedImage()); 
-				
-				BufferedImage bufferSegmentado = Segmentador.segmentarImagen(procesador.getImagenOriginal(), 
-						new Point(procesador.getX1(), procesador.getY1()), 
-						new Point(procesador.getX2(), procesador.getY2()));
-				
-				Imagen imagenSegmentada = new Imagen(bufferSegmentado, procesador.getImagenActual().getFormato(), procesador.getImagenActual().getNombre()+"_segmentada");
-				procesador.setImagenActual(imagenSegmentada);
-				procesador.getImagenOriginal().setBufferedImage(imagenSinCambio);
-				VentanaPrincipal.this.refrescarImagen();
-				VentanaPrincipal.this.refrescarCantidadPixeles(procesador.getImagenOriginal().getBufferedImage().getWidth()*procesador.getImagenOriginal().getBufferedImage().getHeight());
+				SegmentacionDialog m = new SegmentacionDialog(VentanaPrincipal.this, contentPane);
+				m.setVisible(true);
 			}
 		});
 		panelPromedios.add(botonSegmentar);
@@ -1185,6 +1175,22 @@ public class VentanaPrincipal extends JFrame {
 		ProcesadorDeImagenes.obtenerInstancia().setImagenActual(nuevaImagenActual);
 
 		VentanaPrincipal.this.refrescarImagen();
+	}
+	
+	public void segmentarImagen(int repeticiones, int diferenciaColor) {
+		ProcesadorDeImagenes procesador = ProcesadorDeImagenes.obtenerInstancia();
+		
+		BufferedImage imagenSinCambio = procesador.clonarBufferedImage(procesador.getImagenOriginal().getBufferedImage()); 
+		
+		BufferedImage bufferSegmentado = Segmentador.segmentarImagen(procesador.getImagenOriginal(), 
+				new Point(procesador.getX1(), procesador.getY1()), 
+				new Point(procesador.getX2(), procesador.getY2()), repeticiones, diferenciaColor);
+		
+		Imagen imagenSegmentada = new Imagen(bufferSegmentado, procesador.getImagenActual().getFormato(), procesador.getImagenActual().getNombre()+"_segmentada");
+		procesador.setImagenActual(imagenSegmentada);
+		procesador.getImagenOriginal().setBufferedImage(imagenSinCambio);
+		VentanaPrincipal.this.refrescarImagen();
+		VentanaPrincipal.this.refrescarCantidadPixeles(procesador.getImagenOriginal().getBufferedImage().getWidth()*procesador.getImagenOriginal().getBufferedImage().getHeight());
 	}
 	
 	public JLabel getPanelDeImagen(){

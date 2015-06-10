@@ -11,9 +11,12 @@ import ar.com.untref.imagenes.modelo.Curva;
 import ar.com.untref.imagenes.modelo.Imagen;
 
 public class Segmentador {
+	
+private static int diferenciaColor = 20;	
 
-public static BufferedImage segmentarImagen(Imagen imagenOriginal, Point punto1, Point punto2) {
+public static BufferedImage segmentarImagen(Imagen imagenOriginal, Point punto1, Point punto2, int repeticiones, int difColor) {
 		
+		diferenciaColor = difColor;
 		Imagen imagenMuleto = new Imagen(imagenOriginal.getBufferedImage(), imagenOriginal.getFormato(), imagenOriginal.getNombre()+"_m");
 		BufferedImage imagen = imagenMuleto.getBufferedImage();
 		
@@ -61,7 +64,7 @@ public static BufferedImage segmentarImagen(Imagen imagenOriginal, Point punto1,
 		
 		int[] promedioDeColores = obtenerPromedioRGB(imagen, punto1, punto2);
 		
-		for(int i = 0; i < 20; i++){
+		for(int i = 0; i < repeticiones; i++){
 			
 			Iterator<Point> iteradorPuntos = lOut.iterator();
 			while(iteradorPuntos.hasNext()){
@@ -191,7 +194,6 @@ public static BufferedImage segmentarImagen(Imagen imagenOriginal, Point punto1,
 			
 			matrizSigmas[unPoint.x][unPoint.y] = -3;
 			lIn.remove(unPoint);
-		
 		}
 	}
 
@@ -288,9 +290,9 @@ public static BufferedImage segmentarImagen(Imagen imagenOriginal, Point punto1,
 //		
 //		boolean esSimilar = mediaCuadrada < 0.9;
 		
-		boolean esSimilar = Math.abs(colorEnEsePunto.getRed()-colorPromedio.getRed()) <= 20 
-							&& Math.abs(colorEnEsePunto.getGreen()-colorPromedio.getGreen()) <= 20
-							&& Math.abs(colorEnEsePunto.getBlue()-colorPromedio.getBlue()) <= 20;
+		boolean esSimilar = Math.abs(colorEnEsePunto.getRed()-colorPromedio.getRed()) <= diferenciaColor 
+							&& Math.abs(colorEnEsePunto.getGreen()-colorPromedio.getGreen()) <= diferenciaColor
+							&& Math.abs(colorEnEsePunto.getBlue()-colorPromedio.getBlue()) <= diferenciaColor;
 		
 		return esSimilar;
 	}
