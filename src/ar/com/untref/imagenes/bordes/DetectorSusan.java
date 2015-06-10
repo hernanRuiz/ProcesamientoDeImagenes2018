@@ -23,7 +23,9 @@ public class DetectorSusan {
  	 * 
  	 * Por lo tanto, se tomó como criterio que cualquier resultado mayor a 0.4, será considerado borde/esquina.
  	 */
- 	private static double criterioDeBordeBordeOEsquina = 0.4;
+	private static double criterioDeSierra = 0.25;
+ 	private static double criterioDeBorde = 0.5;
+ 	private static double criterioDeEsquina = 0.75;
  	
  	/**
  	 * Aplica una máscara circular de 7x7 con el método de Susan.
@@ -103,7 +105,7 @@ public class DetectorSusan {
  		
  		int[][] mascaraSusan = calcularMascaraDeSusan();
  		
- 		Imagen imagenResultante = new Imagen(imagenOriginal.getBufferedImage(), imagenOriginal.getFormato(), imagenOriginal.getNombre()+"_susan");
+ 		Imagen imagenResultante = new Imagen(new BufferedImage(imagenOriginal.getBufferedImage().getWidth(), imagenOriginal.getBufferedImage().getHeight(), imagenOriginal.getBufferedImage().getType()), imagenOriginal.getFormato(), imagenOriginal.getNombre()+"_susan");
  		
  		int sumarEnAncho = (-1) * (TAMANIO_MASCARA / 2);
  		int sumarEnAlto = (-1) * (TAMANIO_MASCARA / 2);
@@ -139,9 +141,11 @@ public class DetectorSusan {
  				}
  				// Fin iteración máscara
  				
- 				double s = 1.0 - ((double)cantidadDePixelesSimilaresAlCentral / (double)CANTIDAD_PIXELES_MASCARA);
+ 				double Sr0 = 1.0 - ((double)cantidadDePixelesSimilaresAlCentral / (double)CANTIDAD_PIXELES_MASCARA);
  				
- 				if (s > criterioDeBordeBordeOEsquina) {
+ 				if (Math.abs( Sr0 - criterioDeBorde) < 0.1 
+ 						|| Math.abs( Sr0 - criterioDeEsquina) < 0.1 
+ 						|| Math.abs( Sr0 - criterioDeSierra) < 0.1) {
  					
  					imagenResultante.getBufferedImage().setRGB(i, j, pixelRojo);
  				} else {
