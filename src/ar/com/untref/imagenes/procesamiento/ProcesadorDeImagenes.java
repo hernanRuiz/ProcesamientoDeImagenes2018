@@ -3,6 +3,8 @@ package ar.com.untref.imagenes.procesamiento;
 import java.awt.Color;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
+import java.awt.image.WritableRaster;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.LinkedList;
@@ -80,9 +82,9 @@ public class ProcesadorDeImagenes {
 					imagen.setMatriz(MatricesManager.calcularMatrizDeLaImagen(bufferedImage, Canal.VERDE), Canal.VERDE);
 					imagen.setMatriz(MatricesManager.calcularMatrizDeLaImagen(bufferedImage, Canal.AZUL), Canal.AZUL);
 
-					imagenActual = imagen;
-					imagenOriginal = imagen;
-					imagenADevolver = imagen;
+					imagenActual = new Imagen(imagen.getBufferedImage(), imagen.getFormato(), imagen.getNombre(), imagen.getMatriz(Canal.ROJO), imagen.getMatriz(Canal.VERDE),imagen.getMatriz(Canal.AZUL));
+					imagenOriginal = new Imagen(imagen.getBufferedImage(), imagen.getFormato(), imagen.getNombre(), imagen.getMatriz(Canal.ROJO), imagen.getMatriz(Canal.VERDE),imagen.getMatriz(Canal.AZUL));
+					imagenADevolver = new Imagen(imagen.getBufferedImage(), imagen.getFormato(), imagen.getNombre(), imagen.getMatriz(Canal.ROJO), imagen.getMatriz(Canal.VERDE),imagen.getMatriz(Canal.AZUL));
 				}
 
 			} catch (Exception e) {
@@ -132,9 +134,9 @@ public class ProcesadorDeImagenes {
 				imagen.setMatriz(matrizCanal, Canal.VERDE);
 				imagen.setMatriz(matrizCanal, Canal.AZUL);
 
-				imagenActual = imagen;
-				imagenOriginal = imagen;
-				imagenADevolver = imagen;
+				imagenActual = new Imagen(imagen.getBufferedImage(), imagen.getFormato(), imagen.getNombre(), imagen.getMatriz(Canal.ROJO), imagen.getMatriz(Canal.VERDE),imagen.getMatriz(Canal.AZUL));
+				imagenOriginal = new Imagen(imagen.getBufferedImage(), imagen.getFormato(), imagen.getNombre(), imagen.getMatriz(Canal.ROJO), imagen.getMatriz(Canal.VERDE),imagen.getMatriz(Canal.AZUL));
+				imagenADevolver = new Imagen(imagen.getBufferedImage(), imagen.getFormato(), imagen.getNombre(), imagen.getMatriz(Canal.ROJO), imagen.getMatriz(Canal.VERDE),imagen.getMatriz(Canal.AZUL));
 				
 			} catch (Exception e) {
 
@@ -231,6 +233,7 @@ public class ProcesadorDeImagenes {
 	}
 	
 	public int[] calcularValoresPromedio(BufferedImage bufferedImage, int ancho, int alto){
+		
 		int acumuladorRojo = 0;
 		int acumuladorVerde = 0;
 		int acumuladorAzul = 0;
@@ -256,6 +259,7 @@ public class ProcesadorDeImagenes {
 		valoresPromedio[0] = promedioRojo;
 		valoresPromedio[1] = promedioVerde;
 		valoresPromedio[2] = promedioAzul;
+		
 		return valoresPromedio;
 	}
 
@@ -541,7 +545,7 @@ public class ProcesadorDeImagenes {
 		this.y1 = y1;
 		this.y2 = y2;
 		
-		if (imagenActual != null) {
+		if (getImagenActual() != null) {
 
 			List<Point> pixeles = new LinkedList<Point>();
 
@@ -557,10 +561,14 @@ public class ProcesadorDeImagenes {
 				pixeles.add(new Point(x2,j));
 			}
 			
+			BufferedImage imagenSinCambio = clonarBufferedImage(getImagenActual().getBufferedImage()); 
+			
 			for (Point pixel: pixeles){
 				
-				imagenActual.getBufferedImage().setRGB(pixel.x, pixel.y, Color.RED.getRGB());
+				getImagenActual().getBufferedImage().setRGB(pixel.x, pixel.y, Color.RED.getRGB());
 			}
+			
+			getImagenOriginal().setBufferedImage(imagenSinCambio);
 			
 			ventana.refrescarImagen();
 		}
@@ -576,4 +584,27 @@ public class ProcesadorDeImagenes {
 		return valoresXEY;
 	}
 
+	public Integer getX1() {
+		return x1;
+	}
+
+	public Integer getX2() {
+		return x2;
+	}
+
+	public Integer getY1() {
+		return y1;
+	}
+
+	public Integer getY2() {
+		return y2;
+	}
+
+	public BufferedImage clonarBufferedImage(BufferedImage buffered){
+		
+		ColorModel cm = buffered.getColorModel();
+		boolean isAlphaPremultiplied = cm.isAlphaPremultiplied();
+		WritableRaster raster = buffered.copyData(null);
+		return new BufferedImage(cm, raster, isAlphaPremultiplied, null);
+	}
 }

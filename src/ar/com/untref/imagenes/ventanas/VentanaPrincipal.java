@@ -6,6 +6,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -56,6 +57,7 @@ import ar.com.untref.imagenes.procesamiento.MatricesManager;
 import ar.com.untref.imagenes.procesamiento.OperacionesManager;
 import ar.com.untref.imagenes.procesamiento.ProcesadorDeImagenes;
 import ar.com.untref.imagenes.procesamiento.Umbralizador;
+import ar.com.untref.imagenes.segmentacion.Segmentador;
 
 @SuppressWarnings("serial")
 public class VentanaPrincipal extends JFrame {
@@ -126,6 +128,27 @@ public class VentanaPrincipal extends JFrame {
 		cantidadPixeles.setVisible(false);
 		resultadoCantidadPixeles = new JLabel("");
 		resultadoCantidadPixeles.setVisible(false);
+		
+		JButton botonSegmentar = new JButton("Segmentar");
+		botonSegmentar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				ProcesadorDeImagenes procesador = ProcesadorDeImagenes.obtenerInstancia();
+				
+				BufferedImage imagenSinCambio = procesador.clonarBufferedImage(procesador.getImagenOriginal().getBufferedImage()); 
+				
+				BufferedImage bufferSegmentado = Segmentador.segmentarImagen(procesador.getImagenOriginal(), 
+						new Point(procesador.getX1(), procesador.getY1()), 
+						new Point(procesador.getX2(), procesador.getY2()));
+				
+				Imagen imagenSegmentada = new Imagen(bufferSegmentado, procesador.getImagenActual().getFormato(), procesador.getImagenActual().getNombre()+"_segmentada");
+				procesador.setImagenActual(imagenSegmentada);
+				procesador.getImagenOriginal().setBufferedImage(imagenSinCambio);
+				VentanaPrincipal.this.refrescarImagen();
+				VentanaPrincipal.this.refrescarCantidadPixeles(procesador.getImagenOriginal().getBufferedImage().getWidth()*procesador.getImagenOriginal().getBufferedImage().getHeight());
+			}
+		});
+		panelPromedios.add(botonSegmentar);
 		panelPromedios.add(cantidadPixeles);
 		panelPromedios.add(resultadoCantidadPixeles);
 		
