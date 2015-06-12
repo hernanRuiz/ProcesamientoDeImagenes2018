@@ -101,7 +101,7 @@ public class DetectorSusan {
  	/**
  	 * @return imagen binaria que detecta los bordes y esquinas de la imagen original
  	 */
- 	public static BufferedImage aplicar(Imagen imagenOriginal) {
+ 	public static BufferedImage aplicar(Imagen imagenOriginal, String flagDetector) {
  		
  		int[][] mascaraSusan = calcularMascaraDeSusan();
  		
@@ -143,15 +143,79 @@ public class DetectorSusan {
  				
  				double Sr0 = 1.0 - ((double)cantidadDePixelesSimilaresAlCentral / (double)CANTIDAD_PIXELES_MASCARA);
  				
- 				if (Math.abs( Sr0 - criterioDeBorde) < 0.1 
- 						|| Math.abs( Sr0 - criterioDeEsquina) < 0.1 
- 						|| Math.abs( Sr0 - criterioDeSierra) < 0.1) {
+ 				
+ 				switch (flagDetector) {
+
+ 				case "Esquinas":
+ 					if(Math.abs( Sr0 - criterioDeEsquina) < 0.1){
+ 	 					
+ 	 					imagenResultante.getBufferedImage().setRGB(i, j, pixelRojo);
+ 	 				} else {
+ 	 					
+ 	 					imagenResultante.getBufferedImage().setRGB(i, j, pixelNegro);
+ 	 				}
+ 					break;
+
+ 				case "Bordes":
+ 					if(Math.abs( Sr0 - criterioDeBorde) < 0.1){
+ 	 					
+ 	 					imagenResultante.getBufferedImage().setRGB(i, j, pixelRojo);
+ 	 				} else {
+ 	 					
+ 	 					imagenResultante.getBufferedImage().setRGB(i, j, pixelNegro);
+ 	 				}
+ 					break;
+
+ 				case "Sierras":
+ 					if(Math.abs( Sr0 - criterioDeSierra) < 0.1){
+ 	 					
+ 	 					imagenResultante.getBufferedImage().setRGB(i, j, pixelRojo);
+ 	 				} else {
+ 	 					
+ 	 					imagenResultante.getBufferedImage().setRGB(i, j, pixelNegro);
+ 	 				}
+ 					break;
  					
- 					imagenResultante.getBufferedImage().setRGB(i, j, pixelRojo);
- 				} else {
+ 				case "EsquinasYBordes":
+ 					if(Math.abs( Sr0 - criterioDeEsquina) < 0.1 || Math.abs( Sr0 - criterioDeBorde) < 0.1){
+ 	 					
+ 	 					imagenResultante.getBufferedImage().setRGB(i, j, pixelRojo);
+ 	 				} else {
+ 	 					
+ 	 					imagenResultante.getBufferedImage().setRGB(i, j, pixelNegro);
+ 	 				}
+ 					break;
  					
- 					imagenResultante.getBufferedImage().setRGB(i, j, pixelNegro);
- 				}				
+ 				case "EsquinasYSierras":
+ 					if(Math.abs( Sr0 - criterioDeEsquina) < 0.1 || Math.abs( Sr0 - criterioDeSierra) < 0.1){
+ 	 					
+ 	 					imagenResultante.getBufferedImage().setRGB(i, j, pixelRojo);
+ 	 				} else {
+ 	 					
+ 	 					imagenResultante.getBufferedImage().setRGB(i, j, pixelNegro);
+ 	 				}
+ 					break;
+ 				
+ 				case "BordesYSierras":
+ 					if(Math.abs( Sr0 - criterioDeBorde) < 0.1 || Math.abs( Sr0 - criterioDeSierra) < 0.1){
+ 	 					
+ 	 					imagenResultante.getBufferedImage().setRGB(i, j, pixelRojo);
+ 	 				} else {
+ 	 					
+ 	 					imagenResultante.getBufferedImage().setRGB(i, j, pixelNegro);
+ 	 				}
+ 					break;
+ 				
+ 				case "BordesSierrasYEsquinas":
+					if(Math.abs( Sr0 - criterioDeEsquina) < 0.1 || Math.abs( Sr0 - criterioDeBorde) < 0.1 || Math.abs( Sr0 - criterioDeSierra) < 0.1){
+	 					
+	 					imagenResultante.getBufferedImage().setRGB(i, j, pixelRojo);
+	 				} else {
+	 					
+	 					imagenResultante.getBufferedImage().setRGB(i, j, pixelNegro);
+	 				}
+					break;
+				}
  			}
  		}
  		return imagenResultante.getBufferedImage();

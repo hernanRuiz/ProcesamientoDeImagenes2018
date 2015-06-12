@@ -23,6 +23,7 @@ import javax.swing.border.EmptyBorder;
 
 import ar.com.untref.imagenes.bordes.DetectorDeBordes;
 import ar.com.untref.imagenes.bordes.DetectorDeBordesDeCanny;
+import ar.com.untref.imagenes.bordes.DetectorSusan;
 import ar.com.untref.imagenes.bordes.InterfaceDetectorDeBordes;
 import ar.com.untref.imagenes.dialogs.DetectorDeCannyDialog;
 import ar.com.untref.imagenes.dialogs.DifusionAnisotropicaDialog;
@@ -33,6 +34,7 @@ import ar.com.untref.imagenes.dialogs.LoGDialog;
 import ar.com.untref.imagenes.dialogs.MascaraGaussianaDialog;
 import ar.com.untref.imagenes.dialogs.MedidaMascaraDialog;
 import ar.com.untref.imagenes.dialogs.SigmaDialog;
+import ar.com.untref.imagenes.dialogs.SusanDialog;
 import ar.com.untref.imagenes.enums.Mascara;
 import ar.com.untref.imagenes.enums.NivelMensaje;
 import ar.com.untref.imagenes.filtros.FiltroDeLaMedia;
@@ -570,6 +572,16 @@ public class VentanaRuido extends JFrame {
 		JMenu menuDeteccionDeBordes = new JMenu("Deteccion de Bordes");
 		menuItemEditar.add(menuDeteccionDeBordes);
 		
+		JMenuItem menuItemDetectorDeSusan = new JMenuItem("Detector de Susan");
+		menuItemDetectorDeSusan.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			
+				SusanDialog dialog = new SusanDialog(VentanaRuido.this, contentPane);
+				dialog.setVisible(true);
+			}
+		});
+		menuDeteccionDeBordes.add(menuItemDetectorDeSusan);
+		
 		JMenu menuItemCanny = new JMenu("Detector De Bordes Canny");
 		menuDeteccionDeBordes.add(menuItemCanny);
 		
@@ -1090,5 +1102,14 @@ public void umbralizarConHisteresis(int umbral1, int umbral2) {
 		ProcesadorDeImagenes.obtenerInstancia().setImagenActual(nuevaImagenActual);
 
 		VentanaRuido.this.refrescarImagen();
+	}
+	
+	public void aplicarDetectorSusan(String flag) {
+		
+		Imagen imagenActual = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
+		Imagen imagenResultante = new Imagen(DetectorSusan.aplicar(imagenActual, flag), imagenActual.getFormato(), imagenActual.getNombre()+"_susan");
+		ProcesadorDeImagenes.obtenerInstancia().setImagenActual(imagenResultante);
+		VentanaRuido.this.refrescarImagen();
+		
 	}
 }
