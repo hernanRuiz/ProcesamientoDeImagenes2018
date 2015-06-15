@@ -109,10 +109,10 @@ public class DetectorDeBordesDeCanny {
 
 	public static int[][] calcularAnguloDelGradiente(int[][] matrizX, int[][] matrizY){
 
-		int[][] matrizDeAngulos = new int[matrizX.length][matrizX.length];
+		int[][] matrizDeAngulos = new int[matrizX[0].length][matrizX.length];
 		
-		for (int i=0; i<matrizX.length ;i++){
-			for (int j=0; j<matrizX[0].length ;j++){
+		for (int i=0; i<matrizX[0].length ;i++){
+			for (int j=0; j<matrizX.length ;j++){
 				
 				float arcTan = 0;
 				if(matrizX[i][j] != 0){
@@ -259,29 +259,28 @@ public class DetectorDeBordesDeCanny {
 		int[][] matrizHisteresisVerde2 = DetectorDeBordesDeCanny.aplicarUmbralizacionConHisteresis(matrizVerdes2, umbral1, umbral2);
 		int[][] matrizHisteresisAzul2 = DetectorDeBordesDeCanny.aplicarUmbralizacionConHisteresis(matrizAzules2, umbral1, umbral2);
 		
-		
-		for (int i=0; i < matrizRojos1[0].length ;i++){
-			for (int j=0; j < matrizRojos1.length ;j++){
+		for (int i=0; i < matrizRojos1.length ;i++){
+			for (int j=0; j < matrizRojos1[0].length ;j++){
 				
 				if (matrizHisteresisRojo1[i][j] > matrizHisteresisRojo2[i][j]){
 					
-					matrizResultanteRojo[i][j] = matrizHisteresisRojo1[i][j];
+					matrizResultanteRojo[j][i] = matrizHisteresisRojo1[i][j];
 				}else{
-					matrizResultanteRojo[i][j] = matrizHisteresisRojo2[i][j];
+					matrizResultanteRojo[j][i] = matrizHisteresisRojo2[i][j];
 				}
 				
 				if (matrizHisteresisVerde1[i][j] > matrizHisteresisVerde2[i][j]){
 					
-					matrizResultanteVerde[i][j] = matrizHisteresisVerde1[i][j];
+					matrizResultanteVerde[j][i] = matrizHisteresisVerde1[i][j];
 				}else{
-					matrizResultanteVerde[i][j] = matrizHisteresisVerde2[i][j];
+					matrizResultanteVerde[j][i] = matrizHisteresisVerde2[i][j];
 				}
 				
 				if (matrizHisteresisAzul1[i][j] > matrizHisteresisAzul2[i][j]){
 					
-					matrizResultanteAzul[i][j] = matrizHisteresisAzul1[i][j];
+					matrizResultanteAzul[j][i] = matrizHisteresisAzul1[i][j];
 				}else{
-					matrizResultanteAzul[i][j] = matrizHisteresisAzul2[i][j];
+					matrizResultanteAzul[j][i] = matrizHisteresisAzul2[i][j];
 				}
 				
 			}

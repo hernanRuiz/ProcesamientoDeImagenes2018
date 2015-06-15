@@ -40,6 +40,8 @@ import ar.com.untref.imagenes.dialogs.LoGDialog;
 import ar.com.untref.imagenes.dialogs.OperacionesMatricesDialog;
 import ar.com.untref.imagenes.dialogs.SegmentacionDialog;
 import ar.com.untref.imagenes.dialogs.SigmaDialog;
+import ar.com.untref.imagenes.dialogs.SusanDialog;
+import ar.com.untref.imagenes.enums.Canal;
 import ar.com.untref.imagenes.enums.FormatoDeImagen;
 import ar.com.untref.imagenes.enums.NivelMensaje;
 import ar.com.untref.imagenes.helpers.DialogsHelper;
@@ -114,6 +116,8 @@ public class VentanaPrincipal extends JFrame {
 		final JPanel imagenOriginal = new JPanel();
 		panelPromedios.add(imagenOriginal);
 		
+		final JButton botonSegmentar = new JButton("Segmentar");
+		
 		final JButton botonSeleccionar = new JButton("Seleccionar");
 		botonSeleccionar.setVisible(false);
 		botonSeleccionar.addActionListener(new ActionListener() {
@@ -121,6 +125,7 @@ public class VentanaPrincipal extends JFrame {
 
 				DialogsHelper.mostarMensaje(contentPane, "Cliquea en la esquina superior izquierda y la inferior derecha que formarán el cuadrado para marcar una región en la imagen");
 				labelPrincipal.addMouseListener(new MarcarImagenListener(VentanaPrincipal.this));
+				botonSegmentar.setEnabled(true);
 			}
 		});
 		panelPromedios.add(botonSeleccionar);
@@ -130,7 +135,6 @@ public class VentanaPrincipal extends JFrame {
 		resultadoCantidadPixeles = new JLabel("");
 		resultadoCantidadPixeles.setVisible(false);
 		
-		JButton botonSegmentar = new JButton("Segmentar");
 		botonSegmentar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
@@ -138,6 +142,7 @@ public class VentanaPrincipal extends JFrame {
 				m.setVisible(true);
 			}
 		});
+		botonSegmentar.setEnabled(false);
 		panelPromedios.add(botonSegmentar);
 		panelPromedios.add(cantidadPixeles);
 		panelPromedios.add(resultadoCantidadPixeles);
@@ -627,10 +632,8 @@ public class VentanaPrincipal extends JFrame {
 		menuItemDetectorDeSusan.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 			
-				Imagen imagenActual = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
-				Imagen imagenResultante = new Imagen(DetectorSusan.aplicar(imagenActual), imagenActual.getFormato(), imagenActual.getNombre()+"_susan");
-				ProcesadorDeImagenes.obtenerInstancia().setImagenActual(imagenResultante);
-				VentanaPrincipal.this.refrescarImagen();
+				SusanDialog dialog = new SusanDialog(VentanaPrincipal.this, contentPane);
+				dialog.setVisible(true);
 			}
 		});
 		menuDeteccionDeBordes.add(menuItemDetectorDeSusan);
@@ -1000,9 +1003,30 @@ public class VentanaPrincipal extends JFrame {
 	public void aplicarDetectorCanny(int umbral1, int umbral2, int sigma1, int sigma2) {
 		
 		Imagen imagenAnterior = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
-		Imagen imagenNueva = DetectorDeBordesDeCanny.aplicarDetectorDeCanny(imagenAnterior, sigma1, sigma2, umbral1, umbral2);
+	
+		int[][] matrizRojos1 = imagenAnterior.getMatriz(Canal.ROJO);
+		int[][] matrizVerdes1 = imagenAnterior.getMatriz(Canal.VERDE);
+		int[][] matrizAzules1 = imagenAnterior.getMatriz(Canal.AZUL);
+
+		int[][] matrizRojoTranspuesta1 = new int[matrizRojos1[0].length][matrizRojos1.length];
+		int[][] matrizVerdeTranspuesta1 = new int[matrizRojos1[0].length][matrizRojos1.length];
+		int[][] matrizAzulTranspuesta1 = new int[matrizRojos1[0].length][matrizRojos1.length];
+	
+		   for(int j = 0; j < matrizRojos1.length; j++){
+	           for(int i = 0; i < matrizRojos1[0].length; i++){
+	        	   matrizRojoTranspuesta1[i][j] = matrizRojos1[j][i];
+	        	   matrizVerdeTranspuesta1[i][j] = matrizVerdes1[j][i];
+	        	   matrizAzulTranspuesta1[i][j] = matrizAzules1[j][i];
+	           }
+	        }
+		   
+		BufferedImage buffer1 = MatricesManager.obtenerImagenDeMatrices(matrizRojoTranspuesta1, matrizVerdeTranspuesta1, matrizAzulTranspuesta1); 
+		Imagen imagen1 = new Imagen(buffer1, imagenAnterior.getFormato(), imagenAnterior.getNombre()+"Transpuesta");
 		
+		Imagen imagenFinal = DetectorDeBordesDeCanny.aplicarDetectorDeCanny(imagen1, sigma1, sigma2, umbral1, umbral2);		
+		Imagen imagenNueva = new Imagen(imagenFinal.getBufferedImage(), imagenAnterior.getFormato(), imagenAnterior.getNombre()+"_canny");
 		ProcesadorDeImagenes.obtenerInstancia().setImagenActual(imagenNueva);
+		
 		VentanaPrincipal.this.refrescarImagen();
 	}
 	
@@ -1195,6 +1219,15 @@ public class VentanaPrincipal extends JFrame {
 	
 	public JLabel getPanelDeImagen(){
 		return labelPrincipal;
+	}
+
+	public void aplicarDetectorSusan(String flag) {
+		
+		Imagen imagenActual = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
+		Imagen imagenResultante = new Imagen(DetectorSusan.aplicar(imagenActual, flag), imagenActual.getFormato(), imagenActual.getNombre()+"_susan");
+		ProcesadorDeImagenes.obtenerInstancia().setImagenActual(imagenResultante);
+		VentanaPrincipal.this.refrescarImagen();
+		
 	}
 	
 }
