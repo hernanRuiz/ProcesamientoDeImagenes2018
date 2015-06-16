@@ -355,7 +355,6 @@ public class MatricesManager {
 	
 	public static BufferedImage obtenerImagenDeMatrices(int[][] matrizRojos, int[][] matrizVerdes, int[][] matrizAzules){
 		
-
 		int filas = matrizRojos.length;
 		int columnas = matrizRojos[0].length;
 
@@ -370,6 +369,40 @@ public class MatricesManager {
 		}
 		
 		return imagenFinal;
+	}
+
+
+	public static int[][] elevarAlCuadrado(int[][] matriz) {
+		
+		int filas = matriz.length;
+		int columnas = matriz[0].length;
+
+		for (int f = 0; f < filas; f++) {
+			for (int g = 0; g < columnas; g++) {
+
+				matriz[f][g] = (int) Math.pow(matriz[f][g],2);
+			}
+		}
+		
+		return matriz;
+	}
+
+
+	public static int[][] multiplicarValores(int[][] matrizRojoEnX,
+			int[][] matrizRojoEnY) {
+
+		int filas = matrizRojoEnX.length;
+		int columnas = matrizRojoEnX[0].length;
+		int[][] matrizResultado = new int[filas][columnas];
+
+		for (int f = 0; f < filas; f++) {
+			for (int g = 0; g < columnas; g++) {
+
+				matrizResultado[f][g] = matrizRojoEnX[f][g]*matrizRojoEnY[f][g];
+			}
+		}
+		
+		return matrizResultado;
 	}
 }
 

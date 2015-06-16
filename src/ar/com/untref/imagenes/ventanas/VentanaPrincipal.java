@@ -25,16 +25,19 @@ import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import javax.swing.SwingWorker;
 import javax.swing.border.EmptyBorder;
 
 import ar.com.untref.imagenes.bordes.DetectarBordesDireccionales;
 import ar.com.untref.imagenes.bordes.DetectorDeBordes;
 import ar.com.untref.imagenes.bordes.DetectorDeBordesDeCanny;
+import ar.com.untref.imagenes.bordes.DetectorDeHarris;
 import ar.com.untref.imagenes.bordes.DetectorSusan;
 import ar.com.untref.imagenes.bordes.InterfaceDetectorDeBordes;
 import ar.com.untref.imagenes.dialogs.DetectorDeCannyDialog;
 import ar.com.untref.imagenes.dialogs.DifusionAnisotropicaDialog;
 import ar.com.untref.imagenes.dialogs.DifusionIsotropicaDialog;
+import ar.com.untref.imagenes.dialogs.EspereDialog;
 import ar.com.untref.imagenes.dialogs.HisteresisDialog;
 import ar.com.untref.imagenes.dialogs.LoGDialog;
 import ar.com.untref.imagenes.dialogs.OperacionesMatricesDialog;
@@ -80,8 +83,11 @@ public class VentanaPrincipal extends JFrame {
 	private JMenuItem menuItemGuardarComo;
 	private JSlider umbralSlider;
 	private JLabel resultadoCantidadPixeles;
+	private EspereDialog dialogoEspera;
 
 	public VentanaPrincipal() {
+
+		dialogoEspera = new EspereDialog();
 
 		this.setTitle("Procesamiento de Imágenes");
 				
@@ -646,6 +652,28 @@ public class VentanaPrincipal extends JFrame {
 				dialog.setVisible(true);
 			}
 		});
+		
+		JMenuItem menuItemHarris = new JMenuItem("Detector de Harris");
+		menuItemHarris.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				SwingWorker<Void, Void> mySwingWorker = new SwingWorker<Void, Void>(){
+			         @Override
+			         protected Void doInBackground() throws Exception {
+
+			        	Imagen imagenConHarris = DetectorDeHarris.detectarEsquinas(ProcesadorDeImagenes.obtenerInstancia().getImagenActual());
+						ProcesadorDeImagenes.obtenerInstancia().setImagenActual(imagenConHarris);
+						refrescarImagen();
+						
+						return null;
+			         }
+			      };
+
+			      mySwingWorker.execute();
+			      mostrarDialogoDeEspera();
+			}
+		});
+		menuDeteccionDeBordes.add(menuItemHarris);
 		menuDeteccionDeBordes.add(menuItemDetectorDeSusan);
 		
 		JMenu menuCanny = new JMenu("Detector de Canny");
@@ -1110,6 +1138,7 @@ public class VentanaPrincipal extends JFrame {
 		Imagen imagen = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
 		labelPrincipal.setIcon(new ImageIcon(imagen.getBufferedImage()));
 		chequearGuardarComo(menuItemGuardarComo);
+		ocultarDialogoDeEspera();
 	}
 
 	public void refrescarCantidadPixeles(int cantidadPixeles) {
@@ -1239,6 +1268,16 @@ public class VentanaPrincipal extends JFrame {
 		ProcesadorDeImagenes.obtenerInstancia().setImagenActual(imagenResultante);
 		VentanaPrincipal.this.refrescarImagen();
 		
+	}
+	
+	public void mostrarDialogoDeEspera(){
+		
+		this.dialogoEspera.mostrar();
+	}
+	
+	public void ocultarDialogoDeEspera(){
+		
+		this.dialogoEspera.ocultar();
 	}
 	
 }
