@@ -64,6 +64,25 @@ public class ProcesadorDeVideo {
 		return sePudoAvanzar;
 	}
 	
+	public boolean retrocederUnFotograma(){
+		
+		boolean sePudoRetroceder = false;
+		
+		if (posicionActual != 0){
+			
+			posicionActual--;
+			sePudoRetroceder = true;
+		}
+		
+		return sePudoRetroceder;
+	}
+	
+
+	public void reiniciar() {
+
+		this.posicionActual = 0;
+	}
+	
 	public Imagen getImagenActual() {
 		
 		String fotogramaActual = VentanaVideo.class.getResource(getVideoActual().getFotogramaPorPosicion(posicionActual)).getPath();

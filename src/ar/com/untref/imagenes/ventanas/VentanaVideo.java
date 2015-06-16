@@ -14,6 +14,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
+import javax.swing.SwingWorker;
 
 import ar.com.untref.imagenes.enums.FormatoDeImagen;
 import ar.com.untref.imagenes.helpers.DialogsHelper;
@@ -32,6 +33,8 @@ public class VentanaVideo extends JFrame{
 	private JButton botonSegmentar;
 	private JButton botonSiguienteFotograma;
 	private JButton botonFotogramaAnterior;
+	private JButton botonPrincipio;
+	private JButton botonPlay;
 	
 	public VentanaVideo() {
 		this.setTitle("Procesamiento de Video");
@@ -81,8 +84,42 @@ public class VentanaVideo extends JFrame{
 		botonFotogramaAnterior = new JButton("Anterior");
 		botonFotogramaAnterior.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				
+				botonSiguienteFotograma.setEnabled(true);
+				botonPlay.setEnabled(true);
+				
+				if (ProcesadorDeVideo.obtenerInstancia().retrocederUnFotograma()){
+					
+					BufferedImage bufferSegmentado = volverASegmentarImagen();
+					refrescarImagen(bufferSegmentado);
+					botonPrincipio.setEnabled(true);
+					botonFotogramaAnterior.setEnabled(true);
+				} else {
+					
+					DialogsHelper.mostarMensaje(getContentPane(), "El video comienza aquí");
+					botonPrincipio.setEnabled(false);
+					botonFotogramaAnterior.setEnabled(false);
+				};
+			
 			}
 		});
+		
+		botonPrincipio = new JButton("Principio");
+		botonPrincipio.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				ProcesadorDeVideo.obtenerInstancia().reiniciar();
+				
+				BufferedImage bufferSegmentado = segmentarImagen();
+				refrescarImagen(bufferSegmentado);
+				botonPrincipio.setEnabled(false);
+				botonFotogramaAnterior.setEnabled(false);
+				botonSiguienteFotograma.setEnabled(true);
+				botonPlay.setEnabled(true);
+			}
+		});
+		botonPrincipio.setEnabled(false);
+		panel1.add(botonPrincipio);
 		botonFotogramaAnterior.setEnabled(false);
 		panel1.add(botonFotogramaAnterior);
 		
@@ -90,19 +127,53 @@ public class VentanaVideo extends JFrame{
 		botonSiguienteFotograma.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
+				botonPrincipio.setEnabled(true);
+				botonFotogramaAnterior.setEnabled(true);
+
 				if (ProcesadorDeVideo.obtenerInstancia().avanzarUnFotograma()){
 					
 					BufferedImage bufferSegmentado = volverASegmentarImagen();
 					refrescarImagen(bufferSegmentado);
+					botonSiguienteFotograma.setEnabled(true);
+					botonPlay.setEnabled(true);
 				} else {
 					
 					DialogsHelper.mostarMensaje(getContentPane(), "Fin del video");
+					botonSiguienteFotograma.setEnabled(false);
+					botonPlay.setEnabled(false);
 				};
 			
 			}
 		});
 		botonSiguienteFotograma.setEnabled(false);
 		panel1.add(botonSiguienteFotograma);
+		
+		botonPlay = new JButton("Play");
+		botonPlay.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				SwingWorker<Void, Void> mySwingWorker = new SwingWorker<Void, Void>(){
+			         @Override
+			         protected Void doInBackground() throws Exception {
+
+			        	while (ProcesadorDeVideo.obtenerInstancia().avanzarUnFotograma()){
+								
+							BufferedImage bufferSegmentado = volverASegmentarImagen();
+							refrescarImagen(bufferSegmentado);
+						}
+						return null;
+			         }
+			    };
+			    mySwingWorker.execute();
+				
+				botonPrincipio.setEnabled(true);
+				botonFotogramaAnterior.setEnabled(true);
+				botonSiguienteFotograma.setEnabled(false);
+				botonPlay.setEnabled(false);
+			}
+		});
+		botonPlay.setEnabled(false);
+		panel1.add(botonPlay);
 		
 		JMenuBar menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
@@ -161,7 +232,7 @@ public class VentanaVideo extends JFrame{
 	
 	public void habilitarBotonesNavegacion(){
 		
-		botonFotogramaAnterior.setEnabled(true);
 		botonSiguienteFotograma.setEnabled(true);
+		botonPlay.setEnabled(true);
 	}
 }
