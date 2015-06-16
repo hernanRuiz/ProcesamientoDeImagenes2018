@@ -1217,7 +1217,7 @@ public class VentanaPrincipal extends JFrame {
 		
 		BufferedImage imagenSinCambio = procesador.clonarBufferedImage(procesador.getImagenOriginal().getBufferedImage()); 
 		
-		BufferedImage bufferSegmentado = Segmentador.segmentarImagen(procesador.getImagenOriginal(), 
+		BufferedImage bufferSegmentado = Segmentador.segmentarImagenPrimeraVez(procesador.getImagenOriginal(), 
 				new Point(procesador.getX1(), procesador.getY1()), 
 				new Point(procesador.getX2(), procesador.getY2()), repeticiones, diferenciaColor);
 		

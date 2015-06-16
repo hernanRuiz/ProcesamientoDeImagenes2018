@@ -12,9 +12,15 @@ import ar.com.untref.imagenes.modelo.Imagen;
 
 public class Segmentador {
 	
-private static int diferenciaColor = 20;	
+private static int diferenciaColor = 20;
+private static List<Point> lIn;
+private static List<Point> lOut;
+private static int[][] matrizSigmas;
+private static int[] promedioDeColores;
+private static int contPixelFueraLout;
+private static int contPixelDentroLin;
 
-public static BufferedImage segmentarImagen(Imagen imagenOriginal, Point punto1, Point punto2, int repeticiones, int difColor) {
+public static BufferedImage segmentarImagenPrimeraVez(Imagen imagenOriginal, Point punto1, Point punto2, int repeticiones, int difColor) {
 		
 		diferenciaColor = difColor;
 		Imagen imagenMuleto = new Imagen(imagenOriginal.getBufferedImage(), imagenOriginal.getFormato(), imagenOriginal.getNombre()+"_m");
@@ -27,13 +33,13 @@ public static BufferedImage segmentarImagen(Imagen imagenOriginal, Point punto1,
 		int desdeY = curvaSeleccionada.getDesde().y;
 		int hastaY = curvaSeleccionada.getHasta().y;
 
-		int[][] matrizSigmas = new int[imagen.getWidth()][imagen.getHeight()];
+		matrizSigmas = new int[imagen.getWidth()][imagen.getHeight()];
 		
-		List<Point> lIn = new CopyOnWriteArrayList<Point>();
-		List<Point> lOut = new CopyOnWriteArrayList<Point>();
+		lIn = new CopyOnWriteArrayList<Point>();
+		lOut = new CopyOnWriteArrayList<Point>();
 
-		int contPixelFueraLout = 0;
-		int contPixelDentroLin = 0;
+		contPixelFueraLout = 0;
+		contPixelDentroLin = 0;
 		
 		for(int i = 0; i < imagen.getWidth() ; i++){
 			for(int j = 0; j < imagen.getHeight() ; j++){
@@ -62,7 +68,7 @@ public static BufferedImage segmentarImagen(Imagen imagenOriginal, Point punto1,
 			}
 		}
 		
-		int[] promedioDeColores = obtenerPromedioRGB(imagen, punto1, punto2);
+		promedioDeColores = obtenerPromedioRGB(imagen, punto1, punto2);
 		
 		for(int i = 0; i < repeticiones; i++){
 			
@@ -205,68 +211,47 @@ public static BufferedImage segmentarImagen(Imagen imagenOriginal, Point punto1,
 		
 		if(calcularFd(promedio, imagen, unPoint) > 0){
 			
-			int valorMatrizIzquierda = matrizSigmas[unPoint.x - 1][unPoint.y];
-			int valorMatrizDerecha = matrizSigmas[unPoint.x + 1][unPoint.y];
-			int valorMatrizArriba = matrizSigmas[unPoint.x][unPoint.y - 1];
-			int valorMatrizAbajo = matrizSigmas[unPoint.x][unPoint.y + 1];
-			
-			if(valorMatrizIzquierda == 3){
+			if (unPoint.x>0 && unPoint.y<imagen.getHeight()){
 				
-				matrizSigmas[unPoint.x - 1][unPoint.y] = 1;
-				lOut.add(new Point(unPoint.x - 1, unPoint.y));
-			}
-
-			if(valorMatrizDerecha == 3){
-
-				matrizSigmas[unPoint.x + 1][unPoint.y] = 1;
-				lOut.add(new Point(unPoint.x + 1, unPoint.y));
-			}
-			
-			if(valorMatrizArriba == 3){
+				int valorMatrizIzquierda = matrizSigmas[unPoint.x - 1][unPoint.y];
+				int valorMatrizDerecha = matrizSigmas[unPoint.x + 1][unPoint.y];
+				int valorMatrizArriba = matrizSigmas[unPoint.x][unPoint.y - 1];
+				int valorMatrizAbajo = matrizSigmas[unPoint.x][unPoint.y + 1];
 				
-				matrizSigmas[unPoint.x][unPoint.y - 1] = 1;
-				lOut.add(new Point(unPoint.x, unPoint.y - 1));
-			}
-
-			if(valorMatrizAbajo == 3){
+				if(valorMatrizIzquierda == 3){
+					
+					matrizSigmas[unPoint.x - 1][unPoint.y] = 1;
+					lOut.add(new Point(unPoint.x - 1, unPoint.y));
+				}
+	
+				if(valorMatrizDerecha == 3){
+	
+					matrizSigmas[unPoint.x + 1][unPoint.y] = 1;
+					lOut.add(new Point(unPoint.x + 1, unPoint.y));
+				}
 				
-				matrizSigmas[unPoint.x][unPoint.y + 1] = 1;
-				lOut.add(new Point(unPoint.x, unPoint.y + 1));
+				if(valorMatrizArriba == 3){
+					
+					matrizSigmas[unPoint.x][unPoint.y - 1] = 1;
+					lOut.add(new Point(unPoint.x, unPoint.y - 1));
+				}
+	
+				if(valorMatrizAbajo == 3){
+					
+					matrizSigmas[unPoint.x][unPoint.y + 1] = 1;
+					lOut.add(new Point(unPoint.x, unPoint.y + 1));
+				}
+				
+				lIn.add(new Point(unPoint.x, unPoint.y));
+				matrizSigmas[unPoint.x][unPoint.y] = -1;
+				lOut.remove(unPoint);
 			}
-			
-			lIn.add(new Point(unPoint.x, unPoint.y));
-			matrizSigmas[unPoint.x][unPoint.y] = -1;
-			lOut.remove(unPoint);
 		}
 	}
 	
 	private static int calcularFd(int[] promedio, BufferedImage imagen, Point posicion) {
 
 		Color colorPromedio = new Color(promedio[0], promedio[1], promedio[2]);
-//		int cantidadDePixelesDentroConColorPromedio = 0;
-//		int cantidadDePixelesFueraConColorPromedio = 0;
-//		
-//		//Probabilidad de que un pixel dentro de la region de la curva tenga el color promedio
-//		float probabilidadOmega1 = 0;
-//		//Probabilidad de que un pixel fuera de la region de la curva tenga el color promedio
-//		float probabilidadOmega2 = 0;
-//		
-//		for (int i=0; i< matrizSigmas.length; i++ ){
-//			for (int j=0; j< matrizSigmas[0].length; j++ ){
-//				
-//				if (sonColoresSimilares(imagen, colorPromedio, i, j) && matrizSigmas[i][j]==-3 ){
-//					
-//					cantidadDePixelesDentroConColorPromedio++;
-//				} else if (sonColoresSimilares(imagen, colorPromedio, i, j) && matrizSigmas[i][j]>=1 ) {//Lout tambien esta fuera de la curva por eso tomo los sigmas 1 y 3
-//					
-//				    cantidadDePixelesFueraConColorPromedio++;
-//				}
-//			}
-//		}
-//		
-//		probabilidadOmega1 = (float) cantidadDePixelesDentroConColorPromedio / contadorPixelDentro;
-//		probabilidadOmega2 = (float) cantidadDePixelesFueraConColorPromedio / contadorPixelFuera;
-//		
 		int fD = 1;
 		
 		boolean debeSeguir = sonColoresSimilares(imagen, colorPromedio, posicion.x, posicion.y);
@@ -283,12 +268,6 @@ public static BufferedImage segmentarImagen(Imagen imagenOriginal, Point punto1,
 			Color colorPromedio, int i, int j) {
 		
 		Color colorEnEsePunto = new Color(imagen.getRGB(i, j));
-		
-//		double mediaCuadrada = Math.sqrt( Math.pow(colorEnEsePunto.getRed()-colorPromedio.getRed(), 2) +
-//										  Math.pow(colorEnEsePunto.getGreen()-colorPromedio.getGreen(), 2) +
-//										  Math.pow(colorEnEsePunto.getBlue()-colorPromedio.getBlue(), 2)) / Math.pow(255, 3);
-//		
-//		boolean esSimilar = mediaCuadrada < 0.9;
 		
 		boolean esSimilar = Math.abs(colorEnEsePunto.getRed()-colorPromedio.getRed()) <= diferenciaColor 
 							&& Math.abs(colorEnEsePunto.getGreen()-colorPromedio.getGreen()) <= diferenciaColor
@@ -402,4 +381,45 @@ public static BufferedImage segmentarImagen(Imagen imagenOriginal, Point punto1,
 	       return valoresPromedio;
 
 	}
+	
+	public static BufferedImage volverASegmentar(Imagen imagenOriginal, int repeticiones, int difColor) {
+		
+		diferenciaColor = difColor;
+		Imagen imagenMuleto = new Imagen(imagenOriginal.getBufferedImage(), imagenOriginal.getFormato(), imagenOriginal.getNombre()+"_m");
+		BufferedImage imagen = imagenMuleto.getBufferedImage();
+		
+		for(int i = 0; i < repeticiones; i++){
+			
+			Iterator<Point> iteradorPuntos = lOut.iterator();
+			while(iteradorPuntos.hasNext()){
+				
+				expandir(imagen, matrizSigmas, lIn, lOut, promedioDeColores,iteradorPuntos, contPixelFueraLout, contPixelDentroLin);
+			}
+
+			Iterator<Point> iteradorPuntosLin = lIn.iterator();
+			while(iteradorPuntosLin.hasNext()){
+				
+				sacarLinNoCorrespondientes(matrizSigmas, lIn, iteradorPuntosLin);
+			}
+			
+			Iterator<Point> iteradorPuntosLin2 = lIn.iterator();
+			while(iteradorPuntosLin2.hasNext()){
+				
+				contraer(imagen, matrizSigmas, lIn, lOut, promedioDeColores, iteradorPuntosLin2, contPixelFueraLout, contPixelDentroLin);
+			}
+			
+			Iterator<Point> iteradorPuntosLout2 = lOut.iterator();
+			while(iteradorPuntosLout2.hasNext()){
+				
+				sacarLoutNoCorrespondientes(matrizSigmas, lOut, iteradorPuntosLout2);
+			}
+		}
+		
+		for(Point unPoint : lIn){
+			imagen.setRGB(unPoint.x, unPoint.y, Color.RED.getRGB());
+		}
+		
+		return imagen;
+	}
+	
 }

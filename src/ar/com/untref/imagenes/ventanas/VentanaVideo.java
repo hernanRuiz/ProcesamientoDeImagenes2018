@@ -30,6 +30,8 @@ public class VentanaVideo extends JFrame{
 	private JPanel panelBotones;
 	private JLabel labelPrincipal;
 	private JButton botonSegmentar;
+	private JButton botonSiguienteFotograma;
+	private JButton botonFotogramaAnterior;
 	
 	public VentanaVideo() {
 		this.setTitle("Procesamiento de Video");
@@ -54,18 +56,12 @@ public class VentanaVideo extends JFrame{
 		botonSegmentar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
-				ProcesadorDeVideo procesador = ProcesadorDeVideo.obtenerInstancia();
-				
-				BufferedImage imagenNueva = ProcesadorDeImagenes.obtenerInstancia().clonarBufferedImage(procesador.getImagenActual().getBufferedImage()); 
-				Imagen image = new Imagen(imagenNueva, FormatoDeImagen.JPEG, "segmentada");
-				
-				BufferedImage bufferSegmentado = Segmentador.segmentarImagen(image, 
-						new Point(procesador.getX1(), procesador.getY1()), 
-						new Point(procesador.getX2(), procesador.getY2()), 100, 80);
-				
-//				Imagen imagenSegmentada = new Imagen(bufferSegmentado, procesador.getImagenActual().getFormato(), procesador.getImagenActual().getNombre()+"_segmentada");
+				BufferedImage bufferSegmentado = segmentarImagen();
 				VentanaVideo.this.refrescarImagen(bufferSegmentado);
+				habilitarBotonesNavegacion();
+				botonSegmentar.setEnabled(false);
 			}
+
 		});
 		botonSegmentar.setHorizontalAlignment(SwingConstants.LEFT);
 		botonSegmentar.setEnabled(false);
@@ -81,6 +77,32 @@ public class VentanaVideo extends JFrame{
 			}
 		});
 		panel1.add(botonSeleccionar);
+		
+		botonFotogramaAnterior = new JButton("Anterior");
+		botonFotogramaAnterior.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
+		botonFotogramaAnterior.setEnabled(false);
+		panel1.add(botonFotogramaAnterior);
+		
+		botonSiguienteFotograma = new JButton("Siguiente");
+		botonSiguienteFotograma.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				if (ProcesadorDeVideo.obtenerInstancia().avanzarUnFotograma()){
+					
+					BufferedImage bufferSegmentado = volverASegmentarImagen();
+					refrescarImagen(bufferSegmentado);
+				} else {
+					
+					DialogsHelper.mostarMensaje(getContentPane(), "Fin del video");
+				};
+			
+			}
+		});
+		botonSiguienteFotograma.setEnabled(false);
+		panel1.add(botonSiguienteFotograma);
 		
 		JMenuBar menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
@@ -100,6 +122,28 @@ public class VentanaVideo extends JFrame{
 		
 	}
 	
+	private BufferedImage segmentarImagen() {
+		
+		ProcesadorDeVideo procesador = ProcesadorDeVideo.obtenerInstancia();
+		BufferedImage imagenNueva = ProcesadorDeImagenes.obtenerInstancia().clonarBufferedImage(procesador.getImagenActual().getBufferedImage()); 
+		Imagen image = new Imagen(imagenNueva, FormatoDeImagen.JPEG, "segmentada");
+		
+		BufferedImage bufferSegmentado = Segmentador.segmentarImagenPrimeraVez(image, 
+				new Point(procesador.getX1(), procesador.getY1()), 
+				new Point(procesador.getX2(), procesador.getY2()), 100, 50);
+		return bufferSegmentado;
+	}
+	
+	private BufferedImage volverASegmentarImagen() {
+		
+		ProcesadorDeVideo procesador = ProcesadorDeVideo.obtenerInstancia();
+		BufferedImage imagenNueva = ProcesadorDeImagenes.obtenerInstancia().clonarBufferedImage(procesador.getImagenActual().getBufferedImage()); 
+		Imagen image = new Imagen(imagenNueva, FormatoDeImagen.JPEG, "segmentada");
+		
+		BufferedImage bufferSegmentado = Segmentador.volverASegmentar(image, 100, 50);
+		return bufferSegmentado;
+	}
+	
 	public void refrescarImagen(BufferedImage imagen) {
 
 		labelPrincipal.setIcon(new ImageIcon(imagen));
@@ -113,5 +157,11 @@ public class VentanaVideo extends JFrame{
 	public void habilitarBotonSegmentar() {
 
 		botonSegmentar.setEnabled(true);
+	}
+	
+	public void habilitarBotonesNavegacion(){
+		
+		botonFotogramaAnterior.setEnabled(true);
+		botonSiguienteFotograma.setEnabled(true);
 	}
 }

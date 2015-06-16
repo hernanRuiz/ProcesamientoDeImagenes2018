@@ -51,6 +51,19 @@ public class ProcesadorDeVideo {
 		return videoActual;
 	}
 	
+	public boolean avanzarUnFotograma(){
+		
+		boolean sePudoAvanzar = false;
+		
+		if (posicionActual!=videoActual.getFotogramas().size()-1){
+			
+			posicionActual++;
+			sePudoAvanzar = true;
+		}
+		
+		return sePudoAvanzar;
+	}
+	
 	public Imagen getImagenActual() {
 		
 		String fotogramaActual = VentanaVideo.class.getResource(getVideoActual().getFotogramaPorPosicion(posicionActual)).getPath();
