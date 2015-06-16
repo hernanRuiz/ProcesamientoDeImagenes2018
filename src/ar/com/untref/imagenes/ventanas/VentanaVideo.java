@@ -1,9 +1,12 @@
 package ar.com.untref.imagenes.ventanas;
 
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
+import java.util.Date;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -13,6 +16,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
 import javax.swing.SwingWorker;
 
@@ -35,6 +39,8 @@ public class VentanaVideo extends JFrame{
 	private JButton botonFotogramaAnterior;
 	private JButton botonPrincipio;
 	private JButton botonPlay;
+	private JLabel lblNewLabel;
+	private JTextArea consola;
 	
 	public VentanaVideo() {
 		this.setTitle("Procesamiento de Video");
@@ -43,9 +49,22 @@ public class VentanaVideo extends JFrame{
 		setBounds(100, 100, 800, 600);
 		getContentPane().setLayout(null);
 		
+		consola = new JTextArea();
+		consola.setEditable(false);
+		consola.setLineWrap(true);
+		consola.setBounds(539, 35, 235, 439);
+		getContentPane().add(consola);
+		
+		lblNewLabel = new JLabel("CONSOLA");
+		lblNewLabel.setBackground(Color.GRAY);
+		lblNewLabel.setFont(new Font("Quartz MS", Font.BOLD, 13));
+		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		lblNewLabel.setBounds(539, 0, 235, 36);
+		getContentPane().add(lblNewLabel);
+		
 		labelPrincipal = new JLabel("");
 		labelPrincipal.setHorizontalAlignment(SwingConstants.CENTER);
-		labelPrincipal.setBounds(0, 0, 774, 474);
+		labelPrincipal.setBounds(0, 0, 540, 474);
 		getContentPane().add(labelPrincipal);
 		
 		panelBotones = new JPanel();
@@ -109,13 +128,15 @@ public class VentanaVideo extends JFrame{
 			public void actionPerformed(ActionEvent e) {
 				
 				ProcesadorDeVideo.obtenerInstancia().reiniciar();
-				
+				consola.setText("");
+
 				BufferedImage bufferSegmentado = segmentarImagen();
 				refrescarImagen(bufferSegmentado);
 				botonPrincipio.setEnabled(false);
 				botonFotogramaAnterior.setEnabled(false);
 				botonSiguienteFotograma.setEnabled(true);
 				botonPlay.setEnabled(true);
+
 			}
 		});
 		botonPrincipio.setEnabled(false);
@@ -178,7 +199,7 @@ public class VentanaVideo extends JFrame{
 		JMenuBar menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
 		
-		JMenu mnNuevoVideo = new JMenu("Nuevo Video");
+		JMenu mnNuevoVideo = new JMenu("Cargar Video");
 		menuBar.add(mnNuevoVideo);
 		
 		JMenuItem mntmHoja = new JMenuItem("Abuela");
@@ -199,9 +220,17 @@ public class VentanaVideo extends JFrame{
 		BufferedImage imagenNueva = ProcesadorDeImagenes.obtenerInstancia().clonarBufferedImage(procesador.getImagenActual().getBufferedImage()); 
 		Imagen image = new Imagen(imagenNueva, FormatoDeImagen.JPEG, "segmentada");
 		
+		long tiempoDeInicio = new Date().getTime();
+		
 		BufferedImage bufferSegmentado = Segmentador.segmentarImagenPrimeraVez(image, 
 				new Point(procesador.getX1(), procesador.getY1()), 
 				new Point(procesador.getX2(), procesador.getY2()), 100, 50);
+		
+		long tiempoDeFin = new Date().getTime();
+		String tiempo = "Tiempo de procesamiento del fotograma " + procesador.getPosicionActual() +": " + (tiempoDeFin-tiempoDeInicio) + " milisegundos";
+		System.out.println(tiempo);
+		consola.setText(tiempo+"\n"+consola.getText().toString());
+		
 		return bufferSegmentado;
 	}
 	
@@ -211,7 +240,15 @@ public class VentanaVideo extends JFrame{
 		BufferedImage imagenNueva = ProcesadorDeImagenes.obtenerInstancia().clonarBufferedImage(procesador.getImagenActual().getBufferedImage()); 
 		Imagen image = new Imagen(imagenNueva, FormatoDeImagen.JPEG, "segmentada");
 		
+		long tiempoDeInicio = new Date().getTime();
+
 		BufferedImage bufferSegmentado = Segmentador.volverASegmentar(image, 100, 50);
+		
+		long tiempoDeFin = new Date().getTime();
+		String tiempo = "Tiempo de procesamiento del fotograma " + procesador.getPosicionActual() +": " + (tiempoDeFin-tiempoDeInicio) + " milisegundos";
+		System.out.println(tiempo);
+		consola.setText(tiempo +"\n"+consola.getText().toString());
+		
 		return bufferSegmentado;
 	}
 	
