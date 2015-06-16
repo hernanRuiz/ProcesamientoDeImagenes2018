@@ -92,7 +92,7 @@ public static BufferedImage segmentarImagen(Imagen imagenOriginal, Point punto1,
 		}
 		
 		for(Point unPoint : lIn){
-			imagen.setRGB(unPoint.x, unPoint.y, Color.PINK.getRGB());
+			imagen.setRGB(unPoint.x, unPoint.y, Color.RED.getRGB());
 		}
 		
 		return imagen;

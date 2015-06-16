@@ -4,6 +4,7 @@ public enum FormatoDeImagen {
 	
 	RAW (".raw", "raw"),
 	JPG(".jpg", "jpg"),
+	JPEG(".jpeg", "jpeg"),
 	GIF(".gif", "gif"),
 	BMP(".bmp", "bmp"),
 	PNG(".png", "png"),

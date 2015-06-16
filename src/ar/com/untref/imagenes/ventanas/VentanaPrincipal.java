@@ -371,6 +371,16 @@ public class VentanaPrincipal extends JFrame {
 		inhabilitarItem(menuItemGuardarComo);
 		
 		menu.add(menuItemGuardarComo);
+		
+		JMenuItem menuEditarVideo = new JMenuItem("Editar Video");
+		menuEditarVideo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				VentanaVideo video = new VentanaVideo();
+				video.setVisible(true);
+			}
+		});
+		menu.add(menuEditarVideo);
 		menu.add(menuItem);
 		
 		menuItemEditar = new JMenu("Editar");
@@ -1202,6 +1212,7 @@ public class VentanaPrincipal extends JFrame {
 	}
 	
 	public void segmentarImagen(int repeticiones, int diferenciaColor) {
+		
 		ProcesadorDeImagenes procesador = ProcesadorDeImagenes.obtenerInstancia();
 		
 		BufferedImage imagenSinCambio = procesador.clonarBufferedImage(procesador.getImagenOriginal().getBufferedImage()); 
