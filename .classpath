@@ -9,5 +9,15 @@
 	<classpathentry exported="true" kind="lib" path="libs/jfreechart-1.0.19.jar"/>
 	<classpathentry exported="true" kind="lib" path="forms-1.3.0.jar" sourcepath="forms-1.3.0-src.zip"/>
 	<classpathentry kind="lib" path="miglayout15-swing.jar" sourcepath="miglayout-src.zip"/>
+	<classpathentry kind="lib" path="libs/image-processing-1.3.1.jar"/>
+	<classpathentry kind="lib" path="libs/core-1.3.1.jar"/>
+	<classpathentry kind="lib" path="libs/image-feature-extraction-1.3.1.jar"/>
+	<classpathentry kind="lib" path="libs/core-image-1.3.1.jar" sourcepath="libs/core-image-1.3.1-sources.jar"/>
+	<classpathentry kind="lib" path="libs/image-local-features-1.3.1.jar"/>
+	<classpathentry kind="lib" path="libs/core-feature-1.3.1.jar"/>
+	<classpathentry kind="lib" path="libs/core-math-1.3.1.jar"/>
+	<classpathentry kind="lib" path="libs/apache-commons-sanselan.jar"/>
+	<classpathentry kind="lib" path="libs/log4j-1.2.17.jar"/>
+	<classpathentry kind="lib" path="libs/jafama-2.1.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

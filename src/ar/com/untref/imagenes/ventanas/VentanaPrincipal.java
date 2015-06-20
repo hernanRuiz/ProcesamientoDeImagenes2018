@@ -12,6 +12,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
+import java.net.URL;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -34,6 +35,7 @@ import ar.com.untref.imagenes.bordes.DetectorDeBordesDeCanny;
 import ar.com.untref.imagenes.bordes.DetectorDeHarris;
 import ar.com.untref.imagenes.bordes.DetectorSusan;
 import ar.com.untref.imagenes.bordes.InterfaceDetectorDeBordes;
+import ar.com.untref.imagenes.bordes.TransformadaDeHough;
 import ar.com.untref.imagenes.dialogs.DetectorDeCannyDialog;
 import ar.com.untref.imagenes.dialogs.DifusionAnisotropicaDialog;
 import ar.com.untref.imagenes.dialogs.DifusionIsotropicaDialog;
@@ -64,6 +66,7 @@ import ar.com.untref.imagenes.procesamiento.OperacionesManager;
 import ar.com.untref.imagenes.procesamiento.ProcesadorDeImagenes;
 import ar.com.untref.imagenes.procesamiento.Umbralizador;
 import ar.com.untref.imagenes.segmentacion.Segmentador;
+import ar.com.untref.imagenes.sift.Sift;
 
 @SuppressWarnings("serial")
 public class VentanaPrincipal extends JFrame {
@@ -433,6 +436,19 @@ public class VentanaPrincipal extends JFrame {
 				}
 			}
 		});
+		
+		JMenuItem menuItemSift = new JMenuItem("Sift");
+		menuItemSift.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				try {
+					Sift.aplicarMetodoSift(new URL("http://dl.dropbox.com/u/8705593/query.jpg"), new URL("http://dl.dropbox.com/u/8705593/target.jpg"));
+				} catch (Exception e) {
+					e.printStackTrace();
+				} 
+			}
+		});
+		menuItemEditar.add(menuItemSift);
 		menuItemEditar.add(menuItemHistogramas);
 		
 		JMenu menuFiltros = new JMenu("Filtros");
@@ -560,7 +576,7 @@ public class VentanaPrincipal extends JFrame {
 				resultadoCantidadPixeles.setVisible(false);
 				botonPromedio.setVisible(false);
 				BufferedImage buf = Graficador.crearImagenConCuadradoEnElCentro(200, 200, 40);
-				Imagen imagenConCuadrado = new Imagen(buf, FormatoDeImagen.JPG, "Imagen Con Cuadrado");
+				Imagen imagenConCuadrado = new Imagen(buf, FormatoDeImagen.JPG, "Imagen Con Cuadrado", new int[buf.getWidth()][buf.getHeight()], new int[buf.getWidth()][buf.getHeight()], new int[buf.getWidth()][buf.getHeight()]);
 				ProcesadorDeImagenes.obtenerInstancia().setImagenActual(imagenConCuadrado);
 				VentanaPrincipal.this.refrescarImagen();
 			}
@@ -576,7 +592,7 @@ public class VentanaPrincipal extends JFrame {
 				resultadoCantidadPixeles.setVisible(false);
 				botonPromedio.setVisible(false);
 				BufferedImage buf = Graficador.crearImagenConCirculoEnElMedio(200,200,40);
-				Imagen imagenConCirculo = new Imagen(buf, FormatoDeImagen.JPG, "Imagen Con Circulo");
+				Imagen imagenConCirculo = new Imagen(buf, FormatoDeImagen.JPG, "Imagen Con Circulo", new int[buf.getWidth()][buf.getHeight()], new int[buf.getWidth()][buf.getHeight()], new int[buf.getWidth()][buf.getHeight()]);
 				ProcesadorDeImagenes.obtenerInstancia().setImagenActual(imagenConCirculo);
 				VentanaPrincipal.this.refrescarImagen();
 			}
@@ -592,7 +608,7 @@ public class VentanaPrincipal extends JFrame {
 				resultadoCantidadPixeles.setVisible(false);
 				botonPromedio.setVisible(false);
 				BufferedImage buf = Graficador.crearImagenConDegradeDeGrises(200, 250);
-				Imagen degrade = new Imagen(buf, FormatoDeImagen.JPG, "Degradé de grises");
+				Imagen degrade = new Imagen(buf, FormatoDeImagen.JPG, "Degradé de grises", new int[buf.getWidth()][buf.getHeight()], new int[buf.getWidth()][buf.getHeight()], new int[buf.getWidth()][buf.getHeight()]);
 				ProcesadorDeImagenes.obtenerInstancia().setImagenActual(degrade);
 				VentanaPrincipal.this.refrescarImagen();
 			}
@@ -608,7 +624,7 @@ public class VentanaPrincipal extends JFrame {
 				resultadoCantidadPixeles.setVisible(false);
 				botonPromedio.setVisible(false);
 				BufferedImage buf = Graficador.crearImagenConDegradeColor(200, 250);
-				Imagen degrade = new Imagen(buf, FormatoDeImagen.JPG, "Degradé de color");
+				Imagen degrade = new Imagen(buf, FormatoDeImagen.JPG, "Degradé de color", new int[buf.getWidth()][buf.getHeight()], new int[buf.getWidth()][buf.getHeight()], new int[buf.getWidth()][buf.getHeight()]);
 				ProcesadorDeImagenes.obtenerInstancia().setImagenActual(degrade);
 				VentanaPrincipal.this.refrescarImagen();
 			}
@@ -673,6 +689,16 @@ public class VentanaPrincipal extends JFrame {
 			      mostrarDialogoDeEspera();
 			}
 		});
+		
+		JMenuItem menuItemTransfoHough = new JMenuItem("Transformada de hough");
+		menuItemTransfoHough.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				TransformadaDeHough.aplicarTransformadaDeHough(ProcesadorDeImagenes.obtenerInstancia().getImagenActual(), 
+						0, 180, 1, 0, 180, 1, null);
+			}
+		});
+		menuDeteccionDeBordes.add(menuItemTransfoHough);
 		menuDeteccionDeBordes.add(menuItemHarris);
 		menuDeteccionDeBordes.add(menuItemDetectorDeSusan);
 		

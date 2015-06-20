@@ -10,18 +10,11 @@ public class Graficador {
 		
 		BufferedImage bufferedImage = new BufferedImage(ancho, alto, BufferedImage.TYPE_BYTE_BINARY);
 
-		for (int i = 0; i < ancho; i++) {
-			for (int j = 0; j < alto; j++) {
-				bufferedImage.setRGB(i, j, 255);
-			}
-		}
-		
 		int posicionInicial = (ancho/2 -1) - (longitudDelCuadrado/2);
 		for (int incrementoEnX=0; incrementoEnX < longitudDelCuadrado; incrementoEnX++){
-
 			for (int incrementoEnY=0; incrementoEnY < longitudDelCuadrado; incrementoEnY++){
 				
-				bufferedImage.setRGB(posicionInicial+incrementoEnX, posicionInicial + incrementoEnY, -1);
+				bufferedImage.setRGB(posicionInicial+incrementoEnX, posicionInicial + incrementoEnY, Color.WHITE.getRGB());
 			}
 		}
 
