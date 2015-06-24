@@ -5,6 +5,7 @@ import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.WritableRaster;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.LinkedList;
@@ -77,14 +78,29 @@ public class ProcesadorDeImagenes {
 
 					Imagen imagen = new Imagen(bufferedImage,
 							formatoDeLaImagen, archivoActual.getNombre());
-					
-					imagen.setMatriz(MatricesManager.calcularMatrizDeLaImagen(bufferedImage, Canal.ROJO), Canal.ROJO);
-					imagen.setMatriz(MatricesManager.calcularMatrizDeLaImagen(bufferedImage, Canal.VERDE), Canal.VERDE);
-					imagen.setMatriz(MatricesManager.calcularMatrizDeLaImagen(bufferedImage, Canal.AZUL), Canal.AZUL);
 
-					imagenActual = new Imagen(imagen.getBufferedImage(), imagen.getFormato(), imagen.getNombre(), imagen.getMatriz(Canal.ROJO), imagen.getMatriz(Canal.VERDE),imagen.getMatriz(Canal.AZUL));
-					imagenOriginal = new Imagen(imagen.getBufferedImage(), imagen.getFormato(), imagen.getNombre(), imagen.getMatriz(Canal.ROJO), imagen.getMatriz(Canal.VERDE),imagen.getMatriz(Canal.AZUL));
-					imagenADevolver = new Imagen(imagen.getBufferedImage(), imagen.getFormato(), imagen.getNombre(), imagen.getMatriz(Canal.ROJO), imagen.getMatriz(Canal.VERDE),imagen.getMatriz(Canal.AZUL));
+					imagen.setMatriz(MatricesManager.calcularMatrizDeLaImagen(
+							bufferedImage, Canal.ROJO), Canal.ROJO);
+					imagen.setMatriz(MatricesManager.calcularMatrizDeLaImagen(
+							bufferedImage, Canal.VERDE), Canal.VERDE);
+					imagen.setMatriz(MatricesManager.calcularMatrizDeLaImagen(
+							bufferedImage, Canal.AZUL), Canal.AZUL);
+
+					imagenActual = new Imagen(imagen.getBufferedImage(),
+							imagen.getFormato(), imagen.getNombre(),
+							imagen.getMatriz(Canal.ROJO),
+							imagen.getMatriz(Canal.VERDE),
+							imagen.getMatriz(Canal.AZUL));
+					imagenOriginal = new Imagen(imagen.getBufferedImage(),
+							imagen.getFormato(), imagen.getNombre(),
+							imagen.getMatriz(Canal.ROJO),
+							imagen.getMatriz(Canal.VERDE),
+							imagen.getMatriz(Canal.AZUL));
+					imagenADevolver = new Imagen(imagen.getBufferedImage(),
+							imagen.getFormato(), imagen.getNombre(),
+							imagen.getMatriz(Canal.ROJO),
+							imagen.getMatriz(Canal.VERDE),
+							imagen.getMatriz(Canal.AZUL));
 				}
 
 			} catch (Exception e) {
@@ -127,17 +143,30 @@ public class ProcesadorDeImagenes {
 
 				Imagen imagen = new Imagen(bufferedImage, formatoDeLaImagen,
 						archivoActual.getNombre());
-				
-				int[][] matrizCanal = MatricesManager.calcularMatrizDeLaImagen(bufferedImage, Canal.ROJO);
-				
+
+				int[][] matrizCanal = MatricesManager.calcularMatrizDeLaImagen(
+						bufferedImage, Canal.ROJO);
+
 				imagen.setMatriz(matrizCanal, Canal.ROJO);
 				imagen.setMatriz(matrizCanal, Canal.VERDE);
 				imagen.setMatriz(matrizCanal, Canal.AZUL);
 
-				imagenActual = new Imagen(imagen.getBufferedImage(), imagen.getFormato(), imagen.getNombre(), imagen.getMatriz(Canal.ROJO), imagen.getMatriz(Canal.VERDE),imagen.getMatriz(Canal.AZUL));
-				imagenOriginal = new Imagen(imagen.getBufferedImage(), imagen.getFormato(), imagen.getNombre(), imagen.getMatriz(Canal.ROJO), imagen.getMatriz(Canal.VERDE),imagen.getMatriz(Canal.AZUL));
-				imagenADevolver = new Imagen(imagen.getBufferedImage(), imagen.getFormato(), imagen.getNombre(), imagen.getMatriz(Canal.ROJO), imagen.getMatriz(Canal.VERDE),imagen.getMatriz(Canal.AZUL));
-				
+				imagenActual = new Imagen(imagen.getBufferedImage(),
+						imagen.getFormato(), imagen.getNombre(),
+						imagen.getMatriz(Canal.ROJO),
+						imagen.getMatriz(Canal.VERDE),
+						imagen.getMatriz(Canal.AZUL));
+				imagenOriginal = new Imagen(imagen.getBufferedImage(),
+						imagen.getFormato(), imagen.getNombre(),
+						imagen.getMatriz(Canal.ROJO),
+						imagen.getMatriz(Canal.VERDE),
+						imagen.getMatriz(Canal.AZUL));
+				imagenADevolver = new Imagen(imagen.getBufferedImage(),
+						imagen.getFormato(), imagen.getNombre(),
+						imagen.getMatriz(Canal.ROJO),
+						imagen.getMatriz(Canal.VERDE),
+						imagen.getMatriz(Canal.AZUL));
+
 			} catch (Exception e) {
 
 				e.printStackTrace();
@@ -160,15 +189,15 @@ public class ProcesadorDeImagenes {
 			int contador = 0;
 			for (int i = 0; i < height; i++) {
 				for (int j = 0; j < width; j++) {
-					
+
 					matrizDeImagen[j][i] = bytes[contador];
-					
+
 					int argb = 0;
 					argb += -16777216; // 255 alpha
-					int blue = ( (int)bytes[contador] & 0xff);
-		            int green = ((int)bytes[contador] & 0xff) << 8;
-		            int red = ((int)bytes[contador] & 0xff) << 16;
-		            int color = argb + red + green + blue;
+					int blue = ((int) bytes[contador] & 0xff);
+					int green = ((int) bytes[contador] & 0xff) << 8;
+					int red = ((int) bytes[contador] & 0xff) << 16;
+					int color = argb + red + green + blue;
 					imagen.setRGB(j, i, color);
 					contador++;
 				}
@@ -223,17 +252,21 @@ public class ProcesadorDeImagenes {
 				}
 			}
 
-			BufferedImage imagenRecortada = getBufferedImageDeMatriz(matrizRecortada, ancho+1, alto+1);
-			cantidadPixeles = imagenRecortada.getWidth()* imagenRecortada.getHeight();
-			Imagen nuevaImagenRecortada = new Imagen(imagenRecortada, imagenActual.getFormato(), imagenActual.getNombre());
+			BufferedImage imagenRecortada = getBufferedImageDeMatriz(
+					matrizRecortada, ancho + 1, alto + 1);
+			cantidadPixeles = imagenRecortada.getWidth()
+					* imagenRecortada.getHeight();
+			Imagen nuevaImagenRecortada = new Imagen(imagenRecortada,
+					imagenActual.getFormato(), imagenActual.getNombre());
 			imagenActual = nuevaImagenRecortada;
 			ventana.refrescarImagen();
 			ventana.refrescarCantidadPixeles(cantidadPixeles);
 		}
 	}
-	
-	public int[] calcularValoresPromedio(BufferedImage bufferedImage, int ancho, int alto){
-		
+
+	public int[] calcularValoresPromedio(BufferedImage bufferedImage,
+			int ancho, int alto) {
+
 		int acumuladorRojo = 0;
 		int acumuladorVerde = 0;
 		int acumuladorAzul = 0;
@@ -245,28 +278,28 @@ public class ProcesadorDeImagenes {
 		Color color;
 
 		for (int i = 0; i < ancho; i++) {
-	        for (int j = 0; j < alto; j++) {
-	        	color = new Color(bufferedImage.getRGB(i, j));
-	        	acumuladorRojo+=color.getRed();
-	        	acumuladorVerde+=color.getGreen();
-	        	acumuladorAzul+=color.getBlue();
-	        }
+			for (int j = 0; j < alto; j++) {
+				color = new Color(bufferedImage.getRGB(i, j));
+				acumuladorRojo += color.getRed();
+				acumuladorVerde += color.getGreen();
+				acumuladorAzul += color.getBlue();
+			}
 		}
-		
+
 		promedioRojo = (acumuladorRojo / cantidadPixeles);
 		promedioVerde = (acumuladorVerde / cantidadPixeles);
 		promedioAzul = (acumuladorAzul / cantidadPixeles);
 		valoresPromedio[0] = promedioRojo;
 		valoresPromedio[1] = promedioVerde;
 		valoresPromedio[2] = promedioAzul;
-		
+
 		return valoresPromedio;
 	}
 
 	public Imagen aplicarNegativo(Imagen imagen) {
-		
+
 		Imagen imagenEnNegativo = null;
-		
+
 		if (imagen != null) {
 
 			imagenOriginal = imagen;
@@ -283,9 +316,10 @@ public class ProcesadorDeImagenes {
 				}
 			}
 
-			imagenEnNegativo = new Imagen(resultado, imagen.getFormato(), imagen.getNombre());
+			imagenEnNegativo = new Imagen(resultado, imagen.getFormato(),
+					imagen.getNombre());
 		}
-		
+
 		return imagenEnNegativo;
 	}
 
@@ -293,102 +327,116 @@ public class ProcesadorDeImagenes {
 
 		imagenActual = imagen;
 	}
-	
-	public Archivo getArchivoActual(){
-		
+
+	public Archivo getArchivoActual() {
+
 		return this.archivoActual;
 	}
-	
-	public Imagen getImagenOriginal(){
-		
+
+	public Imagen getImagenOriginal() {
+
 		return imagenOriginal;
 	}
-	
-	public void setImagenOriginal(Imagen imagen){
+
+	public void setImagenOriginal(Imagen imagen) {
 		imagenOriginal = imagen;
 	}
-	
-	public void aumentarContrastePorFactor(Imagen imagen){
-		
+
+	public void aumentarContrastePorFactor(Imagen imagen) {
+
 		setImagenOriginal(imagen);
 		BufferedImage buffered = imagen.getBufferedImage();
-		
-		int[][] matrizRojos = new int[imagen.getBufferedImage().getWidth()][imagen.getBufferedImage().getHeight()];
-		int[][] matrizVerdes = new int[imagen.getBufferedImage().getWidth()][imagen.getBufferedImage().getHeight()];
-		int[][] matrizAzules = new int[imagen.getBufferedImage().getWidth()][imagen.getBufferedImage().getHeight()];
 
-		
+		int[][] matrizRojos = new int[imagen.getBufferedImage().getWidth()][imagen
+				.getBufferedImage().getHeight()];
+		int[][] matrizVerdes = new int[imagen.getBufferedImage().getWidth()][imagen
+				.getBufferedImage().getHeight()];
+		int[][] matrizAzules = new int[imagen.getBufferedImage().getWidth()][imagen
+				.getBufferedImage().getHeight()];
+
 		for (int x = 0; x < buffered.getWidth(); x++) {
 			for (int y = 0; y < buffered.getHeight(); y++) {
 
 				int rgba = buffered.getRGB(x, y);
-				
+
 				Color col = new Color(rgba, true);
-				
-				matrizRojos[x][y] = FormulasHelper.aumentoContrasteConFactor(col.getRed(), 2f);
-				
-				matrizVerdes[x][y] =  FormulasHelper.aumentoContrasteConFactor(col.getGreen(), 2f);
-				
-				matrizAzules[x][y] = FormulasHelper.aumentoContrasteConFactor(col.getBlue(), 2f);
+
+				matrizRojos[x][y] = FormulasHelper.aumentoContrasteConFactor(
+						col.getRed(), 2f);
+
+				matrizVerdes[x][y] = FormulasHelper.aumentoContrasteConFactor(
+						col.getGreen(), 2f);
+
+				matrizAzules[x][y] = FormulasHelper.aumentoContrasteConFactor(
+						col.getBlue(), 2f);
 			}
 		}
-		
-		matrizRojos = MatricesManager.aplicarTransformacionLogaritmica(matrizRojos);
-		matrizVerdes = MatricesManager.aplicarTransformacionLogaritmica(matrizVerdes);
-		matrizAzules = MatricesManager.aplicarTransformacionLogaritmica(matrizAzules);
-		
-		buffered = MatricesManager.generarImagenRGBconContraste(matrizRojos, matrizVerdes, matrizAzules);
-		
-		imagenActual= new Imagen(buffered, imagenOriginal.getFormato(), imagenOriginal.getNombre());
+
+		matrizRojos = MatricesManager
+				.aplicarTransformacionLogaritmica(matrizRojos);
+		matrizVerdes = MatricesManager
+				.aplicarTransformacionLogaritmica(matrizVerdes);
+		matrizAzules = MatricesManager
+				.aplicarTransformacionLogaritmica(matrizAzules);
+
+		buffered = MatricesManager.generarImagenRGBconContraste(matrizRojos,
+				matrizVerdes, matrizAzules);
+
+		imagenActual = new Imagen(buffered, imagenOriginal.getFormato(),
+				imagenOriginal.getNombre());
 	}
-	
+
 	/**
-	 * @param imagen - imagen a umbralizar
-	 * @param umbral - valor que hará de separador entre valores 0 y 255
+	 * @param imagen
+	 *            - imagen a umbralizar
+	 * @param umbral
+	 *            - valor que hará de separador entre valores 0 y 255
 	 */
-	public void umbralizarImagen(VentanaPrincipal ventana, int umbral){
-		
+	public void umbralizarImagen(VentanaPrincipal ventana, int umbral) {
+
 		imagenActual = Umbralizador.umbralizarImagen(imagenOriginal, umbral);
 		ventana.refrescarImagen();
 	}
-	
-	public void encontrarUmbralGlobal(VentanaPrincipal ventana, int umbralViejo){
-		
+
+	public void encontrarUmbralGlobal(VentanaPrincipal ventana, int umbralViejo) {
+
 		int deltaUmbral = 30;
 		boolean finalizo = false;
-		
-		while( !finalizo ){
 
-			int umbralNuevo = Umbralizador.encontrarNuevoUmbralGlobal(imagenOriginal, umbralViejo);
-			finalizo = (Math.abs(umbralViejo-umbralNuevo) < deltaUmbral);
-			
+		while (!finalizo) {
+
+			int umbralNuevo = Umbralizador.encontrarNuevoUmbralGlobal(
+					imagenOriginal, umbralViejo);
+			finalizo = (Math.abs(umbralViejo - umbralNuevo) < deltaUmbral);
+
 			umbralViejo = umbralNuevo;
 		}
-		
+
 		umbralizarImagen(ventana, umbralViejo);
 	}
-	
-	
-	public void encontrarUmbralGlobal(VentanaRuido ventana, int umbralViejo){
-		
+
+	public void encontrarUmbralGlobal(VentanaRuido ventana, int umbralViejo) {
+
 		int deltaUmbral = 30;
 		boolean finalizo = false;
-		
-		while( !finalizo ){
 
-			int umbralNuevo = Umbralizador.encontrarNuevoUmbralGlobal(imagenOriginal, umbralViejo);
-			finalizo = (Math.abs(umbralViejo-umbralNuevo) < deltaUmbral);
-			
+		while (!finalizo) {
+
+			int umbralNuevo = Umbralizador.encontrarNuevoUmbralGlobal(
+					imagenOriginal, umbralViejo);
+			finalizo = (Math.abs(umbralViejo - umbralNuevo) < deltaUmbral);
+
 			umbralViejo = umbralNuevo;
 		}
-		
-		imagenActual = Umbralizador.umbralizarImagen(imagenOriginal, umbralViejo);
+
+		imagenActual = Umbralizador.umbralizarImagen(imagenOriginal,
+				umbralViejo);
 		ventana.refrescarImagen();
 	}
-	
-	
-	public BufferedImage aplicarTransformacionLogaritmica(BufferedImage bufferedImage){
-		
+
+	public BufferedImage aplicarTransformacionLogaritmica(
+			BufferedImage bufferedImage) {
+
 		float rojoMax;
 		float verdeMax;
 		float azulMax;
@@ -396,8 +444,9 @@ public class ProcesadorDeImagenes {
 		BufferedImage imagenTransformada;
 		int nrows = bufferedImage.getWidth();
 		int ncols = bufferedImage.getHeight();
-		imagenTransformada = new BufferedImage(nrows, ncols, BufferedImage.TYPE_3BYTE_BGR);
-		
+		imagenTransformada = new BufferedImage(nrows, ncols,
+				BufferedImage.TYPE_3BYTE_BGR);
+
 		rojoMax = 255;
 		verdeMax = 255;
 		azulMax = 255;
@@ -409,7 +458,7 @@ public class ProcesadorDeImagenes {
 				int rojoActual = colorActual.getRed();
 				int verdeActual = colorActual.getGreen();
 				int azulActual = colorActual.getBlue();
-				
+
 				if (rojoMax < rojoActual) {
 					rojoMax = rojoActual;
 				}
@@ -430,7 +479,7 @@ public class ProcesadorDeImagenes {
 		maximosYMinimos[0] = rojoMax;
 		maximosYMinimos[1] = verdeMax;
 		maximosYMinimos[2] = azulMax;
-		
+
 		for (int i = 0; i < nrows; i++) {
 			for (int j = 0; j < ncols; j++) {
 
@@ -438,21 +487,25 @@ public class ProcesadorDeImagenes {
 				int rojoActual = colorActual.getRed();
 				int verdeActual = colorActual.getGreen();
 				int azulActual = colorActual.getBlue();
-				
-				int rojoTransformado = (int) ((255f / (Math.log(rojoMax))) * Math.log(1 + rojoActual));
-				int verdeTransformado = (int) ((255f / (Math.log(verdeMax))) * Math.log(1 + verdeActual));
-				int azulTransformado = (int) ((255f / (Math.log(azulMax))) * Math.log(1 + azulActual));
 
-				Color colorModificado = new Color(rojoTransformado, verdeTransformado, azulTransformado);
+				int rojoTransformado = (int) ((255f / (Math.log(rojoMax))) * Math
+						.log(1 + rojoActual));
+				int verdeTransformado = (int) ((255f / (Math.log(verdeMax))) * Math
+						.log(1 + verdeActual));
+				int azulTransformado = (int) ((255f / (Math.log(azulMax))) * Math
+						.log(1 + azulActual));
+
+				Color colorModificado = new Color(rojoTransformado,
+						verdeTransformado, azulTransformado);
 				imagenTransformada.setRGB(i, j, colorModificado.getRGB());
 			}
 		}
-		
+
 		return imagenTransformada;
 	}
-	
-	public BufferedImage aplicarTransformacionLineal(BufferedImage bufferedImage){
-		
+
+	public BufferedImage aplicarTransformacionLineal(BufferedImage bufferedImage) {
+
 		float rojoMin;
 		float rojoMax;
 		float verdeMin;
@@ -463,9 +516,10 @@ public class ProcesadorDeImagenes {
 		BufferedImage imagenTransformada;
 		int nrows = bufferedImage.getWidth();
 		int ncols = bufferedImage.getHeight();
-		imagenTransformada = new BufferedImage(nrows, ncols, BufferedImage.TYPE_3BYTE_BGR);
-		
-		//Color color = new Color(bufferedImage.getRGB(0, 0));
+		imagenTransformada = new BufferedImage(nrows, ncols,
+				BufferedImage.TYPE_3BYTE_BGR);
+
+		// Color color = new Color(bufferedImage.getRGB(0, 0));
 		rojoMin = 0;
 		rojoMax = 255;
 		verdeMin = 0;
@@ -475,12 +529,12 @@ public class ProcesadorDeImagenes {
 
 		for (int f = 0; f < nrows; f++) {
 			for (int g = 0; g < ncols; g++) {
-		
+
 				Color colorActual = new Color(bufferedImage.getRGB(f, g));
 				int rojoActual = colorActual.getRed();
 				int verdeActual = colorActual.getGreen();
 				int azulActual = colorActual.getBlue();
-				
+
 				if (rojoMin > rojoActual) {
 					rojoMin = rojoActual;
 				}
@@ -516,7 +570,7 @@ public class ProcesadorDeImagenes {
 		maximosYMinimos[3] = verdeMax;
 		maximosYMinimos[4] = azulMin;
 		maximosYMinimos[5] = azulMax;
-		
+
 		for (int i = 0; i < nrows; i++) {
 			for (int j = 0; j < ncols; j++) {
 
@@ -524,16 +578,17 @@ public class ProcesadorDeImagenes {
 				int rojoActual = colorActual.getRed();
 				int verdeActual = colorActual.getGreen();
 				int azulActual = colorActual.getBlue();
-				
+
 				int rojoTransformado = (int) ((((255f) / (rojoMax - rojoMin)) * rojoActual) - ((rojoMin * 255f) / (rojoMax - rojoMin)));
 				int verdeTransformado = (int) (((255f / (verdeMax - verdeMin)) * verdeActual) - ((verdeMin * 255f) / (verdeMax - verdeMin)));
 				int azulTransformado = (int) (((255f / (azulMax - azulMin)) * azulActual) - ((azulMin * 255f) / (azulMax - azulMin)));
 
-				Color colorModificado = new Color(rojoTransformado, verdeTransformado, azulTransformado);
+				Color colorModificado = new Color(rojoTransformado,
+						verdeTransformado, azulTransformado);
 				imagenTransformada.setRGB(i, j, colorModificado.getRGB());
 			}
 		}
-		
+
 		return imagenTransformada;
 	}
 
@@ -544,43 +599,45 @@ public class ProcesadorDeImagenes {
 		this.x2 = x2;
 		this.y1 = y1;
 		this.y2 = y2;
-		
+
 		if (getImagenActual() != null) {
 
 			List<Point> pixeles = new LinkedList<Point>();
 
-			for (int i = x1; i<= x2; i++){
-				
-				pixeles.add(new Point(i,y1));
-				pixeles.add(new Point(i,y2));
+			for (int i = x1; i <= x2; i++) {
+
+				pixeles.add(new Point(i, y1));
+				pixeles.add(new Point(i, y2));
 			}
-			
-			for (int j = y1; j<= y2; j++){
-				
-				pixeles.add(new Point(x1,j));
-				pixeles.add(new Point(x2,j));
+
+			for (int j = y1; j <= y2; j++) {
+
+				pixeles.add(new Point(x1, j));
+				pixeles.add(new Point(x2, j));
 			}
-			
-			BufferedImage imagenSinCambio = clonarBufferedImage(getImagenActual().getBufferedImage()); 
-			
-			for (Point pixel: pixeles){
-				
-				getImagenActual().getBufferedImage().setRGB(pixel.x, pixel.y, Color.RED.getRGB());
+
+			BufferedImage imagenSinCambio = clonarBufferedImage(getImagenActual()
+					.getBufferedImage());
+
+			for (Point pixel : pixeles) {
+
+				getImagenActual().getBufferedImage().setRGB(pixel.x, pixel.y,
+						Color.RED.getRGB());
 			}
-			
+
 			getImagenOriginal().setBufferedImage(imagenSinCambio);
-			
+
 			ventana.refrescarImagen();
 		}
 	}
-	
-	public Integer[] getXEY(){
+
+	public Integer[] getXEY() {
 		Integer[] valoresXEY = new Integer[4];
 		valoresXEY[0] = x1;
 		valoresXEY[1] = x2;
 		valoresXEY[2] = y1;
 		valoresXEY[3] = y2;
-		
+
 		return valoresXEY;
 	}
 
@@ -600,11 +657,37 @@ public class ProcesadorDeImagenes {
 		return y2;
 	}
 
-	public BufferedImage clonarBufferedImage(BufferedImage buffered){
-		
+	public BufferedImage clonarBufferedImage(BufferedImage buffered) {
+
 		ColorModel cm = buffered.getColorModel();
 		boolean isAlphaPremultiplied = cm.isAlphaPremultiplied();
 		WritableRaster raster = buffered.copyData(null);
 		return new BufferedImage(cm, raster, isAlphaPremultiplied, null);
+	}
+
+	public File obtenerFileDesdeArchivo() {
+
+		File fileADevolver = null;
+
+		JFileChooser selector = new JFileChooser();
+		selector.setDialogTitle("Seleccione una imagen");
+
+		FileNameExtensionFilter filtroImagen = new FileNameExtensionFilter(
+				"JPG & GIF & BMP & PNG", "jpg", "gif", "bmp", "png");
+		selector.setFileFilter(filtroImagen);
+
+		int flag = selector.showOpenDialog(null);
+
+		if (flag == JFileChooser.APPROVE_OPTION) {
+			try {
+
+				fileADevolver = selector.getSelectedFile();
+			} catch (Exception e) {
+
+				e.printStackTrace();
+			}
+		}
+
+		return fileADevolver;
 	}
 }

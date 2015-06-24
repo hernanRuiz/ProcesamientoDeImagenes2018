@@ -12,7 +12,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
-import java.net.URL;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -44,6 +43,7 @@ import ar.com.untref.imagenes.dialogs.HisteresisDialog;
 import ar.com.untref.imagenes.dialogs.LoGDialog;
 import ar.com.untref.imagenes.dialogs.OperacionesMatricesDialog;
 import ar.com.untref.imagenes.dialogs.SegmentacionDialog;
+import ar.com.untref.imagenes.dialogs.SiftDialog;
 import ar.com.untref.imagenes.dialogs.SigmaDialog;
 import ar.com.untref.imagenes.dialogs.SusanDialog;
 import ar.com.untref.imagenes.enums.Canal;
@@ -66,7 +66,6 @@ import ar.com.untref.imagenes.procesamiento.OperacionesManager;
 import ar.com.untref.imagenes.procesamiento.ProcesadorDeImagenes;
 import ar.com.untref.imagenes.procesamiento.Umbralizador;
 import ar.com.untref.imagenes.segmentacion.Segmentador;
-import ar.com.untref.imagenes.sift.Sift;
 
 @SuppressWarnings("serial")
 public class VentanaPrincipal extends JFrame {
@@ -442,9 +441,12 @@ public class VentanaPrincipal extends JFrame {
 			public void actionPerformed(ActionEvent arg0) {
 				
 				try {
-					Sift.aplicarMetodoSift(new URL("http://dl.dropbox.com/u/8705593/query.jpg"), new URL("http://dl.dropbox.com/u/8705593/target.jpg"));
+
+					SiftDialog dialogo = new SiftDialog();
+					dialogo.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
+					DialogsHelper.mostarMensaje(contentPane, "Ocurrió un error aplicando el método Sift. Intenta con otra imagen", NivelMensaje.ERROR);
 				} 
 			}
 		});

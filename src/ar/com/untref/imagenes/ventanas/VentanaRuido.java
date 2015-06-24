@@ -500,8 +500,6 @@ public class VentanaRuido extends JFrame {
 		
 		menu.add(menuItemAbrirRaw);
 			
-		
-		
 		inhabilitarItem(menuItemGuardarComo);
 		
 		menu.add(menuItemGuardarComo);
