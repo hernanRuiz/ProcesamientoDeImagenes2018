@@ -63,7 +63,7 @@ public class Sift {
 		}
 
 		MBFImage consistentMatches = MatchingUtilities.drawMatches(query,
-				target, matcher.getMatches(), RGBColour.RED);
+				target, matcher.getMatches(), RGBColour.MAGENTA);
 		
 		JOptionPane.showMessageDialog(null, "Cantidad de coincidencias entre descriptores: " + String.valueOf(matcher.getMatches().size()));
 		
