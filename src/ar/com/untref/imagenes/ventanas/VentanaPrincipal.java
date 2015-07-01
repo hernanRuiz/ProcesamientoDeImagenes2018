@@ -40,6 +40,7 @@ import ar.com.untref.imagenes.dialogs.DifusionAnisotropicaDialog;
 import ar.com.untref.imagenes.dialogs.DifusionIsotropicaDialog;
 import ar.com.untref.imagenes.dialogs.EspereDialog;
 import ar.com.untref.imagenes.dialogs.HisteresisDialog;
+import ar.com.untref.imagenes.dialogs.HoughDialog;
 import ar.com.untref.imagenes.dialogs.LoGDialog;
 import ar.com.untref.imagenes.dialogs.OperacionesMatricesDialog;
 import ar.com.untref.imagenes.dialogs.SegmentacionDialog;
@@ -696,11 +697,8 @@ public class VentanaPrincipal extends JFrame {
 		menuItemTransfoHough.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
-				ProcesadorDeImagenes proc = ProcesadorDeImagenes.obtenerInstancia();
-				BufferedImage imagenAnterior = proc.clonarBufferedImage(proc.getImagenActual().getBufferedImage());
-				TransformadaDeHough.aplicarTransformadaDeHough(ProcesadorDeImagenes.obtenerInstancia().getImagenActual(), 
-						0, 90, 90, 0, 200, 50, VentanaPrincipal.this);
-				proc.setImagenOriginal(new Imagen(imagenAnterior, proc.getImagenActual().getFormato(), proc.getImagenActual().getNombre()));
+				HoughDialog d = new HoughDialog(VentanaPrincipal.this);
+				d.setVisible(true);
 			}
 		});
 		menuDeteccionDeBordes.add(menuItemTransfoHough);
@@ -1301,6 +1299,16 @@ public class VentanaPrincipal extends JFrame {
 		
 	}
 	
+	public void aplicarTransformadaDeHough(int titaMin, int titaMax,
+			int discTita, int roMin, int roMax, int discRo) {
+
+		ProcesadorDeImagenes proc = ProcesadorDeImagenes.obtenerInstancia();
+		BufferedImage imagenAnterior = proc.clonarBufferedImage(proc.getImagenActual().getBufferedImage());
+		TransformadaDeHough.aplicarTransformadaDeHough(ProcesadorDeImagenes.obtenerInstancia().getImagenActual(), 
+				titaMin, titaMax, discTita, roMin, roMax, discRo, VentanaPrincipal.this);
+		proc.setImagenOriginal(new Imagen(imagenAnterior, proc.getImagenActual().getFormato(), proc.getImagenActual().getNombre()));
+	}
+	
 	public void mostrarDialogoDeEspera(){
 		
 		this.dialogoEspera.mostrar();
@@ -1310,5 +1318,5 @@ public class VentanaPrincipal extends JFrame {
 		
 		this.dialogoEspera.ocultar();
 	}
-	
+
 }
