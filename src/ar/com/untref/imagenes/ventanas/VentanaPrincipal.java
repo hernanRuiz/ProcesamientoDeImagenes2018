@@ -696,8 +696,11 @@ public class VentanaPrincipal extends JFrame {
 		menuItemTransfoHough.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
+				ProcesadorDeImagenes proc = ProcesadorDeImagenes.obtenerInstancia();
+				BufferedImage imagenAnterior = proc.clonarBufferedImage(proc.getImagenActual().getBufferedImage());
 				TransformadaDeHough.aplicarTransformadaDeHough(ProcesadorDeImagenes.obtenerInstancia().getImagenActual(), 
-						0, 180, 1, 0, 180, 1, null);
+						0, 90, 90, 0, 200, 50, VentanaPrincipal.this);
+				proc.setImagenOriginal(new Imagen(imagenAnterior, proc.getImagenActual().getFormato(), proc.getImagenActual().getNombre()));
 			}
 		});
 		menuDeteccionDeBordes.add(menuItemTransfoHough);
