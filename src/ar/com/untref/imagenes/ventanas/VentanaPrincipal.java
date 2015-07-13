@@ -1300,12 +1300,12 @@ public class VentanaPrincipal extends JFrame {
 	}
 	
 	public void aplicarTransformadaDeHough(int titaMin, int titaMax,
-			int discTita, int roMin, int roMax, int discRo) {
+			int discTita, int roMin, int roMax, int discRo, int umbral) {
 
 		ProcesadorDeImagenes proc = ProcesadorDeImagenes.obtenerInstancia();
 		BufferedImage imagenAnterior = proc.clonarBufferedImage(proc.getImagenActual().getBufferedImage());
 		TransformadaDeHough.aplicarTransformadaDeHough(ProcesadorDeImagenes.obtenerInstancia().getImagenActual(), 
-				titaMin, titaMax, discTita, roMin, roMax, discRo, VentanaPrincipal.this);
+				titaMin, titaMax, discTita, roMin, roMax, discRo, umbral, VentanaPrincipal.this);
 		proc.setImagenOriginal(new Imagen(imagenAnterior, proc.getImagenActual().getFormato(), proc.getImagenActual().getNombre()));
 	}
 	

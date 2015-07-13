@@ -12,7 +12,7 @@ public class TransformadaDeHough {
 
 	public static Imagen aplicarTransformadaDeHough(
 			Imagen imagenOriginalUmbralizada, int titaMin, int titaMax,
-			int discretizadoDeTitas, int roMin, int roMax, int discretizadoDeRos, VentanaPrincipal ventana) {
+			int discretizadoDeTitas, int roMin, int roMax, int discretizadoDeRos, int umbral, VentanaPrincipal ventana) {
 
 		Point[][] matrizDeRectas = crearMatrizDeRectas(titaMin, titaMax, roMin,
 				roMax, discretizadoDeTitas, discretizadoDeRos);
@@ -37,7 +37,7 @@ public class TransformadaDeHough {
 		}
 
 		List<Point> rectasMaximas = buscarRectasMaximas(matrizDeRectas,
-				matrizDeAcumulados);
+				matrizDeAcumulados, umbral);
 
 		dibujarLasRectas(imagenOriginalUmbralizada, rectasMaximas);
 		ventana.refrescarImagen();
@@ -49,14 +49,14 @@ public class TransformadaDeHough {
 		for (Point recta: rectas){
 			
 			//angulo
-			if ( recta.x == 90 || recta.x == 270){
+			if ( recta.x == 0 || recta.x == 180){
 				
 				for (int i=0; i< imagen.getBufferedImage().getHeight(); i++){
 					imagen.getBufferedImage().setRGB(recta.y, i, Color.RED.getRGB());
 				}
 			}
 			
-			if ( recta.x == 0 || recta.x == 180 ){
+			if ( recta.x == 90 || recta.x == 270 ){
 				
 				for (int i=0; i< imagen.getBufferedImage().getWidth(); i++){
 					imagen.getBufferedImage().setRGB(i, recta.y, Color.GREEN.getRGB());
@@ -67,7 +67,7 @@ public class TransformadaDeHough {
 	}
 
 	private static List<Point> buscarRectasMaximas(Point[][] matrizDeRectas,
-			int[][] matrizDeAcumulados) {
+			int[][] matrizDeAcumulados, int umbral) {
 
 		int maximo = Integer.MIN_VALUE;
 		List<Point> posiciones = new ArrayList<Point>();
@@ -88,6 +88,18 @@ public class TransformadaDeHough {
 			}
 		}
 
+		//Busco las proximas al maximo
+		posiciones.clear();
+		for (int i = 0; i < matrizDeAcumulados.length; i++) {
+			for (int j = 0; j < matrizDeAcumulados[0].length; j++) {
+
+				if (maximo - matrizDeAcumulados[i][j] < umbral ) {
+
+					posiciones.add(new Point(i, j));
+				}	
+			}
+		}
+		
 		for (Point puntos : posiciones) {
 
 			int ro = matrizDeRectas[puntos.x][puntos.y].x;

@@ -26,6 +26,8 @@ public class HoughDialog extends JDialog {
 	private JLabel labelRoMinimo;
 	private JLabel labelRoMaximo;
 	private JLabel labelDiscretizacionRo;
+	private JLabel labelUmbral;
+	private JTextField umbral;
 	private JTextField titaMinimo;
 	private JTextField titaMaximo;
 	private JTextField discretizacionTita;
@@ -45,6 +47,7 @@ public class HoughDialog extends JDialog {
 		labelTitaMinimo = new JLabel("Tita mínimo (en grados)");
 		labelTitaMaximo = new JLabel("Tita máximo (en grados)");
 		labelDiscretizacionTita = new JLabel("Discretización Tita");
+		labelUmbral = new JLabel("Umbral");
 		titaMaximo = new JTextField();
 		titaMinimo = new JTextField();
 		discretizacionTita = new JTextField();
@@ -55,6 +58,7 @@ public class HoughDialog extends JDialog {
 		roMaximo = new JTextField();
 		roMinimo = new JTextField();
 		discretizacionRo = new JTextField();
+		umbral = new JTextField();
 		
 		createLayout();
 
@@ -75,7 +79,7 @@ public class HoughDialog extends JDialog {
 				if (!titaMaximo.getText().toString().isEmpty() && !titaMinimo.getText().toString().isEmpty()
 						&& !discretizacionTita.getText().toString().isEmpty() && 
 						!roMaximo.getText().toString().isEmpty() && !roMinimo.getText().toString().isEmpty()
-						&& !discretizacionRo.getText().toString().isEmpty()) {
+						&& !discretizacionRo.getText().toString().isEmpty() && !umbral.getText().toString().isEmpty()) {
 					
 					try{
 						int titaMax = Integer.valueOf(titaMaximo.getText().toString());
@@ -86,9 +90,11 @@ public class HoughDialog extends JDialog {
 						int roMin = Integer.valueOf(roMinimo.getText().toString());
 						int discRo = Integer.valueOf(discretizacionRo.getText().toString());
 						
+						int umbr = Integer.valueOf(umbral.getText().toString());
+						
 						if (ventana != null){
 							
-							ventana.aplicarTransformadaDeHough(titaMin, titaMax, discTita, roMin, roMax, discRo);
+							ventana.aplicarTransformadaDeHough(titaMin, titaMax, discTita, roMin, roMax, discRo, umbr);
 						}
 						
 						HoughDialog.this.dispose();
@@ -116,8 +122,10 @@ public class HoughDialog extends JDialog {
 				.addComponent(discretizacionTita)
 				.addComponent(labelRoMinimo).addComponent(labelDiscretizacionRo)
 				.addComponent(labelRoMaximo)
+				.addComponent(labelUmbral)
 				.addComponent(roMinimo).addComponent(roMaximo)
 				.addComponent(discretizacionRo)
+				.addComponent(umbral)
 				.addComponent(botonConfirmar).addGap(200));
 
 		gl.setVerticalGroup(gl.createSequentialGroup().addGap(30)
@@ -128,6 +136,7 @@ public class HoughDialog extends JDialog {
 				.addComponent(labelRoMinimo).addGap(20).addComponent(roMinimo).addGap(20)
 				.addComponent(labelRoMaximo).addGap(20).addComponent(roMaximo)
 				.addGap(20).addComponent(labelDiscretizacionRo).addGap(20).addComponent(discretizacionRo)
+				.addGap(20).addComponent(labelUmbral).addGap(20).addComponent(umbral)
 				.addGap(20).addComponent(botonConfirmar).addGap(30));
 
 		pack();
