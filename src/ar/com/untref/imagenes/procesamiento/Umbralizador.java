@@ -14,6 +14,7 @@ import ar.com.untref.imagenes.modelo.ClaseOtsu;
 import ar.com.untref.imagenes.modelo.Histograma;
 import ar.com.untref.imagenes.modelo.Imagen;
 import ar.com.untref.imagenes.modelo.Pixel;
+import ar.com.untref.imagenes.modelo.VarianzaInterclase;
 
 public class Umbralizador {
 
@@ -258,9 +259,54 @@ public class Umbralizador {
 		
 		//Paso 4: Calcular la varianza propia de cada clase (within-variance) y la varianza entre clases (between-variance)
 		
+		for ( ClaseOtsu claseActual : mapaDeClases.values() ){
+			
+			double varianza = 0;
+			
+			int acumulado = 0;
+			
+			for (Pixel pixelActual : claseActual.getPixeles()){
+				
+				acumulado += Math.pow((pixelActual.getColor().getRed() - claseActual.getRojoPromedio()), 2)
+							+ Math.pow((pixelActual.getColor().getGreen() - claseActual.getVerdePromedio()), 2)
+							+ Math.pow((pixelActual.getColor().getBlue() - claseActual.getAzulPromedio()), 2);
+			}
+			
+			varianza = Math.sqrt(acumulado) / claseActual.getPixeles().size(); 
+			claseActual.setVarianza(varianza);
+		}
 		
+		List<VarianzaInterclase> listaDeVarianzasInterclase = new ArrayList<VarianzaInterclase>();
 		
+		for ( int i= 0; i< mapaDeClases.values().size(); i++ ){
+			
+			for ( int j = i+1; j < mapaDeClases.values().size(); j++ ){
+				
+				//Calculo el between class
+				VarianzaInterclase varianzaEntreClases = new VarianzaInterclase();
+				
+				ClaseOtsu claseA = mapaDeClases.get(i);
+				ClaseOtsu claseB = mapaDeClases.get(j);
+				
+				varianzaEntreClases.setClaseA(claseA);
+				varianzaEntreClases.setClaseB(claseB);
+
+				double varianza = Math.sqrt( Math.pow(claseA.getRojoPromedio()-claseB.getRojoPromedio(), 2)
+									         + Math.pow(claseA.getVerdePromedio()-claseB.getVerdePromedio(), 2)
+									         + Math.pow(claseA.getAzulPromedio()-claseB.getAzulPromedio(), 2));
+				
+				varianzaEntreClases.setVarianza(varianza);
+				
+				listaDeVarianzasInterclase.add(varianzaEntreClases);
+			}
+		}
 		
+		//Paso 5: Comparo y decido si hacer merge o no
+		// del paso 3 hasta acá, se exportaría a un método que es autorecursivo
+		
+		//Paso 7: Asignar el color promedio de cada clase a todos los pixeles de cada una de las clases.
+		
+		//Paso 8: Formar la imagen pintando los pixeles de cada clase con el color promedio calculado en el paso 7.
 		return null;
 	}
 
