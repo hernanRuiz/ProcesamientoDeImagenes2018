@@ -11,6 +11,7 @@ import java.awt.geom.GeneralPath;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+@SuppressWarnings("serial")
 public class LabelPolares extends JPanel {
 
     private static final int SIZE = 400;

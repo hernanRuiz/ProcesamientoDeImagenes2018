@@ -35,6 +35,7 @@ import ar.com.untref.imagenes.dialogs.MascaraGaussianaDialog;
 import ar.com.untref.imagenes.dialogs.MedidaMascaraDialog;
 import ar.com.untref.imagenes.dialogs.SigmaDialog;
 import ar.com.untref.imagenes.dialogs.SusanDialog;
+import ar.com.untref.imagenes.enums.Canal;
 import ar.com.untref.imagenes.enums.Mascara;
 import ar.com.untref.imagenes.enums.NivelMensaje;
 import ar.com.untref.imagenes.filtros.FiltroDeLaMedia;
@@ -786,7 +787,8 @@ public class VentanaRuido extends JFrame {
 		menuItemUmbralOtsu.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
-				ProcesadorDeImagenes.obtenerInstancia().setImagenActual(Umbralizador.generarUmbralizacionOtsu(ProcesadorDeImagenes.obtenerInstancia().getImagenActual()));
+				int umbralOtsu = Umbralizador.generarUmbralizacionOtsu(ProcesadorDeImagenes.obtenerInstancia().getImagenActual(), Canal.ROJO);
+				ProcesadorDeImagenes.obtenerInstancia().setImagenActual(Umbralizador.umbralizarImagen(ProcesadorDeImagenes.obtenerInstancia().getImagenActual(), umbralOtsu));
 				VentanaRuido.this.refrescarImagen();
 			}
 		});

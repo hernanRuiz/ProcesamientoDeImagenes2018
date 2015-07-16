@@ -77,7 +77,7 @@ public class DetectorDeHarris {
         }
         
         Imagen imagenFinal = new Imagen(MatricesManager.obtenerImagenDeMatrices(transpuestaRojo, transpuestaVerde, transpuestaAzul), FormatoDeImagen.JPEG, "imagenFinal");
-        Imagen imagenUmbralizada = Umbralizador.generarUmbralizacionOtsu(imagenFinal);
+        Imagen imagenUmbralizada = Umbralizador.umbralizarImagen(imagenFinal, Umbralizador.generarUmbralizacionOtsu(imagenFinal, Canal.ROJO));
         
 		return superponerAImagenOriginal(imagenUmbralizada, imagenOriginal);
 	}

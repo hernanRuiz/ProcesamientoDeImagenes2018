@@ -561,7 +561,8 @@ public class VentanaPrincipal extends JFrame {
 		menuItemUmbralOtsu.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
-				ProcesadorDeImagenes.obtenerInstancia().setImagenActual(Umbralizador.generarUmbralizacionOtsu(ProcesadorDeImagenes.obtenerInstancia().getImagenActual()));
+				int umbralOtsu = Umbralizador.generarUmbralizacionOtsu(ProcesadorDeImagenes.obtenerInstancia().getImagenActual(), Canal.ROJO);
+				ProcesadorDeImagenes.obtenerInstancia().setImagenActual(Umbralizador.umbralizarImagen(ProcesadorDeImagenes.obtenerInstancia().getImagenActual(), umbralOtsu));
 				VentanaPrincipal.this.refrescarImagen();
 			}
 		});
