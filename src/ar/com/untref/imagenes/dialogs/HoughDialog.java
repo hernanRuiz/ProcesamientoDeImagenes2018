@@ -14,8 +14,8 @@ import javax.swing.JTextField;
 import ar.com.untref.imagenes.enums.NivelMensaje;
 import ar.com.untref.imagenes.helpers.DialogsHelper;
 import ar.com.untref.imagenes.ventanas.VentanaPrincipal;
-import ar.com.untref.imagenes.ventanas.VentanaRuido;
 
+@SuppressWarnings("serial")
 public class HoughDialog extends JDialog {
 
 	private VentanaPrincipal ventana;
@@ -34,7 +34,6 @@ public class HoughDialog extends JDialog {
 	private JTextField roMinimo;
 	private JTextField roMaximo;
 	private JTextField discretizacionRo;
-	private VentanaRuido ventanaRuido;
 
 	public HoughDialog(VentanaPrincipal ventana) {
 		super(ventana);

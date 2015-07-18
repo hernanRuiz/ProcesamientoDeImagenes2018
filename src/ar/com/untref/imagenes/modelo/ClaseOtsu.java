@@ -53,6 +53,10 @@ public class ClaseOtsu {
 	public List<Pixel> getPixeles() {
 		return pixeles;
 	}
+	
+	public void agregarPixeles(List<Pixel> lista) {
+		this.pixeles.addAll(lista);
+	}
 
 	public void agregarPixel(Pixel pixel) {
 

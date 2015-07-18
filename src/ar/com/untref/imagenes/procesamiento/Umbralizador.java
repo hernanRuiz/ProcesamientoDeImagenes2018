@@ -301,13 +301,39 @@ public class Umbralizador {
 			}
 		}
 		
-		//Paso 5: Comparo y decido si hacer merge o no
+		//Paso 5: Comparo y Paso 6: decido si hacer merge o no
 		// del paso 3 hasta acá, se exportaría a un método que es autorecursivo
+		
+
 		
 		//Paso 7: Asignar el color promedio de cada clase a todos los pixeles de cada una de las clases.
 		
+		for ( ClaseOtsu claseActual : mapaDeClases.values() ){
+			
+			int promedioRojo = claseActual.getRojoPromedio();
+			int promedioVerde = claseActual.getVerdePromedio();
+			int promedioAzul = claseActual.getAzulPromedio();
+			
+			for (Pixel pixelActual : claseActual.getPixeles()){
+				
+				pixelActual.setColor(new Color(promedioRojo, promedioVerde, promedioAzul));
+			}
+		}
+		
 		//Paso 8: Formar la imagen pintando los pixeles de cada clase con el color promedio calculado en el paso 7.
-		return null;
+		
+		BufferedImage buffer = new BufferedImage(imagen.getBufferedImage().getWidth(),imagen.getBufferedImage().getWidth(), imagen.getBufferedImage().getType());
+		Imagen imagenFinal = new Imagen(buffer, imagen.getFormato(), imagen.getNombre()+"_otsuColor");
+		
+		for ( ClaseOtsu claseActual : mapaDeClases.values() ){
+			
+			for (Pixel pixelActual : claseActual.getPixeles()){
+			
+				imagenFinal.getBufferedImage().setRGB(pixelActual.getX(), pixelActual.getX(), pixelActual.getColor().getRGB());
+			}
+		}
+		
+		return imagenFinal;
 	}
 
 	private static void cargarMapaDeClases(
