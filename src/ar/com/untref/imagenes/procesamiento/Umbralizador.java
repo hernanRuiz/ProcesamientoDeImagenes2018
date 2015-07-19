@@ -322,7 +322,7 @@ public class Umbralizador {
 		
 		//Paso 8: Formar la imagen pintando los pixeles de cada clase con el color promedio calculado en el paso 7.
 		
-		BufferedImage buffer = new BufferedImage(imagen.getBufferedImage().getWidth(),imagen.getBufferedImage().getWidth(), imagen.getBufferedImage().getType());
+		BufferedImage buffer = new BufferedImage(imagen.getBufferedImage().getWidth(),imagen.getBufferedImage().getHeight(), imagen.getBufferedImage().getType());
 		Imagen imagenFinal = new Imagen(buffer, imagen.getFormato(), imagen.getNombre()+"_otsuColor");
 		
 		for ( ClaseOtsu claseActual : mapaDeClases.values() ){
