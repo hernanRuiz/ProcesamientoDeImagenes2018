@@ -329,7 +329,7 @@ public class Umbralizador {
 			
 			for (Pixel pixelActual : claseActual.getPixeles()){
 			
-				imagenFinal.getBufferedImage().setRGB(pixelActual.getX(), pixelActual.getX(), pixelActual.getColor().getRGB());
+				imagenFinal.getBufferedImage().setRGB(pixelActual.getX(), pixelActual.getY(), pixelActual.getColor().getRGB());
 			}
 		}
 		
