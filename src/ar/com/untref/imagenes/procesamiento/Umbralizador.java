@@ -180,8 +180,8 @@ public class Umbralizador {
 		
 		//Paso 1: Calcular los umbrales por banda. En este caso, usando Otsu.
 		int umbralOtsuRojo = generarUmbralizacionOtsu(imagen, Canal.ROJO);
-		int umbralOtsuVerde = generarUmbralizacionOtsu(imagen, Canal.ROJO);
-		int umbralOtsuAzul = generarUmbralizacionOtsu(imagen, Canal.ROJO);
+		int umbralOtsuVerde = generarUmbralizacionOtsu(imagen, Canal.VERDE);
+		int umbralOtsuAzul = generarUmbralizacionOtsu(imagen, Canal.AZUL);
 		
 		//Paso 2: Generar las clases segun si el r,g,b de cada pixel de la imagen supera o no el umbral de esa banda
 		//Las clases son:  C4- 1,0,0    C2- 0,1,0    C1- 0,0,1
@@ -189,6 +189,42 @@ public class Umbralizador {
 		//				   C0- 0,0,0    C7- 1,1,1    
 			
 		Map<Integer, ClaseOtsu> mapaDeClases = new HashMap<Integer, ClaseOtsu>();
+		
+		calcularOtsu(imagen, umbralOtsuRojo, umbralOtsuVerde, umbralOtsuAzul, mapaDeClases);
+		
+		//Paso 7: Asignar el color promedio de cada clase a todos los pixeles de cada una de las clases.
+		
+		for ( ClaseOtsu claseActual : mapaDeClases.values() ){
+			
+			int promedioRojo = claseActual.getRojoPromedio();
+			int promedioVerde = claseActual.getVerdePromedio();
+			int promedioAzul = claseActual.getAzulPromedio();
+			
+			for (Pixel pixelActual : claseActual.getPixeles()){
+				
+				pixelActual.setColor(new Color(promedioRojo, promedioVerde, promedioAzul));
+			}
+		}
+		
+		//Paso 8: Formar la imagen pintando los pixeles de cada clase con el color promedio calculado en el paso 7.
+		
+		BufferedImage buffer = new BufferedImage(imagen.getBufferedImage().getWidth(),imagen.getBufferedImage().getHeight(), imagen.getBufferedImage().getType());
+		Imagen imagenFinal = new Imagen(buffer, imagen.getFormato(), imagen.getNombre()+"_otsuColor");
+		
+		for ( ClaseOtsu claseActual : mapaDeClases.values() ){
+			
+			for (Pixel pixelActual : claseActual.getPixeles()){
+			
+				imagenFinal.getBufferedImage().setRGB(pixelActual.getX(), pixelActual.getY(), pixelActual.getColor().getRGB());
+			}
+		}
+		
+		return imagenFinal;
+	}
+
+	private static void calcularOtsu(Imagen imagen, int umbralOtsuRojo,
+			int umbralOtsuVerde, int umbralOtsuAzul,
+			Map<Integer, ClaseOtsu> mapaDeClases) {
 		
 		cargarMapaDeClases(mapaDeClases);
 		
@@ -248,9 +284,12 @@ public class Umbralizador {
 				contador ++;
 			}
 			
-			rojoPromedio = (int) (rojoAcumulado / contador);
-			verdePromedio = (int) (verdeAcumulado / contador);
-			azulPromedio = (int) (azulAcumulado / contador);
+			if (contador!=0){
+				
+				rojoPromedio = (int) (rojoAcumulado / contador);
+				verdePromedio = (int) (verdeAcumulado / contador);
+				azulPromedio = (int) (azulAcumulado / contador);
+			}
 
 			claseActual.setRojoPromedio(rojoPromedio);
 			claseActual.setVerdePromedio(verdePromedio);
@@ -263,7 +302,7 @@ public class Umbralizador {
 			
 			double varianza = 0;
 			
-			int acumulado = 0;
+			double acumulado = 0;
 			
 			for (Pixel pixelActual : claseActual.getPixeles()){
 				
@@ -293,7 +332,7 @@ public class Umbralizador {
 
 				double varianza = Math.sqrt( Math.pow(claseA.getRojoPromedio()-claseB.getRojoPromedio(), 2)
 									         + Math.pow(claseA.getVerdePromedio()-claseB.getVerdePromedio(), 2)
-									         + Math.pow(claseA.getAzulPromedio()-claseB.getAzulPromedio(), 2));
+									         + Math.pow(claseA.getAzulPromedio()-claseB.getAzulPromedio(), 2))	;
 				
 				varianzaEntreClases.setVarianza(varianza);
 				
@@ -301,39 +340,27 @@ public class Umbralizador {
 			}
 		}
 		
+		int i=0;
+		boolean seCombinaronClases = false;
 		//Paso 5: Comparo y Paso 6: decido si hacer merge o no
-		// del paso 3 hasta acá, se exportaría a un método que es autorecursivo
-		
-
-		
-		//Paso 7: Asignar el color promedio de cada clase a todos los pixeles de cada una de las clases.
-		
-		for ( ClaseOtsu claseActual : mapaDeClases.values() ){
+		for (i=0; i< listaDeVarianzasInterclase.size() && !seCombinaronClases; i++){
 			
-			int promedioRojo = claseActual.getRojoPromedio();
-			int promedioVerde = claseActual.getVerdePromedio();
-			int promedioAzul = claseActual.getAzulPromedio();
+			VarianzaInterclase between = listaDeVarianzasInterclase.get(i);
 			
-			for (Pixel pixelActual : claseActual.getPixeles()){
+			if ( between.getClaseA().getVarianza() >= between.getVarianza() 
+					|| between.getClaseB().getVarianza() >= between.getVarianza() ) {
 				
-				pixelActual.setColor(new Color(promedioRojo, promedioVerde, promedioAzul));
+				List<ClaseOtsu> clases = (List<ClaseOtsu>) mapaDeClases.values();
+				between.getClaseA().agregarPixeles(between.getClaseB().getPixeles());
+				clases.remove(between.getClaseB());
+				seCombinaronClases = true;
+				System.err.println("COMBINANDO CLASES");
 			}
+			
+			i++;
+			System.out.println(i);
 		}
 		
-		//Paso 8: Formar la imagen pintando los pixeles de cada clase con el color promedio calculado en el paso 7.
-		
-		BufferedImage buffer = new BufferedImage(imagen.getBufferedImage().getWidth(),imagen.getBufferedImage().getHeight(), imagen.getBufferedImage().getType());
-		Imagen imagenFinal = new Imagen(buffer, imagen.getFormato(), imagen.getNombre()+"_otsuColor");
-		
-		for ( ClaseOtsu claseActual : mapaDeClases.values() ){
-			
-			for (Pixel pixelActual : claseActual.getPixeles()){
-			
-				imagenFinal.getBufferedImage().setRGB(pixelActual.getX(), pixelActual.getY(), pixelActual.getColor().getRGB());
-			}
-		}
-		
-		return imagenFinal;
 	}
 
 	private static void cargarMapaDeClases(

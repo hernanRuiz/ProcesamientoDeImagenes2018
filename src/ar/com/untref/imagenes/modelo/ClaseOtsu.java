@@ -63,4 +63,29 @@ public class ClaseOtsu {
 		this.pixeles.add(pixel);
 	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((pixeles == null) ? 0 : pixeles.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ClaseOtsu other = (ClaseOtsu) obj;
+		if (pixeles == null) {
+			if (other.pixeles != null)
+				return false;
+		} else if (!pixeles.equals(other.pixeles))
+			return false;
+		return true;
+	}
+	
 }

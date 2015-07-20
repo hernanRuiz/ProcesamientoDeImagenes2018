@@ -568,6 +568,17 @@ public class VentanaPrincipal extends JFrame {
 		});
 		menuFiltros.add(menuItemUmbralOtsu);
 		
+		JMenuItem menuItemOtsuColor = new JMenuItem("Otsu Color");
+		menuItemOtsuColor.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				Imagen imagenUmbralizada = Umbralizador.generarUmbralizacionColor(ProcesadorDeImagenes.obtenerInstancia().getImagenActual());
+				ProcesadorDeImagenes.obtenerInstancia().setImagenActual(imagenUmbralizada);
+				VentanaPrincipal.this.refrescarImagen();
+			}
+		});
+		menuFiltros.add(menuItemOtsuColor);
+		
 		menuItemTemplates = new JMenu("Plantillas");
 		menuBar.add(menuItemTemplates);
 		
