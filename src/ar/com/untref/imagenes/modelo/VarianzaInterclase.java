@@ -30,4 +30,8 @@ public class VarianzaInterclase {
 		this.claseB = claseB;
 	}
 
+	@Override
+	public String toString() {
+		return "VarianzaInterclase [varianza=" + varianza +"]";
+	}
 }

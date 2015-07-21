@@ -119,6 +119,7 @@ public class Umbralizador {
 		float[] probabilidadesDeOcurrencia;
 		
 		if (canal.equals(Canal.ROJO)){
+			
 			probabilidadesDeOcurrencia = Histograma.calcularHistogramaRojo(imagen.getBufferedImage());
 		} else if (canal.equals(Canal.VERDE)){
 			
@@ -357,7 +358,6 @@ public class Umbralizador {
 				System.err.println("COMBINANDO CLASES");
 			}
 			
-			i++;
 			System.out.println(i);
 		}
 		

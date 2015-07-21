@@ -87,5 +87,12 @@ public class ClaseOtsu {
 			return false;
 		return true;
 	}
-	
+
+	@Override
+	public String toString() {
+		return "ClaseOtsu [rojoPromedio=" + rojoPromedio + ", verdePromedio="
+				+ verdePromedio + ", azulPromedio=" + azulPromedio
+				+ ", varianza=" + varianza + "]";
+	}
+		
 }
