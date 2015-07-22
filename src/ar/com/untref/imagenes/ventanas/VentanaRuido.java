@@ -787,7 +787,7 @@ public class VentanaRuido extends JFrame {
 		menuItemUmbralOtsu.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
-				int umbralOtsu = Umbralizador.generarUmbralizacionOtsu(ProcesadorDeImagenes.obtenerInstancia().getImagenActual(), Canal.ROJO);
+				int umbralOtsu = Umbralizador.generarUmbralizacionOtsu(ProcesadorDeImagenes.obtenerInstancia().getImagenActual(), Canal.ROJO, true);
 				ProcesadorDeImagenes.obtenerInstancia().setImagenActual(Umbralizador.umbralizarImagen(ProcesadorDeImagenes.obtenerInstancia().getImagenActual(), umbralOtsu));
 				VentanaRuido.this.refrescarImagen();
 			}

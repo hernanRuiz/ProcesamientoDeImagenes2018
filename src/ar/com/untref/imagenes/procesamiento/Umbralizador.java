@@ -114,7 +114,7 @@ public class Umbralizador {
 		return sumatoria;
 	}
 	
-	public static int generarUmbralizacionOtsu(Imagen imagen, Canal canal) {
+	public static int generarUmbralizacionOtsu(Imagen imagen, Canal canal, boolean debeMostrarMensaje) {
 				
 		float[] probabilidadesDeOcurrencia;
 		
@@ -171,7 +171,10 @@ public class Umbralizador {
 			}
 		}
 		
-		JOptionPane.showMessageDialog(null, "Umbral Calculado: " + String.valueOf(umbralMaximo));
+		if (debeMostrarMensaje){
+			
+			JOptionPane.showMessageDialog(null, "Umbral Calculado: " + String.valueOf(umbralMaximo));
+		}
 		
 		return umbralMaximo;
 	}
@@ -180,9 +183,9 @@ public class Umbralizador {
 	public static Imagen generarUmbralizacionColor(Imagen imagen) {
 		
 		//Paso 1: Calcular los umbrales por banda. En este caso, usando Otsu.
-		int umbralOtsuRojo = generarUmbralizacionOtsu(imagen, Canal.ROJO);
-		int umbralOtsuVerde = generarUmbralizacionOtsu(imagen, Canal.VERDE);
-		int umbralOtsuAzul = generarUmbralizacionOtsu(imagen, Canal.AZUL);
+		int umbralOtsuRojo = generarUmbralizacionOtsu(imagen, Canal.ROJO, false);
+		int umbralOtsuVerde = generarUmbralizacionOtsu(imagen, Canal.VERDE, false);
+		int umbralOtsuAzul = generarUmbralizacionOtsu(imagen, Canal.AZUL, false);
 		
 		//Paso 2: Generar las clases segun si el r,g,b de cada pixel de la imagen supera o no el umbral de esa banda
 		//Las clases son:  C4- 1,0,0    C2- 0,1,0    C1- 0,0,1
@@ -191,7 +194,7 @@ public class Umbralizador {
 			
 		Map<Integer, ClaseOtsu> mapaDeClases = new HashMap<Integer, ClaseOtsu>();
 		
-cargarMapaDeClases(mapaDeClases);
+		cargarMapaDeClases(mapaDeClases);
 		
 		for (int x = 0; x < imagen.getBufferedImage().getWidth(); x++) {
 			for (int y = 0; y < imagen.getBufferedImage().getHeight(); y++) {
