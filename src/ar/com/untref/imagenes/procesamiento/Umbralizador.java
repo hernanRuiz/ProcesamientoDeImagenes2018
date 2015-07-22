@@ -191,43 +191,7 @@ public class Umbralizador {
 			
 		Map<Integer, ClaseOtsu> mapaDeClases = new HashMap<Integer, ClaseOtsu>();
 		
-		calcularOtsu(imagen, umbralOtsuRojo, umbralOtsuVerde, umbralOtsuAzul, mapaDeClases);
-		
-		//Paso 7: Asignar el color promedio de cada clase a todos los pixeles de cada una de las clases.
-		
-		for ( ClaseOtsu claseActual : mapaDeClases.values() ){
-			
-			int promedioRojo = claseActual.getRojoPromedio();
-			int promedioVerde = claseActual.getVerdePromedio();
-			int promedioAzul = claseActual.getAzulPromedio();
-			
-			for (Pixel pixelActual : claseActual.getPixeles()){
-				
-				pixelActual.setColor(new Color(promedioRojo, promedioVerde, promedioAzul));
-			}
-		}
-		
-		//Paso 8: Formar la imagen pintando los pixeles de cada clase con el color promedio calculado en el paso 7.
-		
-		BufferedImage buffer = new BufferedImage(imagen.getBufferedImage().getWidth(),imagen.getBufferedImage().getHeight(), imagen.getBufferedImage().getType());
-		Imagen imagenFinal = new Imagen(buffer, imagen.getFormato(), imagen.getNombre()+"_otsuColor");
-		
-		for ( ClaseOtsu claseActual : mapaDeClases.values() ){
-			
-			for (Pixel pixelActual : claseActual.getPixeles()){
-			
-				imagenFinal.getBufferedImage().setRGB(pixelActual.getX(), pixelActual.getY(), pixelActual.getColor().getRGB());
-			}
-		}
-		
-		return imagenFinal;
-	}
-
-	private static void calcularOtsu(Imagen imagen, int umbralOtsuRojo,
-			int umbralOtsuVerde, int umbralOtsuAzul,
-			Map<Integer, ClaseOtsu> mapaDeClases) {
-		
-		cargarMapaDeClases(mapaDeClases);
+cargarMapaDeClases(mapaDeClases);
 		
 		for (int x = 0; x < imagen.getBufferedImage().getWidth(); x++) {
 			for (int y = 0; y < imagen.getBufferedImage().getHeight(); y++) {
@@ -261,6 +225,40 @@ public class Umbralizador {
 				mapaDeClases.get(indice).agregarPixel(pixel);
 			}
 		}
+		
+		calcularOtsu(imagen, mapaDeClases);
+		
+		//Paso 7: Asignar el color promedio de cada clase a todos los pixeles de cada una de las clases.
+		
+		for ( ClaseOtsu claseActual : mapaDeClases.values() ){
+			
+			int promedioRojo = claseActual.getRojoPromedio();
+			int promedioVerde = claseActual.getVerdePromedio();
+			int promedioAzul = claseActual.getAzulPromedio();
+			
+			for (Pixel pixelActual : claseActual.getPixeles()){
+				
+				pixelActual.setColor(new Color(promedioRojo, promedioVerde, promedioAzul));
+			}
+		}
+		
+		//Paso 8: Formar la imagen pintando los pixeles de cada clase con el color promedio calculado en el paso 7.
+		
+		BufferedImage buffer = new BufferedImage(imagen.getBufferedImage().getWidth(),imagen.getBufferedImage().getHeight(), imagen.getBufferedImage().getType());
+		Imagen imagenFinal = new Imagen(buffer, imagen.getFormato(), imagen.getNombre()+"_otsuColor");
+		
+		for ( ClaseOtsu claseActual : mapaDeClases.values() ){
+			
+			for (Pixel pixelActual : claseActual.getPixeles()){
+			
+				imagenFinal.getBufferedImage().setRGB(pixelActual.getX(), pixelActual.getY(), pixelActual.getColor().getRGB());
+			}
+		}
+		
+		return imagenFinal;
+	}
+
+	private static void calcularOtsu(Imagen imagen, Map<Integer, ClaseOtsu> mapaDeClases) {
 		
 		//Paso 3: Calcular el promedio de cada clase
 
@@ -351,14 +349,19 @@ public class Umbralizador {
 			if ( between.getClaseA().getVarianza() >= between.getVarianza() 
 					|| between.getClaseB().getVarianza() >= between.getVarianza() ) {
 				
-				List<ClaseOtsu> clases = (List<ClaseOtsu>) mapaDeClases.values();
+				List<ClaseOtsu> clases = new ArrayList<ClaseOtsu>(mapaDeClases.values());
 				between.getClaseA().agregarPixeles(between.getClaseB().getPixeles());
 				clases.remove(between.getClaseB());
 				seCombinaronClases = true;
-				System.err.println("COMBINANDO CLASES");
+				System.err.println("COMBINANDO CLASES \n" + between.getClaseA() + " y " + between.getClaseB());
+				cargarMapaDeClases(mapaDeClases, clases);
 			}
 			
-			System.out.println(i);
+		}
+		
+		if (seCombinaronClases){
+			
+			calcularOtsu(imagen, mapaDeClases);
 		}
 		
 	}
@@ -366,15 +369,15 @@ public class Umbralizador {
 	private static void cargarMapaDeClases(
 			Map<Integer, ClaseOtsu> mapaDeClases) {
 		
-		ClaseOtsu claseC0 = new ClaseOtsu();
-		ClaseOtsu claseC1 = new ClaseOtsu();
-		ClaseOtsu claseC2 = new ClaseOtsu();
-		ClaseOtsu claseC3 = new ClaseOtsu();
-		ClaseOtsu claseC4 = new ClaseOtsu();
-		ClaseOtsu claseC5 = new ClaseOtsu();
-		ClaseOtsu claseC6 = new ClaseOtsu();
-		ClaseOtsu claseC7 = new ClaseOtsu();
-		
+		ClaseOtsu claseC0 = new ClaseOtsu("C0-(0,0,0)");
+		ClaseOtsu claseC1 = new ClaseOtsu("C1-(0,0,1)");
+		ClaseOtsu claseC2 = new ClaseOtsu("C2-(0,1,0)");
+		ClaseOtsu claseC3 = new ClaseOtsu("C3-(0,1,1)");
+		ClaseOtsu claseC4 = new ClaseOtsu("C4-(1,0,0)");
+		ClaseOtsu claseC5 = new ClaseOtsu("C5-(1,0,1)");
+		ClaseOtsu claseC6 = new ClaseOtsu("C6-(1,1,0)");
+		ClaseOtsu claseC7 = new ClaseOtsu("C7-(1,1,1)");
+				
 		mapaDeClases.put(0, claseC0);
 		mapaDeClases.put(1, claseC1);
 		mapaDeClases.put(2, claseC2);
@@ -383,6 +386,17 @@ public class Umbralizador {
 		mapaDeClases.put(5, claseC5);
 		mapaDeClases.put(6, claseC6);
 		mapaDeClases.put(7, claseC7);
+	}
+	
+	private static void cargarMapaDeClases(
+			Map<Integer, ClaseOtsu> mapaDeClases, List<ClaseOtsu> clases) {
+		
+		mapaDeClases.clear();
+		
+		for (int i=0; i<clases.size();i++){
+			
+			mapaDeClases.put(i, clases.get(i));
+		}
 	}
 	
 }

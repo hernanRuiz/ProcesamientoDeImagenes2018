@@ -5,6 +5,7 @@ import java.util.List;
 
 public class ClaseOtsu {
 
+	private String nombre;
 	private int rojoPromedio;
 	private int verdePromedio;
 	private int azulPromedio;
@@ -12,10 +13,11 @@ public class ClaseOtsu {
 	private double varianza;
 	private List<Pixel> pixeles;
 
-	public ClaseOtsu() {
+	public ClaseOtsu(String nombre) {
 
 		super();
 		this.pixeles = new ArrayList<Pixel>();
+		this.nombre = nombre;
 	}
 
 	public void setRojoPromedio(int rojoPromedio) {
@@ -64,10 +66,17 @@ public class ClaseOtsu {
 	}
 
 	@Override
+	public String toString() {
+		return "ClaseOtsu " + nombre + " [rojoPromedio=" + rojoPromedio + ", verdePromedio="
+				+ verdePromedio + ", azulPromedio=" + azulPromedio
+				+ ", varianza=" + varianza + "]";
+	}
+
+	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((pixeles == null) ? 0 : pixeles.hashCode());
+		result = prime * result + ((nombre == null) ? 0 : nombre.hashCode());
 		return result;
 	}
 
@@ -80,19 +89,12 @@ public class ClaseOtsu {
 		if (getClass() != obj.getClass())
 			return false;
 		ClaseOtsu other = (ClaseOtsu) obj;
-		if (pixeles == null) {
-			if (other.pixeles != null)
+		if (nombre == null) {
+			if (other.nombre != null)
 				return false;
-		} else if (!pixeles.equals(other.pixeles))
+		} else if (!nombre.equals(other.nombre))
 			return false;
 		return true;
 	}
-
-	@Override
-	public String toString() {
-		return "ClaseOtsu [rojoPromedio=" + rojoPromedio + ", verdePromedio="
-				+ verdePromedio + ", azulPromedio=" + azulPromedio
-				+ ", varianza=" + varianza + "]";
-	}
-		
+	
 }
