@@ -27,6 +27,7 @@ import ar.com.untref.imagenes.modelo.Fotogramas;
 import ar.com.untref.imagenes.modelo.Imagen;
 import ar.com.untref.imagenes.procesamiento.ProcesadorDeImagenes;
 import ar.com.untref.imagenes.procesamiento.ProcesadorDeVideo;
+import ar.com.untref.imagenes.procesamiento.Umbralizador;
 import ar.com.untref.imagenes.segmentacion.Segmentador;
 
 @SuppressWarnings("serial")
@@ -195,6 +196,27 @@ public class VentanaVideo extends JFrame{
 		});
 		botonPlay.setEnabled(false);
 		panel1.add(botonPlay);
+		
+		JButton botonOtsuColor = new JButton("OtsuColor");
+		botonOtsuColor.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				SwingWorker<Void, Void> mySwingWorker = new SwingWorker<Void, Void>(){
+			         @Override
+			         protected Void doInBackground() throws Exception {
+
+			        	while (ProcesadorDeVideo.obtenerInstancia().avanzarUnFotograma()){
+								
+							Imagen imagenUmbralizada = Umbralizador.generarUmbralizacionColor(ProcesadorDeVideo.obtenerInstancia().getImagenActual());
+							refrescarImagen(imagenUmbralizada.getBufferedImage());
+						}
+						return null;
+			         }
+			    };
+			    mySwingWorker.execute();
+			}
+		});
+		panel1.add(botonOtsuColor);
 		
 		JMenuBar menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
