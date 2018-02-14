@@ -2,6 +2,10 @@ package ar.com.untref.imagenes.bordes;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
+import java.io.FileNotFoundException;
+import java.io.PrintStream;
+import java.util.LinkedList;
+import java.util.List;
 
 import ar.com.untref.imagenes.enums.Canal;
 import ar.com.untref.imagenes.enums.FormatoDeImagen;
@@ -13,9 +17,46 @@ import ar.com.untref.imagenes.procesamiento.Umbralizador;
 
 public class DetectorDeHarris {
 
-	public static Imagen detectarEsquinas(Imagen imagenOriginal){
+	private static CustomBufferedImage oldImage;
+	private static List<Integer> resultadosX = new LinkedList<Integer>();
+	private static List<Integer>resultadosY = new LinkedList<Integer>();
+	private static PrintStream fileStreamHarris;
+	
+	public static List<Integer> getResultadosX() {
+		return resultadosX;
+	}
+
+	public static void setResultadosX(List<Integer> resultadosX) {
+		DetectorDeHarris.resultadosX = resultadosX;
+	}
+
+	public static List<Integer> getResultadosY() {
+		return resultadosY;
+	}
+
+	public static void setResultadosY(List<Integer> resultadosY) {
+		DetectorDeHarris.resultadosY = resultadosY;
+	}
+
+	public static Imagen detectarEsquinas(Imagen imagenOriginal, boolean flagResultados){
 		
-		//Paso 1: Calcular lx e Iy usando las mácaras de prewit o sobel para toda la imagen.
+		if (flagResultados){			
+			try {
+				fileStreamHarris  = new PrintStream("Salida_algoritmo_Harris.txt");
+				fileStreamHarris.flush();
+				System.setOut(fileStreamHarris);
+				System.out.println("Resultados encontrados:");
+				System.out.println();
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		oldImage = new CustomBufferedImage(imagenOriginal.getBufferedImage());
+		//Imagen imagenADevolver = imagenOriginal;
+		
+		
+		//Paso 1: Calcular lx e Iy usando las mï¿½caras de prewit o sobel para toda la imagen.
 		float[][] mascaraDeSobelEnX = DetectorDeBordes.calcularMascaraDeSobelEnX();
 		float[][] mascaraDeSobelEnY = DetectorDeBordes.calcularMascaraDeSobelEnY();
 		
@@ -49,8 +90,7 @@ public class DetectorDeHarris {
         Imagen imagenConFiltroGaussEnX = FiltroGaussiano.aplicarFiltroGaussiano(imagenX, 2);
         Imagen imagenConFiltroGaussEnY = FiltroGaussiano.aplicarFiltroGaussiano(imagenY, 2);
         
-        //Paso3: Calcular Ixy multiplicando elemento a elemento también suavizar con el mismo filtro gaussiano.
-        
+        //Paso3: Calcular Ixy multiplicando elemento a elemento tambiï¿½n suavizar con el mismo filtro gaussiano.
         int[][] matrizRojoXY = MatricesManager.aplicarTransformacionLineal(MatricesManager.multiplicarValores(matrizRojoEnX, matrizRojoEnY));
         int[][] matrizVerdeXY = MatricesManager.aplicarTransformacionLineal(MatricesManager.multiplicarValores(matrizVerdeEnX, matrizVerdeEnY));
         int[][] matrizAzulXY = MatricesManager.aplicarTransformacionLineal(MatricesManager.multiplicarValores(matrizAzulEnX, matrizAzulEnY));
@@ -65,8 +105,8 @@ public class DetectorDeHarris {
         
         //Aplicamos filtros en X y en Y
         int[][] transpuestaRojo = new int[cimRojos[0].length][cimRojos.length];
-        int[][] transpuestaVerde = new int[cimRojos[0].length][cimRojos.length];
-        int[][] transpuestaAzul = new int[cimRojos[0].length][cimRojos.length];
+        int[][] transpuestaVerde = new int[cimVerdes[0].length][cimVerdes.length];
+        int[][] transpuestaAzul = new int[cimAzules[0].length][cimAzules.length];
     	
     	for(int j = 0; j < cimRojos.length; j++){
            for(int i = 0; i < cimRojos[0].length; i++){
@@ -77,12 +117,15 @@ public class DetectorDeHarris {
         }
         
         Imagen imagenFinal = new Imagen(MatricesManager.obtenerImagenDeMatrices(transpuestaRojo, transpuestaVerde, transpuestaAzul), FormatoDeImagen.JPEG, "imagenFinal");
-        Imagen imagenUmbralizada = Umbralizador.umbralizarImagen(imagenFinal, Umbralizador.generarUmbralizacionOtsu(imagenFinal, Canal.ROJO, true));
         
-		return superponerAImagenOriginal(imagenUmbralizada, imagenOriginal);
+        int umbral = (int) (Umbralizador.generarUmbralizacionOtsu(imagenFinal, Canal.ROJO, false) * 2.6);
+        
+        Imagen imagenUmbralizada = Umbralizador.umbralizarImagen(imagenFinal, umbral);
+        
+		return superponerAImagenOriginal(imagenUmbralizada, imagenOriginal, flagResultados);
 	}
 
-	private static Imagen superponerAImagenOriginal(Imagen umbralizada, Imagen original) {
+	private static Imagen superponerAImagenOriginal(Imagen umbralizada, Imagen original, boolean flagResultados) {
 
 		Imagen imagenFinal = new Imagen(new BufferedImage(umbralizada.getBufferedImage().getWidth(), umbralizada.getBufferedImage().getHeight(), umbralizada.getBufferedImage().getType()), FormatoDeImagen.JPEG, "final");
 		
@@ -92,12 +135,24 @@ public class DetectorDeHarris {
 				Color colorEnUmbralizada = new Color(umbralizada.getBufferedImage().getRGB(i, j));
 				if (colorEnUmbralizada.getRed()==255){
 					
-					imagenFinal.getBufferedImage().setRGB(i, j, Color.YELLOW.getRGB());
+					imagenFinal.getBufferedImage().setRGB(i, j, Color.RED.getRGB());
+					oldImage.setRGB(i, j, Color.RED.getRGB());
+					if (flagResultados){
+						System.out.println(i + "," + j);
+					}
+					resultadosX.add(i);
+					resultadosY.add(j);
 				} else {
 					
+					oldImage.setRGB(i, j, original.getBufferedImage().getRGB(i, j));
 					imagenFinal.getBufferedImage().setRGB(i, j, original.getBufferedImage().getRGB(i, j));
 				}
 			}
+		}
+		
+		if(flagResultados){			
+			fileStreamHarris.flush();
+			fileStreamHarris.close();
 		}
 		
 		return imagenFinal;

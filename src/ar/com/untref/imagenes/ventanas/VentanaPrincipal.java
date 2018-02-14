@@ -12,6 +12,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.util.LinkedList;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -28,17 +30,25 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingWorker;
 import javax.swing.border.EmptyBorder;
 
+import ar.com.untref.imagenes.bordes.AlgoritmoComparativoDeDetectores;
 import ar.com.untref.imagenes.bordes.DetectarBordesDireccionales;
 import ar.com.untref.imagenes.bordes.DetectorDeBordes;
 import ar.com.untref.imagenes.bordes.DetectorDeBordesDeCanny;
 import ar.com.untref.imagenes.bordes.DetectorDeHarris;
 import ar.com.untref.imagenes.bordes.DetectorSusan;
+import ar.com.untref.imagenes.bordes.DoG;
 import ar.com.untref.imagenes.bordes.InterfaceDetectorDeBordes;
 import ar.com.untref.imagenes.bordes.TransformadaDeHough;
+import ar.com.untref.imagenes.bordes.DetectorDeBordesMoravec;
+import ar.com.untref.imagenes.bordes.AlgoritmoComparativoDeDetectores;
+import ar.com.untref.imagenes.dialogs.AlgoritmoComparativoDialog;
 import ar.com.untref.imagenes.dialogs.DetectorDeCannyDialog;
+import ar.com.untref.imagenes.dialogs.DetectorDeMoravecDialog;
+import ar.com.untref.imagenes.dialogs.DiferenciaDeGaussianasDialog;
 import ar.com.untref.imagenes.dialogs.DifusionAnisotropicaDialog;
 import ar.com.untref.imagenes.dialogs.DifusionIsotropicaDialog;
 import ar.com.untref.imagenes.dialogs.EspereDialog;
+import ar.com.untref.imagenes.dialogs.FiltroGaussianoDialog;
 import ar.com.untref.imagenes.dialogs.HisteresisDialog;
 import ar.com.untref.imagenes.dialogs.HoughDialog;
 import ar.com.untref.imagenes.dialogs.LoGDialog;
@@ -50,6 +60,7 @@ import ar.com.untref.imagenes.dialogs.SusanDialog;
 import ar.com.untref.imagenes.enums.Canal;
 import ar.com.untref.imagenes.enums.FormatoDeImagen;
 import ar.com.untref.imagenes.enums.NivelMensaje;
+import ar.com.untref.imagenes.filtros.FiltroGaussiano;
 import ar.com.untref.imagenes.helpers.DialogsHelper;
 import ar.com.untref.imagenes.listeners.GuardarComoListener;
 import ar.com.untref.imagenes.listeners.MarcarImagenListener;
@@ -92,7 +103,7 @@ public class VentanaPrincipal extends JFrame {
 
 		dialogoEspera = new EspereDialog();
 
-		this.setTitle("Procesamiento de Imágenes");
+		this.setTitle("Procesamiento de Im\u00e1genes");
 				
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 800, 600);
@@ -132,7 +143,7 @@ public class VentanaPrincipal extends JFrame {
 		botonSeleccionar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 
-				DialogsHelper.mostarMensaje(contentPane, "Cliquea en la esquina superior izquierda y la inferior derecha que formarán el cuadrado para marcar una región en la imagen");
+				DialogsHelper.mostarMensaje(contentPane, "Cliquea en la esquina superior izquierda y la inferior derecha que formar\u00e1n el cuadrado para marcar una regi\u00f3n en la imagen");
 				labelPrincipal.addMouseListener(new MarcarImagenListener(VentanaPrincipal.this));
 				botonSegmentar.setEnabled(true);
 			}
@@ -211,8 +222,8 @@ public class VentanaPrincipal extends JFrame {
 		});
 		imagenOriginal.add(volverALaImagenOriginal);
 		
-		JLabel labelTamañoRAW = new JLabel("Dimensiones RAW");
-		panelRaw.add(labelTamañoRAW);
+		JLabel labelTamanioRAW = new JLabel("Dimensiones RAW");
+		panelRaw.add(labelTamanioRAW);
 		
 		JLabel labelAltoRAW = new JLabel("Alto:");
 		panelRaw.add(labelAltoRAW);
@@ -236,14 +247,14 @@ public class VentanaPrincipal extends JFrame {
 		panelPixel.setVisible(false);
 		panel.add(panelPixel);
 		
-		JLabel labelPosicionX = new JLabel("Posicion X:");
+		JLabel labelPosicionX = new JLabel("Posici\u00f3n X:");
 		panelPixel.add(labelPosicionX);
 		
 		posicionXTextField = new JTextField();
 		panelPixel.add(posicionXTextField);
 		posicionXTextField.setColumns(4);
 		
-		JLabel labelPosicionY = new JLabel("Posicion Y:");
+		JLabel labelPosicionY = new JLabel("Posici\u00f3n Y:");
 		panelPixel.add(labelPosicionY);
 		labelPosicionY.setHorizontalAlignment(SwingConstants.TRAILING);
 		
@@ -290,11 +301,11 @@ public class VentanaPrincipal extends JFrame {
 							labelColorResultante.setOpaque(true);
 						} catch (Exception e) {
 							
-							DialogsHelper.mostarMensaje(contentPane, "Por favor ingresa una posición válida", NivelMensaje.ERROR);
+							DialogsHelper.mostarMensaje(contentPane, "Por favor ingresa una posici\u00f3n v\u00e1lida", NivelMensaje.ERROR);
 						}
 					} else {
 						
-						DialogsHelper.mostarMensaje(contentPane, "Por favor completa la posicion del pixel a buscar", NivelMensaje.ERROR);
+						DialogsHelper.mostarMensaje(contentPane, "Por favor completa la posici\u00f3n del pixel a buscar", NivelMensaje.ERROR);
 					}
 					
 				} else {
@@ -363,8 +374,9 @@ public class VentanaPrincipal extends JFrame {
 					Imagen imagenElegida = ProcesadorDeImagenes.obtenerInstancia().cargarUnaImagenRawDesdeArchivo(alto, ancho);
 					int cantidadPixeles = alto*ancho;
 					refrescarCantidadPixeles(cantidadPixeles);
-					
-					actualizarPanelDeImagen(menuItemGuardarComo, imagenElegida);
+					if(imagenElegida != null){
+						actualizarPanelDeImagen(menuItemGuardarComo, imagenElegida);
+					}
 				} catch (Exception e){
 					
 					e.printStackTrace();
@@ -389,7 +401,7 @@ public class VentanaPrincipal extends JFrame {
 				video.setVisible(true);
 			}
 		});
-		menu.add(menuEditarVideo);
+		//menu.add(menuEditarVideo);
 		menu.add(menuItem);
 		
 		menuItemEditar = new JMenu("Editar");
@@ -416,11 +428,11 @@ public class VentanaPrincipal extends JFrame {
 		menuItemRecortarImagen.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
-				DialogsHelper.mostarMensaje(contentPane, "Cliquea en la esquina superior izquierda y la inferior derecha que formarán el cuadrado para recortar la imagen");
+				DialogsHelper.mostarMensaje(contentPane, "Cliquea en la esquina superior izquierda y la inferior derecha que formar\u00e1n el cuadrado para recortar la imagen");
 				labelPrincipal.addMouseListener(new RecortarImagenListener(VentanaPrincipal.this));
 			}
 		});
-		menuItemEditar.add(menuItemRecortarImagen);
+		//menuItemEditar.add(menuItemRecortarImagen);
 		
 		
 		
@@ -447,15 +459,25 @@ public class VentanaPrincipal extends JFrame {
 					dialogo.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
-					DialogsHelper.mostarMensaje(contentPane, "Ocurrió un error aplicando el método Sift. Intenta con otra imagen", NivelMensaje.ERROR);
+					DialogsHelper.mostarMensaje(contentPane, "Ocurri\u00f3 un error aplicando el m\u00e9todo Sift. Intenta con otra imagen", NivelMensaje.ERROR);
 				} 
 			}
 		});
-		menuItemEditar.add(menuItemSift);
-		menuItemEditar.add(menuItemHistogramas);
+		//menuItemEditar.add(menuItemSift);
+		//menuItemEditar.add(menuItemHistogramas);
 		
 		JMenu menuFiltros = new JMenu("Filtros");
 		menuItemEditar.add(menuFiltros);
+		
+		JMenuItem menuItemFiltroGaussiano = new JMenuItem("Filtro Gaussiano");
+		menuItemFiltroGaussiano.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				FiltroGaussianoDialog m = new FiltroGaussianoDialog(VentanaPrincipal.this, contentPane);
+				m.setVisible(true);
+			}
+		});
+		menuFiltros.add(menuItemFiltroGaussiano);
+		
 		
 		JMenuItem menuItemNegativo = new JMenuItem("Negativo");
 		menuItemNegativo.addActionListener(new ActionListener() {
@@ -519,10 +541,10 @@ public class VentanaPrincipal extends JFrame {
 				umbralSlider.addChangeListener(listener);
 			}
 		});
-		menuFiltros.add(menuItemUmbralizar);
-		menuFiltros.add(menuItemNegativo);
+		//menuFiltros.add(menuItemUmbralizar);
+		//menuFiltros.add(menuItemNegativo);
 		
-		JMenuItem menuItemCompresionDeRangoDinamico = new JMenuItem("Compresion de Rango Din\u00E1mico");
+		JMenuItem menuItemCompresionDeRangoDinamico = new JMenuItem("Compresi\u00f3n de Rango Din\u00E1mico");
 		menuItemCompresionDeRangoDinamico.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
@@ -549,13 +571,13 @@ public class VentanaPrincipal extends JFrame {
 			public void actionPerformed(ActionEvent arg0) {
 				
 				Imagen imagenActual = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
-				ProcesadorDeImagenes.obtenerInstancia().aumentarContrastePorFactor(imagenActual);;
+				ProcesadorDeImagenes.obtenerInstancia().aumentarContrastePorFactor(imagenActual);
 				VentanaPrincipal.this.refrescarImagen();
 			}
 		});
-		menuFiltros.add(menuItemContrasteConFactor);
-		menuFiltros.add(menuItemCompresionDeRangoDinamico);
-		menuFiltros.add(menuItemUmbralGlobal);
+		//menuFiltros.add(menuItemContrasteConFactor);
+		//menuFiltros.add(menuItemCompresionDeRangoDinamico);
+		//menuFiltros.add(menuItemUmbralGlobal);
 		
 		JMenuItem menuItemUmbralOtsu = new JMenuItem("Umbral Otsu");
 		menuItemUmbralOtsu.addActionListener(new ActionListener() {
@@ -566,7 +588,7 @@ public class VentanaPrincipal extends JFrame {
 				VentanaPrincipal.this.refrescarImagen();
 			}
 		});
-		menuFiltros.add(menuItemUmbralOtsu);
+		//menuFiltros.add(menuItemUmbralOtsu);
 		
 		JMenuItem menuItemOtsuColor = new JMenuItem("Otsu Color");
 		menuItemOtsuColor.addActionListener(new ActionListener() {
@@ -577,10 +599,10 @@ public class VentanaPrincipal extends JFrame {
 				VentanaPrincipal.this.refrescarImagen();
 			}
 		});
-		menuFiltros.add(menuItemOtsuColor);
+		//menuFiltros.add(menuItemOtsuColor);
 		
 		menuItemTemplates = new JMenu("Plantillas");
-		menuBar.add(menuItemTemplates);
+		//menuBar.add(menuItemTemplates);
 		
 		JMenuItem menuItemImagenConCuadrado = new JMenuItem("Imagen con Cuadrado (200x200)");
 		menuItemImagenConCuadrado.addActionListener(new ActionListener() {
@@ -607,7 +629,7 @@ public class VentanaPrincipal extends JFrame {
 				resultadoCantidadPixeles.setVisible(false);
 				botonPromedio.setVisible(false);
 				BufferedImage buf = Graficador.crearImagenConCirculoEnElMedio(200,200,40);
-				Imagen imagenConCirculo = new Imagen(buf, FormatoDeImagen.JPG, "Imagen Con Circulo", new int[buf.getWidth()][buf.getHeight()], new int[buf.getWidth()][buf.getHeight()], new int[buf.getWidth()][buf.getHeight()]);
+				Imagen imagenConCirculo = new Imagen(buf, FormatoDeImagen.JPG, "Imagen Con C\u00edrculo", new int[buf.getWidth()][buf.getHeight()], new int[buf.getWidth()][buf.getHeight()], new int[buf.getWidth()][buf.getHeight()]);
 				ProcesadorDeImagenes.obtenerInstancia().setImagenActual(imagenConCirculo);
 				VentanaPrincipal.this.refrescarImagen();
 			}
@@ -623,7 +645,7 @@ public class VentanaPrincipal extends JFrame {
 				resultadoCantidadPixeles.setVisible(false);
 				botonPromedio.setVisible(false);
 				BufferedImage buf = Graficador.crearImagenConDegradeDeGrises(200, 250);
-				Imagen degrade = new Imagen(buf, FormatoDeImagen.JPG, "Degradé de grises", new int[buf.getWidth()][buf.getHeight()], new int[buf.getWidth()][buf.getHeight()], new int[buf.getWidth()][buf.getHeight()]);
+				Imagen degrade = new Imagen(buf, FormatoDeImagen.JPG, "Degrad\u00e9 de grises", new int[buf.getWidth()][buf.getHeight()], new int[buf.getWidth()][buf.getHeight()], new int[buf.getWidth()][buf.getHeight()]);
 				ProcesadorDeImagenes.obtenerInstancia().setImagenActual(degrade);
 				VentanaPrincipal.this.refrescarImagen();
 			}
@@ -639,7 +661,7 @@ public class VentanaPrincipal extends JFrame {
 				resultadoCantidadPixeles.setVisible(false);
 				botonPromedio.setVisible(false);
 				BufferedImage buf = Graficador.crearImagenConDegradeColor(200, 250);
-				Imagen degrade = new Imagen(buf, FormatoDeImagen.JPG, "Degradé de color", new int[buf.getWidth()][buf.getHeight()], new int[buf.getWidth()][buf.getHeight()], new int[buf.getWidth()][buf.getHeight()]);
+				Imagen degrade = new Imagen(buf, FormatoDeImagen.JPG, "Degrad\u00e9 de color", new int[buf.getWidth()][buf.getHeight()], new int[buf.getWidth()][buf.getHeight()], new int[buf.getWidth()][buf.getHeight()]);
 				ProcesadorDeImagenes.obtenerInstancia().setImagenActual(degrade);
 				VentanaPrincipal.this.refrescarImagen();
 			}
@@ -658,7 +680,7 @@ public class VentanaPrincipal extends JFrame {
 				}
 			
 		});
-		menuItemEditar.add(menuItemPromedioGrises);
+		//menuItemEditar.add(menuItemPromedioGrises);
 		
 		
 		JMenuItem menuItemOperacionesMatrices = new JMenuItem("Operaciones");
@@ -669,11 +691,25 @@ public class VentanaPrincipal extends JFrame {
 			}
 			
 		});
-		menuItemEditar.add(menuItemOperacionesMatrices);
+		//menuItemEditar.add(menuItemOperacionesMatrices);
 		
 		
-		JMenu menuDeteccionDeBordes = new JMenu("Deteccion de Bordes");
+		JMenu menuDeteccionDeBordes = new JMenu("Detecci\u00f3n de Bordes");
 		menuItemEditar.add(menuDeteccionDeBordes);
+		
+		
+		JMenuItem menuItemAlgoritmoComparativo = new JMenuItem("Algoritmo comparativo de detectores");
+		menuItemAlgoritmoComparativo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				AlgoritmoComparativoDialog dialog = new AlgoritmoComparativoDialog(VentanaPrincipal.this, contentPane);
+				dialog.setVisible(true);
+			}
+		});
+		//menuDeteccionDeBordes.add(menuItemAlgoritmoComparativo);
+		
+		menuBar.add(menuItemAlgoritmoComparativo);
+		
 		
 		JMenuItem menuItemDetectorDeSusan = new JMenuItem("Detector de Susan");
 		menuItemDetectorDeSusan.addActionListener(new ActionListener() {
@@ -692,8 +728,10 @@ public class VentanaPrincipal extends JFrame {
 			         @Override
 			         protected Void doInBackground() throws Exception {
 
-			        	Imagen imagenConHarris = DetectorDeHarris.detectarEsquinas(ProcesadorDeImagenes.obtenerInstancia().getImagenActual());
+			        	Imagen imagenConHarris = DetectorDeHarris.detectarEsquinas(ProcesadorDeImagenes.obtenerInstancia().getImagenActual(), true);
 						ProcesadorDeImagenes.obtenerInstancia().setImagenActual(imagenConHarris);
+						DetectorDeHarris.setResultadosX(new LinkedList<Integer>());
+						DetectorDeHarris.setResultadosY(new LinkedList<Integer>());
 						refrescarImagen();
 						
 						return null;
@@ -713,12 +751,35 @@ public class VentanaPrincipal extends JFrame {
 				d.setVisible(true);
 			}
 		});
-		menuDeteccionDeBordes.add(menuItemTransfoHough);
+		//menuDeteccionDeBordes.add(menuItemTransfoHough);
+		
+		JMenuItem menuItemMoravec = new JMenuItem("Detector de Bordes de Movarec");
+		menuItemMoravec.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				DetectorDeMoravecDialog d = new DetectorDeMoravecDialog(VentanaPrincipal.this, contentPane);
+				d.setVisible(true);
+			}
+		});
+		menuDeteccionDeBordes.add(menuItemMoravec);
+		
+		JMenuItem menuItemDoG = new JMenuItem("Diferencia de Gaussianas");
+		menuItemDoG.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				//aplicarDoG(1, 2, 3, 4);
+				DiferenciaDeGaussianasDialog d = new DiferenciaDeGaussianasDialog(VentanaPrincipal.this, contentPane);
+				d.setVisible(true);
+			}
+		});
+		menuDeteccionDeBordes.add(menuItemDoG);
+		
+		
 		menuDeteccionDeBordes.add(menuItemHarris);
 		menuDeteccionDeBordes.add(menuItemDetectorDeSusan);
 		
 		JMenu menuCanny = new JMenu("Detector de Canny");
-		menuDeteccionDeBordes.add(menuCanny);
+		//menuDeteccionDeBordes.add(menuCanny);
 		
 		JMenuItem mntmSupresionNoMaximosItem = new JMenuItem("Supresi\u00F3n No M\u00E1ximos");
 		mntmSupresionNoMaximosItem.addActionListener(new ActionListener() {
@@ -754,7 +815,7 @@ public class VentanaPrincipal extends JFrame {
 		menuCanny.add(menuItemDetectorCanny);
 		
 		JMenu menuDeteccionDePrewitt = new JMenu("Detector De Prewitt");
-		menuDeteccionDeBordes.add(menuDeteccionDePrewitt);
+		//menuDeteccionDeBordes.add(menuDeteccionDePrewitt);
 		
 		JMenuItem menuItemDetectorDePrewitt = new JMenuItem("Aplicar");
 		menuItemDetectorDePrewitt.addActionListener(new ActionListener() {
@@ -772,7 +833,7 @@ public class VentanaPrincipal extends JFrame {
 		menuDeteccionDePrewitt.add(menuItemDetectorDePrewitt);
 		
 		
-		JMenuItem menuItemMascaraEnXPrewitt = new JMenuItem("Mostrar mascara en X");
+		JMenuItem menuItemMascaraEnXPrewitt = new JMenuItem("Mostrar m\u00e1scara en X");
 		menuItemMascaraEnXPrewitt.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
@@ -788,7 +849,7 @@ public class VentanaPrincipal extends JFrame {
 		menuDeteccionDePrewitt.add(menuItemMascaraEnXPrewitt);
 		
 		
-		JMenuItem menuItemMascaraEnYPrewitt = new JMenuItem("Mostrar mascara en Y");
+		JMenuItem menuItemMascaraEnYPrewitt = new JMenuItem("Mostrar m\u00e1scara en Y");
 		menuItemMascaraEnYPrewitt.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
@@ -805,7 +866,7 @@ public class VentanaPrincipal extends JFrame {
 		
 		
 		JMenu menuDeteccionDeSobel = new JMenu("Detector De Sobel");
-		menuDeteccionDeBordes.add(menuDeteccionDeSobel);
+		//menuDeteccionDeBordes.add(menuDeteccionDeSobel);
 		
 		JMenuItem menuItemDetectorDeSobel = new JMenuItem("Aplicar");
 		menuItemDetectorDeSobel.addActionListener(new ActionListener() {
@@ -822,7 +883,7 @@ public class VentanaPrincipal extends JFrame {
 		});
 		menuDeteccionDeSobel.add(menuItemDetectorDeSobel);
 		
-		JMenuItem menuItemMascaraEnXSobel = new JMenuItem("Mostrar mascara en X");
+		JMenuItem menuItemMascaraEnXSobel = new JMenuItem("Mostrar m\u00e1scara en X");
 		menuItemMascaraEnXSobel.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
@@ -838,7 +899,7 @@ public class VentanaPrincipal extends JFrame {
 		menuDeteccionDeSobel.add(menuItemMascaraEnXSobel);
 		
 		
-		JMenuItem menuItemMascaraEnYSobel = new JMenuItem("Mostrar mascara en Y");
+		JMenuItem menuItemMascaraEnYSobel = new JMenuItem("Mostrar m\u00e1scara en Y");
 		menuItemMascaraEnYSobel.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
@@ -855,9 +916,9 @@ public class VentanaPrincipal extends JFrame {
 		
 		
 		JMenu menuDeteccionLaplaciano = new JMenu("Detector Laplaciano");
-		menuDeteccionDeBordes.add(menuDeteccionLaplaciano);
+		//menuDeteccionDeBordes.add(menuDeteccionLaplaciano);
 		
-		JMenuItem menuItemMostrarMascaraLaplaciano = new JMenuItem("Mostrar Mascara");
+		JMenuItem menuItemMostrarMascaraLaplaciano = new JMenuItem("Mostrar M\u00e1scara");
 		menuItemMostrarMascaraLaplaciano.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
@@ -905,7 +966,7 @@ public class VentanaPrincipal extends JFrame {
 		
 		
 		JMenu menuDeteccionLaplacianoDelGaussiano = new JMenu("Detector Laplaciano del Gaussiano");
-		menuDeteccionDeBordes.add(menuDeteccionLaplacianoDelGaussiano);
+		//menuDeteccionDeBordes.add(menuDeteccionLaplacianoDelGaussiano);
 		
 		JMenuItem menuItemAplicarDetectorLaplacianoDelGaussiano = new JMenuItem("Aplicar");
 		menuItemAplicarDetectorLaplacianoDelGaussiano.addActionListener(new ActionListener() {
@@ -916,7 +977,7 @@ public class VentanaPrincipal extends JFrame {
 			}
 		});
 		
-		JMenuItem menuItemMostrarMascaraLaplacianoDelGaussiano = new JMenuItem("Mostrar Mascara");
+		JMenuItem menuItemMostrarMascaraLaplacianoDelGaussiano = new JMenuItem("Mostrar M\u00e1scara");
 		menuItemMostrarMascaraLaplacianoDelGaussiano.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
@@ -943,8 +1004,8 @@ public class VentanaPrincipal extends JFrame {
 		menuDeteccionLaplacianoDelGaussiano.add(menuItemMostrarMascaraLoG);
 
 		
-		JMenu menuDeteccionDeBordesDireccionales = new JMenu("Deteccion de Bordes Direccionales");
-		menuItemEditar.add(menuDeteccionDeBordesDireccionales);
+		JMenu menuDeteccionDeBordesDireccionales = new JMenu("Detecci\u00f3n de Bordes Direccionales");
+		//menuItemEditar.add(menuDeteccionDeBordesDireccionales);
 		
 		JMenuItem menuItemPrewittDireccional = new JMenuItem("Aplicar Prewitt Direccional");
 		menuItemPrewittDireccional.addActionListener(new ActionListener() {
@@ -1006,10 +1067,10 @@ public class VentanaPrincipal extends JFrame {
 		});
 		menuDeteccionDeBordesDireccionales.add(menuItemNuevaDireccional);
 		
-		JMenu menuDifusion = new JMenu("Difusion");
-		menuItemEditar.add(menuDifusion);
+		JMenu menuDifusion = new JMenu("Difusi\u00f3n");
+		//menuItemEditar.add(menuDifusion);
 		
-		JMenuItem menuItemDifusionIsotropica = new JMenuItem("Aplicar Difusión Isotrópica");
+		JMenuItem menuItemDifusionIsotropica = new JMenuItem("Aplicar Difusi\u00f3n Isotr\u00f3pica");
 		menuItemDifusionIsotropica.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
@@ -1021,7 +1082,7 @@ public class VentanaPrincipal extends JFrame {
 		menuDifusion.add(menuItemDifusionIsotropica);
 		
 		
-		JMenuItem menuItemDifusionAnisotropica = new JMenuItem("Aplicar Difusión Anisotrópica");
+		JMenuItem menuItemDifusionAnisotropica = new JMenuItem("Aplicar Difusi\u00f3n Anisotr\u00f3pica");
 		menuItemDifusionAnisotropica.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
@@ -1045,6 +1106,35 @@ public class VentanaPrincipal extends JFrame {
 
 		VentanaPrincipal.this.refrescarImagen();
 	}
+	
+	public void aplicarDetectorDeBordesDeMoravec(int umbral, int radio) {
+		
+		Imagen imagenAnterior = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
+		BufferedImage bufferedImage = DetectorDeBordesMoravec.aplicarMoravec(imagenAnterior, radio, umbral, true);
+		Imagen nuevaImagenActual = new Imagen(bufferedImage,
+				imagenAnterior.getFormato(), imagenAnterior.getNombre());
+		ProcesadorDeImagenes.obtenerInstancia().setImagenActual(
+				nuevaImagenActual);
+		DetectorDeBordesMoravec.setResultadosX(new LinkedList<Integer>());
+		DetectorDeBordesMoravec.setResultadosY(new LinkedList<Integer>());
+		VentanaPrincipal.this.refrescarImagen();
+	}
+
+	
+	public void aplicarDoG(int sigma1, int sigma2, int sigma3, int sigma4) {
+		
+		Imagen imagenAnterior = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
+		BufferedImage bufferedImage = DoG.aplicar(imagenAnterior, sigma1, sigma2, sigma3, sigma4, true);
+		Imagen nuevaImagenActual = new Imagen(bufferedImage,
+				imagenAnterior.getFormato(), imagenAnterior.getNombre());
+		ProcesadorDeImagenes.obtenerInstancia().setImagenActual(
+				nuevaImagenActual);
+		DoG.setResultadosX(new LinkedList<Integer>());
+		DoG.setResultadosY(new LinkedList<Integer>());
+		VentanaPrincipal.this.refrescarImagen();
+	}
+	
+	
 	
 	public void umbralizarConHisteresis(int umbral1, int umbral2) {
 		
@@ -1114,10 +1204,12 @@ public class VentanaPrincipal extends JFrame {
 		
 		Imagen imagenElegida = ProcesadorDeImagenes.obtenerInstancia()
 				.cargarUnaImagenDesdeArchivo();
-		int cantidadPixeles = imagenElegida.getBufferedImage().getWidth()
-				* imagenElegida.getBufferedImage().getHeight();
-		refrescarCantidadPixeles(cantidadPixeles);
-		actualizarPanelDeImagen(menuItemGuardarComo, imagenElegida);
+		if(imagenElegida != null){
+			int cantidadPixeles = imagenElegida.getBufferedImage().getWidth()
+					* imagenElegida.getBufferedImage().getHeight();
+			refrescarCantidadPixeles(cantidadPixeles);
+			actualizarPanelDeImagen(menuItemGuardarComo, imagenElegida);
+		}
 	}
 
 	private void inhabilitarItem(JMenuItem item) {
@@ -1305,8 +1397,10 @@ public class VentanaPrincipal extends JFrame {
 	public void aplicarDetectorSusan(String flag) {
 		
 		Imagen imagenActual = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
-		Imagen imagenResultante = new Imagen(DetectorSusan.aplicar(imagenActual, flag), imagenActual.getFormato(), imagenActual.getNombre()+"_susan");
+		Imagen imagenResultante = new Imagen(DetectorSusan.aplicar(imagenActual, flag, true), imagenActual.getFormato(), imagenActual.getNombre()+"_susan");
 		ProcesadorDeImagenes.obtenerInstancia().setImagenActual(imagenResultante);
+		DetectorSusan.setResultadosX(new LinkedList<Integer>());
+		DetectorSusan.setResultadosY(new LinkedList<Integer>());
 		VentanaPrincipal.this.refrescarImagen();
 		
 	}
@@ -1320,6 +1414,26 @@ public class VentanaPrincipal extends JFrame {
 				titaMin, titaMax, discTita, roMin, roMax, discRo, umbral, VentanaPrincipal.this);
 		proc.setImagenOriginal(new Imagen(imagenAnterior, proc.getImagenActual().getFormato(), proc.getImagenActual().getNombre()));
 	}
+	
+	
+	public void aplicarFiltroGaussiano(int sigmaElegido) {
+		ProcesadorDeImagenes proc = ProcesadorDeImagenes.obtenerInstancia();
+		Imagen imagenAnterior = proc.getImagenActual();
+		Imagen imagenResultante = FiltroGaussiano.aplicarFiltroGaussiano(imagenAnterior, sigmaElegido);
+		proc.setImagenOriginal(new Imagen(imagenAnterior.getBufferedImage(), proc.getImagenActual().getFormato(), proc.getImagenActual().getNombre()));
+		proc.setImagenActual(imagenResultante);
+		VentanaPrincipal.this.refrescarImagen();
+	}
+	
+	
+	public void ejecutarAlgoritmoComparativo(final String coleccion, final int sigma) throws IOException{
+		
+		AlgoritmoComparativoDeDetectores.aplicarAlgoritmo(ProcesadorDeImagenes.obtenerInstancia().getImagenActual(), coleccion, sigma);
+
+		//ProcesadorDeImagenes.obtenerInstancia().setImagenActual(imagenConHarris);
+		//refrescarImagen();
+	}
+	
 	
 	public void mostrarDialogoDeEspera(){
 		

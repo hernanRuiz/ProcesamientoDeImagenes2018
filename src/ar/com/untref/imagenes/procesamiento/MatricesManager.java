@@ -2,7 +2,11 @@ package ar.com.untref.imagenes.procesamiento;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
+import java.awt.image.DataBuffer;
 import java.awt.image.DataBufferByte;
+import java.awt.image.DataBufferUShort;
+import java.nio.ByteBuffer;
+import java.nio.ShortBuffer;
 
 import ar.com.untref.imagenes.enums.Canal;
 
@@ -144,9 +148,50 @@ public class MatricesManager {
 		return imagenResultante;
 	}
 	
+	public static BufferedImage obtenerImagenDeMatrizPGM(int[][] matriz) {
+
+		int width = matriz[0].length;
+		int height = matriz.length;
+
+		BufferedImage imagenResultante = null;
+		imagenResultante = new BufferedImage(width, height,
+				BufferedImage.TYPE_4BYTE_ABGR);
+		
+		for (int i = 0; i < height; i++) {
+			for (int j = 0; j < width; j++) {
+
+				int g = matriz[i][j];
+				Color color = new Color(g);
+				
+				imagenResultante.setRGB(j, i, (255 << 24) | (color.getRGB() << 16) | (color.getRGB() << 8) | color.getRGB());
+			}
+		}
+		
+		return imagenResultante;
+	}
+	
+	
 	public static int[][] calcularMatrizDeLaImagen(BufferedImage image, Canal canal) {
 
-		final byte[] pixels = ((DataBufferByte) image.getRaster().getDataBuffer()).getData();
+		byte[] pixels;
+		
+		DataBuffer dataBuffer = image.getRaster().getDataBuffer();
+		ByteBuffer byteBuffer;
+		
+		short[] pixelesS;
+		byte[] pixelesB;
+		
+		if (dataBuffer instanceof DataBufferUShort) {
+			pixelesS = ((DataBufferUShort) dataBuffer).getData();
+			byteBuffer = ByteBuffer.allocate(pixelesS.length * 2);
+			byteBuffer.asShortBuffer().put(ShortBuffer.wrap(pixelesS));
+			pixels = byteBuffer.array();
+		} else {
+			pixelesB = ((DataBufferByte) dataBuffer).getData();
+			byteBuffer = ByteBuffer.wrap(pixelesB);
+			pixels = byteBuffer.array();
+		}
+		
 		final int width = image.getWidth();
 		final int height = image.getHeight();
 		final boolean hasAlphaChannel = image.getAlphaRaster() != null;
@@ -154,7 +199,7 @@ public class MatricesManager {
 		int[][] matriz = new int[height][width];
 		if (hasAlphaChannel) {
 			final int pixelLength = 4;
-			for (int pixel = 0, row = 0, col = 0; pixel < pixels.length; pixel += pixelLength) {
+			for (int pixel = 0, row = 0, col = 0; (pixel + 3) < pixels.length; pixel += pixelLength) {
 				
 				int argb = 0;
 				argb += (((int) pixels[pixel] & 0xff) << 24); // alpha
@@ -184,7 +229,7 @@ public class MatricesManager {
 			}
 		} else {
 			final int pixelLength = 3;
-			for (int pixel = 0, row = 0, col = 0; pixel < pixels.length; pixel += pixelLength) {
+			for (int pixel = 0, row = 0, col = 0; (pixel +3) < pixels.length; pixel += pixelLength) {
 				int argb = 0;
 				argb += -16777216; // 255 alpha
 				argb += ((int) pixels[pixel] & 0xff); // blue

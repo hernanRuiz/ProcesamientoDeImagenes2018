@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.awt.image.Kernel;
+import java.util.LinkedList;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -23,9 +24,13 @@ import javax.swing.border.EmptyBorder;
 
 import ar.com.untref.imagenes.bordes.DetectorDeBordes;
 import ar.com.untref.imagenes.bordes.DetectorDeBordesDeCanny;
+import ar.com.untref.imagenes.bordes.DetectorDeBordesMoravec;
+import ar.com.untref.imagenes.bordes.DetectorDeHarris;
 import ar.com.untref.imagenes.bordes.DetectorSusan;
+import ar.com.untref.imagenes.bordes.DoG;
 import ar.com.untref.imagenes.bordes.InterfaceDetectorDeBordes;
 import ar.com.untref.imagenes.dialogs.DetectorDeCannyDialog;
+import ar.com.untref.imagenes.dialogs.DetectorDeMoravecDialog;
 import ar.com.untref.imagenes.dialogs.DifusionAnisotropicaDialog;
 import ar.com.untref.imagenes.dialogs.DifusionIsotropicaDialog;
 import ar.com.untref.imagenes.dialogs.EspereDialog;
@@ -117,8 +122,8 @@ public class VentanaRuido extends JFrame {
 		final JPanel panelPromedios = new JPanel();
 		JLabel cantidadPixeles = new JLabel("Cantidad de Pixeles:");
 		resultadoCantidadPixeles = new JLabel("");
-		panelPromedios.add(cantidadPixeles);
-		panelPromedios.add(resultadoCantidadPixeles);
+		//panelPromedios.add(cantidadPixeles);
+		//panelPromedios.add(resultadoCantidadPixeles);
 		cantidadDePixeles = imagenSinCambios.getBufferedImage().getHeight()*imagenSinCambios.getBufferedImage().getWidth();
 		refrescarCantidadPixeles(cantidadDePixeles);
 		
@@ -135,11 +140,11 @@ public class VentanaRuido extends JFrame {
 		final JLabel labelResultadoPromedioAzul = new JLabel("");
 		labelResultadoPromedioAzul.setVisible(false);
 		
-		panelPromedios.add(botonPromedio, BorderLayout.PAGE_END);
-		panelPromedios.add(labelPromedioGrises, BorderLayout.PAGE_END);
-		panelPromedios.add(labelResultadoPromedioRojo, BorderLayout.PAGE_END);
-		panelPromedios.add(labelResultadoPromedioVerde, BorderLayout.PAGE_END);
-		panelPromedios.add(labelResultadoPromedioAzul, BorderLayout.PAGE_END);
+		//panelPromedios.add(botonPromedio, BorderLayout.PAGE_END);
+		//panelPromedios.add(labelPromedioGrises, BorderLayout.PAGE_END);
+		//panelPromedios.add(labelResultadoPromedioRojo, BorderLayout.PAGE_END);
+		//panelPromedios.add(labelResultadoPromedioVerde, BorderLayout.PAGE_END);
+		//panelPromedios.add(labelResultadoPromedioAzul, BorderLayout.PAGE_END);
 		JButton volverALaImagenOriginal = new JButton("Imagen Original");
 		
 		volverALaImagenOriginal.addActionListener(new ActionListener() {
@@ -283,19 +288,19 @@ public class VentanaRuido extends JFrame {
 		});
 		
 		JLabel labelRuidoExponencial = new JLabel("Ruido Exponencial:");
-		panelRuido.add(labelRuidoExponencial);
+		//panelRuido.add(labelRuidoExponencial);
 		
 		JLabel labelLambda = new JLabel("λ:");
-		panelRuido.add(labelLambda);
+		//panelRuido.add(labelLambda);
 		
 		textFieldLambda = new JTextField();
-		panelRuido.add(textFieldLambda);
+		//panelRuido.add(textFieldLambda);
 		textFieldLambda.setMinimumSize(new Dimension(3, 20));
 		textFieldLambda.setPreferredSize(new Dimension(1, 20));
 		textFieldLambda.setColumns(3);
 		
 		JButton aplicarRuidoExponencial = new JButton("Aplicar");
-		panelRuido.add(aplicarRuidoExponencial);
+		//panelRuido.add(aplicarRuidoExponencial);
 		aplicarRuidoExponencial.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
@@ -339,19 +344,19 @@ public class VentanaRuido extends JFrame {
 
 		
 		JLabel labelRuidoRayleigh = new JLabel("Ruido Rayleigh:");
-		panelRuido.add(labelRuidoRayleigh);
+		//panelRuido.add(labelRuidoRayleigh);
 		
 		JLabel labelPhi = new JLabel("φ:");
-		panelRuido.add(labelPhi);
+		//panelRuido.add(labelPhi);
 		
 		textFieldPhi = new JTextField();
-		panelRuido.add(textFieldPhi);
+		//panelRuido.add(textFieldPhi);
 		textFieldPhi.setMinimumSize(new Dimension(3, 20));
 		textFieldPhi.setPreferredSize(new Dimension(1, 20));
 		textFieldPhi.setColumns(3);
 		
 		JButton aplicarRuidoRayleigh = new JButton("Aplicar");
-		panelRuido.add(aplicarRuidoRayleigh);
+		//panelRuido.add(aplicarRuidoRayleigh);
 		aplicarRuidoRayleigh.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
@@ -395,20 +400,20 @@ public class VentanaRuido extends JFrame {
 		});
 		
 		JLabel labelRuidoSaltAndPepper = new JLabel("Ruido SyP");
-		panelRuido.add(labelRuidoSaltAndPepper);
+		//panelRuido.add(labelRuidoSaltAndPepper);
 		
 		JLabel labelPorcentaje = new JLabel("(%):");
-		panelRuido.add(labelPorcentaje);
+		//panelRuido.add(labelPorcentaje);
 		
 		textFieldPorcentaje = new JTextField();
-		panelRuido.add(textFieldPorcentaje);
+		//panelRuido.add(textFieldPorcentaje);
 		textFieldPorcentaje.setMinimumSize(new Dimension(3, 20));
 		textFieldPorcentaje.setPreferredSize(new Dimension(1, 20));
 		textFieldPorcentaje.setColumns(3);
 		
 		
 		JButton aplicarRuidoSaltAndPepper = new JButton("Aplicar");
-		panelRuido.add(aplicarRuidoSaltAndPepper);
+		//panelRuido.add(aplicarRuidoSaltAndPepper);
 		aplicarRuidoSaltAndPepper.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
@@ -522,7 +527,7 @@ public class VentanaRuido extends JFrame {
 				}
 			}
 		});
-		menuItemEditar.add(menuItemHistogramas);
+		//menuItemEditar.add(menuItemHistogramas);
 		
 		JMenu menuFiltros = new JMenu("Filtros");
 		menuItemEditar.add(menuFiltros);
@@ -544,7 +549,7 @@ public class VentanaRuido extends JFrame {
 				d.setVisible(true);
 			}
 		});
-		menuFiltros.add(menuItemFiltroMedia);
+		//menuFiltros.add(menuItemFiltroMedia);
 		menuFiltros.add(filtroGaussianoMenuItem);
 		
 		JMenuItem menuItemFiltroPasaAltos = new JMenuItem("Filtro pasa altos");
@@ -564,12 +569,36 @@ public class VentanaRuido extends JFrame {
 				d.setVisible(true);
 			}
 		});
-		menuFiltros.add(menuItemFiltroDeLaMediana);
-		menuFiltros.add(menuItemFiltroPasaAltos);
+		//menuFiltros.add(menuItemFiltroDeLaMediana);
+		//menuFiltros.add(menuItemFiltroPasaAltos);
 		
 		
 		JMenu menuDeteccionDeBordes = new JMenu("Deteccion de Bordes");
 		menuItemEditar.add(menuDeteccionDeBordes);
+		
+		JMenuItem menuItemHarris = new JMenuItem("Detector de Harris");
+		menuItemHarris.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				SwingWorker<Void, Void> mySwingWorker = new SwingWorker<Void, Void>(){
+			         @Override
+			         protected Void doInBackground() throws Exception {
+
+			        	Imagen imagenConHarris = DetectorDeHarris.detectarEsquinas(ProcesadorDeImagenes.obtenerInstancia().getImagenActual(), true);
+						ProcesadorDeImagenes.obtenerInstancia().setImagenActual(imagenConHarris);
+						DetectorDeHarris.setResultadosX(new LinkedList<Integer>());
+						DetectorDeHarris.setResultadosY(new LinkedList<Integer>());
+						refrescarImagen();
+						
+						return null;
+			         }
+			      };
+
+			      mySwingWorker.execute();
+			      mostrarDialogoDeEspera();
+			}
+		});
+		menuDeteccionDeBordes.add(menuItemHarris);
 		
 		JMenuItem menuItemDetectorDeSusan = new JMenuItem("Detector de Susan");
 		menuItemDetectorDeSusan.addActionListener(new ActionListener() {
@@ -581,8 +610,32 @@ public class VentanaRuido extends JFrame {
 		});
 		menuDeteccionDeBordes.add(menuItemDetectorDeSusan);
 		
+		
+		JMenuItem menuItemMoravec = new JMenuItem("Detector de Bordes de Movarec");
+		menuItemMoravec.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				DetectorDeMoravecDialog d = new DetectorDeMoravecDialog(VentanaRuido.this, contentPane);
+				d.setVisible(true);
+			}
+		});
+		menuDeteccionDeBordes.add(menuItemMoravec);
+		
+		
+		JMenuItem menuItemDoG = new JMenuItem("Diferencia de Gaussianas");
+		menuItemDoG.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				aplicarDoG(1, 3, 5, 7);
+				
+				//DiferenciaDeGaussianasDialog d = new DiferenciaDeGaussianasDialog(VentanaPrincipal.this, contentPane);
+				//d.setVisible(true);
+			}
+		});
+		menuDeteccionDeBordes.add(menuItemDoG);
+		
 		JMenu menuItemCanny = new JMenu("Detector De Bordes Canny");
-		menuDeteccionDeBordes.add(menuItemCanny);
+		//menuDeteccionDeBordes.add(menuItemCanny);
 		
 		JMenuItem menuItemNoMaximos = new JMenuItem("Supresión no Máximos");
 		menuItemNoMaximos.addActionListener(new ActionListener() {
@@ -620,7 +673,7 @@ public class VentanaRuido extends JFrame {
 		
 		
 		JMenu menuDeteccionDePrewitt = new JMenu("Detector De Prewitt");
-		menuDeteccionDeBordes.add(menuDeteccionDePrewitt);
+		//menuDeteccionDeBordes.add(menuDeteccionDePrewitt);
 		
 		JMenuItem menuItemDetectorDePrewitt = new JMenuItem("Aplicar");
 		menuItemDetectorDePrewitt.addActionListener(new ActionListener() {
@@ -671,7 +724,7 @@ public class VentanaRuido extends JFrame {
 		
 		
 		JMenu menuDeteccionDeSobel = new JMenu("Detector De Sobel");
-		menuDeteccionDeBordes.add(menuDeteccionDeSobel);
+		//menuDeteccionDeBordes.add(menuDeteccionDeSobel);
 		
 		JMenuItem menuItemDetectorDeSobel = new JMenuItem("Aplicar");
 		menuItemDetectorDeSobel.addActionListener(new ActionListener() {
@@ -721,7 +774,7 @@ public class VentanaRuido extends JFrame {
 		
 		
 		JMenu menuDeteccionLaplaciano = new JMenu("Detector Laplaciano");
-		menuDeteccionDeBordes.add(menuDeteccionLaplaciano);
+		//menuDeteccionDeBordes.add(menuDeteccionLaplaciano);
 		
 		JMenuItem menuItemMostrarMascaraLaplaciano = new JMenuItem("Mostrar Mascara");
 		menuItemMostrarMascaraLaplaciano.addActionListener(new ActionListener() {
@@ -770,7 +823,7 @@ public class VentanaRuido extends JFrame {
 		menuDeteccionLaplaciano.add(menuItemAplicarDetectorLaplaciano);
 		
 		JMenu menuDeteccionLoG = new JMenu("Detector Laplaciano del Gaussiano");
-		menuDeteccionDeBordes.add(menuDeteccionLoG);
+		//menuDeteccionDeBordes.add(menuDeteccionLoG);
 		
 		JMenuItem menuItemAplicarDetectorLoG = new JMenuItem("Aplicar");
 		menuItemAplicarDetectorLoG.addActionListener(new ActionListener() {
@@ -803,7 +856,7 @@ public class VentanaRuido extends JFrame {
 		});
 		
 		JMenu menuUmbral = new JMenu ("Umbrales");
-		menuItemEditar.add(menuUmbral);
+		//menuItemEditar.add(menuUmbral);
 		
 		menuUmbral.add(menuItemUmbralGlobal);
 		menuUmbral.add(menuItemUmbralOtsu);
@@ -821,7 +874,7 @@ public class VentanaRuido extends JFrame {
 		
 		
 		JMenu menuDifusion = new JMenu("Difusion");
-		menuItemEditar.add(menuDifusion);
+		//menuItemEditar.add(menuDifusion);
 		
 		JMenuItem menuItemDifusionIsotropica = new JMenuItem("Aplicar Difusión Isotrópica");
 		menuItemDifusionIsotropica.addActionListener(new ActionListener() {
@@ -1107,9 +1160,43 @@ public void umbralizarConHisteresis(int umbral1, int umbral2) {
 	public void aplicarDetectorSusan(String flag) {
 		
 		Imagen imagenActual = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
-		Imagen imagenResultante = new Imagen(DetectorSusan.aplicar(imagenActual, flag), imagenActual.getFormato(), imagenActual.getNombre()+"_susan");
+		Imagen imagenResultante = new Imagen(DetectorSusan.aplicar(imagenActual, flag, true), imagenActual.getFormato(), imagenActual.getNombre()+"_susan");
 		ProcesadorDeImagenes.obtenerInstancia().setImagenActual(imagenResultante);
+		DetectorSusan.setResultadosX(new LinkedList<Integer>());
+		DetectorSusan.setResultadosY(new LinkedList<Integer>());
 		VentanaRuido.this.refrescarImagen();
 		
 	}
+	
+	
+	public void aplicarDetectorDeBordesDeMoravec(int umbral, int radio) {
+		
+		Imagen imagenAnterior = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
+		BufferedImage bufferedImage = DetectorDeBordesMoravec.aplicarMoravec(imagenAnterior, radio, umbral, true);
+		Imagen nuevaImagenActual = new Imagen(bufferedImage,
+				imagenAnterior.getFormato(), imagenAnterior.getNombre());
+		ProcesadorDeImagenes.obtenerInstancia().setImagenActual(
+				nuevaImagenActual);
+		DetectorDeBordesMoravec.setResultadosX(new LinkedList<Integer>());
+		DetectorDeBordesMoravec.setResultadosY(new LinkedList<Integer>());
+		VentanaRuido.this.refrescarImagen();
+	}
+	
+	
+	public void aplicarDoG(int sigma1, int sigma2, int sigma3, int sigma4) {
+		
+		Imagen imagenAnterior = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
+		BufferedImage bufferedImage = DoG.aplicar(imagenAnterior, sigma1, sigma2, sigma3, sigma4, true);
+		Imagen nuevaImagenActual = new Imagen(bufferedImage,
+				imagenAnterior.getFormato(), imagenAnterior.getNombre());
+		ProcesadorDeImagenes.obtenerInstancia().setImagenActual(
+				nuevaImagenActual);
+		DoG.setResultadosX(new LinkedList<Integer>());
+		DoG.setResultadosY(new LinkedList<Integer>());
+		VentanaRuido.this.refrescarImagen();
+	}
+	
 }
+
+
+

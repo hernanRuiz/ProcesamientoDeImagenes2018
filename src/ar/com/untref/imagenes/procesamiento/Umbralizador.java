@@ -32,7 +32,7 @@ public class Umbralizador {
 				int rgba = imagenOriginal.getBufferedImage().getRGB(x, y);
 				Color col = new Color(rgba, true);
 				
-				if ( col.getRed()<= umbral){
+				if ( col.getRed() <= umbral){
 					
 					col = new Color(0,0,0);
 				} else {

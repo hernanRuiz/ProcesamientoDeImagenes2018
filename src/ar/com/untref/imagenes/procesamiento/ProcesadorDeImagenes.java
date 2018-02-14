@@ -5,8 +5,11 @@ import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.WritableRaster;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.util.LinkedList;
 import java.util.List;
@@ -17,6 +20,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import ar.com.untref.imagenes.enums.Canal;
 import ar.com.untref.imagenes.enums.FormatoDeImagen;
+import ar.com.untref.imagenes.filtros.FiltroGaussiano;
 import ar.com.untref.imagenes.helpers.FormulasHelper;
 import ar.com.untref.imagenes.modelo.Archivo;
 import ar.com.untref.imagenes.modelo.Imagen;
@@ -56,11 +60,12 @@ public class ProcesadorDeImagenes {
 
 		Imagen imagenADevolver = null;
 
-		JFileChooser selector = new JFileChooser();
+		JFileChooser selector = new JFileChooser("D:\\1736 - 3 Hernan Ruiz\\User Hernan\\DocT\\Resultados");
 		selector.setDialogTitle("Seleccione una imagen");
 
 		FileNameExtensionFilter filtroImagen = new FileNameExtensionFilter(
-				"JPG & GIF & BMP & PNG", "jpg", "gif", "bmp", "png");
+				"JPG & GIF & BMP & PNG & PGM", "jpg", "gif", "bmp", "png", "pgm");
+		
 		selector.setFileFilter(filtroImagen);
 
 		int flag = selector.showOpenDialog(null);
@@ -76,41 +81,132 @@ public class ProcesadorDeImagenes {
 
 				if (formatoDeLaImagen != FormatoDeImagen.DESCONOCIDO) {
 
-					Imagen imagen = new Imagen(bufferedImage,
-							formatoDeLaImagen, archivoActual.getNombre());
+						Imagen imagen;
+						
+						if (formatoDeLaImagen != FormatoDeImagen.PGM){
+	
+							imagen = new Imagen(bufferedImage,
+									formatoDeLaImagen, archivoActual.getNombre());
+							
+						imagen.setMatriz(MatricesManager.calcularMatrizDeLaImagen(
+								bufferedImage, Canal.ROJO), Canal.ROJO);
+						imagen.setMatriz(MatricesManager.calcularMatrizDeLaImagen(
+								bufferedImage, Canal.VERDE), Canal.VERDE);
+						imagen.setMatriz(MatricesManager.calcularMatrizDeLaImagen(
+								bufferedImage, Canal.AZUL), Canal.AZUL);
+	
+						imagenActual = new Imagen(imagen.getBufferedImage(),
+								imagen.getFormato(), imagen.getNombre(),
+								imagen.getMatriz(Canal.ROJO),
+								imagen.getMatriz(Canal.VERDE),
+								imagen.getMatriz(Canal.AZUL));
+						imagenOriginal = new Imagen(imagen.getBufferedImage(),
+								imagen.getFormato(), imagen.getNombre(),
+								imagen.getMatriz(Canal.ROJO),
+								imagen.getMatriz(Canal.VERDE),
+								imagen.getMatriz(Canal.AZUL));
+						imagenADevolver = new Imagen(imagen.getBufferedImage(),
+								imagen.getFormato(), imagen.getNombre(),
+								imagen.getMatriz(Canal.ROJO),
+								imagen.getMatriz(Canal.VERDE),
+								imagen.getMatriz(Canal.AZUL));
+					} else {
+						
+						
+						//BufferedImage im = readPGMFile(selector.getSelectedFile());
+						
+//						int[][] matrizCanal = MatricesManager.calcularMatrizDeLaImagen(
+//								im, Canal.ROJO);
 
-					imagen.setMatriz(MatricesManager.calcularMatrizDeLaImagen(
-							bufferedImage, Canal.ROJO), Canal.ROJO);
-					imagen.setMatriz(MatricesManager.calcularMatrizDeLaImagen(
-							bufferedImage, Canal.VERDE), Canal.VERDE);
-					imagen.setMatriz(MatricesManager.calcularMatrizDeLaImagen(
-							bufferedImage, Canal.AZUL), Canal.AZUL);
-
-					imagenActual = new Imagen(imagen.getBufferedImage(),
-							imagen.getFormato(), imagen.getNombre(),
-							imagen.getMatriz(Canal.ROJO),
-							imagen.getMatriz(Canal.VERDE),
-							imagen.getMatriz(Canal.AZUL));
-					imagenOriginal = new Imagen(imagen.getBufferedImage(),
-							imagen.getFormato(), imagen.getNombre(),
-							imagen.getMatriz(Canal.ROJO),
-							imagen.getMatriz(Canal.VERDE),
-							imagen.getMatriz(Canal.AZUL));
-					imagenADevolver = new Imagen(imagen.getBufferedImage(),
-							imagen.getFormato(), imagen.getNombre(),
-							imagen.getMatriz(Canal.ROJO),
-							imagen.getMatriz(Canal.VERDE),
-							imagen.getMatriz(Canal.AZUL));
-				}
-
+						imagen  = new Imagen(readPGMFile(selector.getSelectedFile()),
+								formatoDeLaImagen, archivoActual.getNombre());
+						
+						imagenActual = new Imagen(imagen.getBufferedImage(),
+								imagen.getFormato(), imagen.getNombre());
+						imagenOriginal = new Imagen(imagen.getBufferedImage(),
+								imagen.getFormato(), imagen.getNombre());
+						imagenADevolver = new Imagen(imagen.getBufferedImage(),
+								imagen.getFormato(), imagen.getNombre());
+					
+					}
+				} 
+					
 			} catch (Exception e) {
 
 				e.printStackTrace();
 			}
+			
 		}
 
 		return imagenADevolver;
 	}
+	
+	
+	
+	  /**
+	   * Reads a PGM file and returns the image. The maximum greyscale
+	   * value is rescaled to be between 0 and 255.
+	   * @param filename
+	   * @return
+	 * @throws IOException 
+	   */
+	  public static BufferedImage readPGMFile(File archivoActual) throws IOException
+	  {
+	    
+		FileInputStream f = new FileInputStream(archivoActual);
+		BufferedReader d = new BufferedReader(new InputStreamReader(f));
+		//String magic = d.readLine(); // first line contains P2 or P5
+		String line = d.readLine(); // second line contains height and width
+
+		String valores[] = line.split(" ");
+
+		int width = Integer.valueOf(valores[0]);
+		int height = Integer.valueOf(valores[1]);
+
+		line = d.readLine();
+
+		int max = Integer.valueOf(line);
+
+		while (line.startsWith("#")) {
+			line = d.readLine();
+		}
+
+		int[][] image = new int[height][width];
+
+		// int row = 0;
+		// int col = 0;
+
+		// while(d.re){
+		// int value = scanner.nextInt();
+		//
+		// // re-scale the value to be between 0 and 255
+		// value = (int) Math.round( ((double) value) / max * 255);
+		//
+		// image[row][col] = value;
+		// col += 1;
+		// if (col == width){
+		// col = 0;
+		// row += 1;
+		// }
+		// }
+
+		for (int i = 0; i < height; ++i) {
+			for (int j = 0; j < width; ++j) {
+				// normalize to 255
+				int value = d.read();
+				value = (int) Math.round((((double) value) * 255) / max);
+				image[i][j] = value;
+			}
+		}
+
+		BufferedImage imagenResultado = MatricesManager
+				.obtenerImagenDeMatrizPGM(image);
+		
+		d.close();
+
+		return imagenResultado;
+	  }
+	
 
 	/**
 	 * Abre una imagen en formato RAW de archivo, con las medidas definidas y la
@@ -296,6 +392,13 @@ public class ProcesadorDeImagenes {
 		return valoresPromedio;
 	}
 
+	
+	public Imagen aplicarFiltroGaussiano(Imagen imagen, int sigma) {
+		
+		return FiltroGaussiano.aplicarFiltroGaussiano(imagen, sigma);
+	}
+	
+	
 	public Imagen aplicarNegativo(Imagen imagen) {
 
 		Imagen imagenEnNegativo = null;
@@ -390,7 +493,7 @@ public class ProcesadorDeImagenes {
 	 * @param imagen
 	 *            - imagen a umbralizar
 	 * @param umbral
-	 *            - valor que hará de separador entre valores 0 y 255
+	 *            - valor que harï¿½ de separador entre valores 0 y 255
 	 */
 	public void umbralizarImagen(VentanaPrincipal ventana, int umbral) {
 

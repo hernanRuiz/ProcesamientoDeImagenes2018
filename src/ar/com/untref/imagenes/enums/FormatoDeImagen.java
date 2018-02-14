@@ -8,6 +8,7 @@ public enum FormatoDeImagen {
 	GIF(".gif", "gif"),
 	BMP(".bmp", "bmp"),
 	PNG(".png", "png"),
+	PGM(".pgm", "pgm"),
 	DESCONOCIDO("","");
 	
 	private String extension;

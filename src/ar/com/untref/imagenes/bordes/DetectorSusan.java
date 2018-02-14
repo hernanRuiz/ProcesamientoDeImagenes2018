@@ -1,34 +1,53 @@
 package ar.com.untref.imagenes.bordes;
 
+
 import java.awt.Color;
 import java.awt.image.BufferedImage;
+import java.io.FileNotFoundException;
+import java.io.PrintStream;
+import java.util.LinkedList;
+import java.util.List;
 
+import ar.com.untref.imagenes.enums.FormatoDeImagen;
 import ar.com.untref.imagenes.modelo.Imagen;
 
 public class DetectorSusan {
 	 
  	private static final int TAMANIO_MASCARA = 7;
  	
- 	// Se cuentan sólo los píxeles de la imágen circular
+ 	// Se cuentan sÃ³lo los pÃ­xeles de la imagen circular
  	private static final int CANTIDAD_PIXELES_MASCARA = 37;
  	
  	private static double umbralT = 27.0;
-	private static int pixelNegro = new Color(0, 0, 0).getRGB();
-	private static int pixelRojo = new Color(255, 0, 0).getRGB();
- 	
+	//private static int pixelNegro = new Color(0, 0, 0).getRGB();
+	private static java.awt.Color pixelRojo = new java.awt.Color(255,0,0);
+	private static java.awt.Color pixelVerde = new java.awt.Color(0,255,0);
+	private static java.awt.Color pixelAzul = new java.awt.Color(0,0,255);
+	
+	
  	/**
  	 * Si el resultado es aprox 0, no corresponde a borde ni esquina.
  	 * Si el resultado es aprox 0.5, es un borde.
  	 * Si el resultado es aprox 0.75 es una esquina.
  	 * 
- 	 * Por lo tanto, se tomó como criterio que cualquier resultado mayor a 0.4, será considerado borde/esquina.
+ 	 * Por lo tanto, se tomï¿½ como criterio que cualquier resultado mayor a 0.4, serï¿½ considerado borde/esquina.
  	 */
 	private static double criterioDeSierra = 0.25;
  	private static double criterioDeBorde = 0.5;
  	private static double criterioDeEsquina = 0.75;
  	
+ 	static Color result = new Color(0);
+ 	
+ 	public static float red;
+	public float green;
+	public float blue;
+	
+	private static List<Integer> resultadosX = new LinkedList<Integer>();
+	private static List<Integer> resultadosY = new LinkedList<Integer>();
+	private static PrintStream fileStreamSusan; 	
+ 	
  	/**
- 	 * Aplica una máscara circular de 7x7 con el método de Susan.
+ 	 * Aplica una mï¿½scara circular de 7x7 con el mï¿½todo de Susan.
  	 */
  	public DetectorSusan() {
  		
@@ -98,71 +117,81 @@ public class DetectorSusan {
 		return mascaraDeSusan;
 	}
  	
- 	/**
- 	 * @return imagen binaria que detecta los bordes y esquinas de la imagen original
- 	 */
- 	public static BufferedImage aplicar(Imagen imagenOriginal, String flagDetector) {
+ 	
+ 	public static BufferedImage aplicar(Imagen image, final String flagDetector, boolean flagResultados) {
+		
+ 		if(flagResultados){			
+ 			try {
+ 				fileStreamSusan = new PrintStream("Salida_algoritmo_Susan.txt");
+ 				fileStreamSusan.flush();
+ 				System.setOut(fileStreamSusan);
+ 				System.out.println("Puntos detectados:");
+ 				System.out.println();
+ 			} catch (FileNotFoundException e) {
+ 				e.printStackTrace();
+ 			}
+		}
  		
- 		int[][] mascaraSusan = calcularMascaraDeSusan();
- 		
- 		Imagen imagenResultante = new Imagen(new BufferedImage(imagenOriginal.getBufferedImage().getWidth(), imagenOriginal.getBufferedImage().getHeight(), imagenOriginal.getBufferedImage().getType()), imagenOriginal.getFormato(), imagenOriginal.getNombre()+"_susan");
- 		
- 		int sumarEnAncho = (-1) * (TAMANIO_MASCARA / 2);
- 		int sumarEnAlto = (-1) * (TAMANIO_MASCARA / 2);
- 		
- 		// Iterar la imagen, sacando los bordes.
- 		for (int i = TAMANIO_MASCARA / 2; i < imagenOriginal.getBufferedImage().getWidth() - (TAMANIO_MASCARA / 2); i++) {
- 			for (int j = TAMANIO_MASCARA / 2; j < imagenOriginal.getBufferedImage().getHeight() - (TAMANIO_MASCARA / 2); j++) {
- 
- 				// Tomo el valor del píxel central de la máscara (el (3,3) de la máscara)
- 				int indiceICentralDeLaImagen = i + sumarEnAncho + (TAMANIO_MASCARA / 2);
- 				int indiceJCentralDeLaImagen = j + sumarEnAlto + (TAMANIO_MASCARA / 2);
- 				double valorCentral = new Color(imagenOriginal.getBufferedImage().getRGB(indiceICentralDeLaImagen, indiceJCentralDeLaImagen)).getRed();
- 				
- 				int cantidadDePixelesSimilaresAlCentral = 0;
-
- 				// Iterar la máscara
- 				for(int iAnchoMascara = 0; iAnchoMascara < TAMANIO_MASCARA; iAnchoMascara++) {
- 					for(int iAltoMascara = 0; iAltoMascara < TAMANIO_MASCARA; iAltoMascara++) {
- 						
- 						int indiceIDeLaImagen = i + sumarEnAncho + iAnchoMascara;
- 						int indiceJDeLaImagen = j + sumarEnAlto + iAltoMascara;
- 
- 						double valor = new Color(imagenOriginal.getBufferedImage().getRGB(indiceIDeLaImagen, indiceJDeLaImagen)).getRed();
- 						
- 						// Se multiplica el valor leído por la máscara, para sacar los que no pertenezcan a la parte circular.
- 						valor = valor * mascaraSusan[iAnchoMascara][iAltoMascara];
- 						
- 						if (Math.abs(valor - valorCentral) < umbralT) {
- 							
- 							cantidadDePixelesSimilaresAlCentral++;
- 						}
- 					}
- 				}
- 				// Fin iteración máscara
- 				
- 				double Sr0 = 1.0 - ((double)cantidadDePixelesSimilaresAlCentral / (double)CANTIDAD_PIXELES_MASCARA);
- 				
- 				
- 				switch (flagDetector) {
+ 		CustomBufferedImage oldImage = new CustomBufferedImage(image.getBufferedImage());
+		int height = oldImage.getHeight();
+		int width = oldImage.getWidth();
+		CustomBufferedImage newImage = new CustomBufferedImage(width, height, oldImage.getType());
+		int[][] susanMask = calcularMascaraDeSusan();
+		double Sr0 = 0;
+		
+		for (int x = 3; x < width - 3; x++) {
+			for (int y = 3; y < height - 3; y++) {
+				
+				int currentColor = oldImage.getGray(x, y);
+				double pixelsWithinColorRange = 0;
+				
+				for (int i = 0; i < 7; i++) {
+					for (int j = 0; j < 7; j++) {
+						int currentMaskColor = oldImage.getGray(x + i - 3, y + j - 3);
+						if (susanMask[i][j] != 0 && Math.abs(currentMaskColor - currentColor) < umbralT) {
+							pixelsWithinColorRange++;
+						}
+					}
+				}
+				
+				Sr0 = 1 - (pixelsWithinColorRange / CANTIDAD_PIXELES_MASCARA);
+				
+				switch (flagDetector) {
 
  				case "Esquinas":
- 					if(Math.abs( Sr0 - criterioDeEsquina) < 0.1){
+ 					
+ 					double lowLimit = 0.75 - (0.75 - 0.5) / 2;
+ 					double highLimit = 0.75 + (0.75 - 0.5) / 2;
+ 					
+ 					if((Math.abs( Sr0 - 0.25) <= 0.01)){
  	 					
- 	 					imagenResultante.getBufferedImage().setRGB(i, j, pixelRojo);
- 	 				} else {
- 	 					
- 	 					imagenResultante.getBufferedImage().setRGB(i, j, pixelNegro);
+ 						oldImage.setRGB(x, y, pixelRojo.getRGB());
+ 						if (flagResultados){
+ 							System.out.println(x + "," + y);
+ 						}
+ 						
+ 						resultadosX.add(x);
+ 						resultadosY.add(y);
  	 				}
- 					break;
+ 					
+ 					/*if(Math.abs( Sr0 - criterioDeBorde) < 0.15){
+ 	 					
+ 						oldImage.setRGB(x, y, pixelVerde.getRGB());
+ 	 				}
+ 					
+ 					if(Math.abs( Sr0 - criterioDeSierra) < 0.15){
+ 	 					
+ 						oldImage.setRGB(x, y, pixelAzul.getRGB());
+ 	 				}
+ 					break;*/
 
- 				case "Bordes":
+ 				/*case "Bordes":
  					if(Math.abs( Sr0 - criterioDeBorde) < 0.1){
  	 					
  	 					imagenResultante.getBufferedImage().setRGB(i, j, pixelRojo);
  	 				} else {
  	 					
- 	 					imagenResultante.getBufferedImage().setRGB(i, j, pixelNegro);
+ 	 					//imagenResultante.getBufferedImage().setRGB(i, j, pixelNegro);
  	 				}
  					break;
 
@@ -172,7 +201,7 @@ public class DetectorSusan {
  	 					imagenResultante.getBufferedImage().setRGB(i, j, pixelRojo);
  	 				} else {
  	 					
- 	 					imagenResultante.getBufferedImage().setRGB(i, j, pixelNegro);
+ 	 					//imagenResultante.getBufferedImage().setRGB(i, j, pixelNegro);
  	 				}
  					break;
  					
@@ -182,7 +211,7 @@ public class DetectorSusan {
  	 					imagenResultante.getBufferedImage().setRGB(i, j, pixelRojo);
  	 				} else {
  	 					
- 	 					imagenResultante.getBufferedImage().setRGB(i, j, pixelNegro);
+ 	 					//imagenResultante.getBufferedImage().setRGB(i, j, pixelNegro);
  	 				}
  					break;
  					
@@ -192,7 +221,7 @@ public class DetectorSusan {
  	 					imagenResultante.getBufferedImage().setRGB(i, j, pixelRojo);
  	 				} else {
  	 					
- 	 					imagenResultante.getBufferedImage().setRGB(i, j, pixelNegro);
+ 	 					//imagenResultante.getBufferedImage().setRGB(i, j, pixelNegro);
  	 				}
  					break;
  				
@@ -202,7 +231,7 @@ public class DetectorSusan {
  	 					imagenResultante.getBufferedImage().setRGB(i, j, pixelRojo);
  	 				} else {
  	 					
- 	 					imagenResultante.getBufferedImage().setRGB(i, j, pixelNegro);
+ 	 					//imagenResultante.getBufferedImage().setRGB(i, j, pixelNegro);
  	 				}
  					break;
  				
@@ -212,12 +241,71 @@ public class DetectorSusan {
 	 					imagenResultante.getBufferedImage().setRGB(i, j, pixelRojo);
 	 				} else {
 	 					
-	 					imagenResultante.getBufferedImage().setRGB(i, j, pixelNegro);
+	 					//imagenResultante.getBufferedImage().setRGB(i, j, pixelNegro);
 	 				}
-					break;
+					break;*/
 				}
- 			}
- 		}
- 		return imagenResultante.getBufferedImage();
+				
+				/*if (Math.abs(s - 0d) < 0.15d) {
+					newImage.setGray(x, y, 0);
+				} else if (Math.abs(s - 0.5d) <= 0.15d) {
+					// newImage.setGray(x, y, 255);
+					newImage.setRGB(x, y, 65280);
+					oldImage.setRGB(x, y, 65280);
+				} else if (Math.abs(s - 0.75d) <= 0.15d) {
+					// newImage.setGray(x, y, 255);
+					newImage.setRGB(x, y, 16711680);
+					oldImage.setRGB(x, y, 16711680);
+				}*/
+			}
+		}
+		
+		Imagen imagenFinal = superponerAImagenOriginal(newImage, oldImage);
+		
+		if(flagResultados){			
+			fileStreamSusan.flush();
+			fileStreamSusan.close();
+		}
+		
+		return oldImage;
  	}
+ 	
+ 	
+ 	 	private static Imagen superponerAImagenOriginal(BufferedImage umbralizada, BufferedImage original) {
+
+		Imagen imagenFinal = new Imagen(new BufferedImage(umbralizada.getWidth(), umbralizada.getHeight(), umbralizada.getType()), FormatoDeImagen.JPEG, "final");
+		
+		for (int i=0; i< umbralizada.getWidth(); i++){
+			for (int j=0; j< umbralizada.getHeight(); j++){
+				
+				Color colorEnUmbralizada = new Color(umbralizada.getRGB(i, j));
+				if (colorEnUmbralizada.getRed()==255){
+					
+					imagenFinal.getBufferedImage().setRGB(i, j, pixelRojo.getRGB());
+				
+				} else {
+					
+					imagenFinal.getBufferedImage().setRGB(i, j, original.getRGB(i, j));
+				}
+			}
+		}
+		
+		return imagenFinal;
+	}
+ 	 	
+	public static List<Integer> getResultadosX() {
+		return resultadosX;
+	}
+
+	public static void setResultadosX(List<Integer> resultadosX) {
+		DetectorSusan.resultadosX = resultadosX;
+	}
+
+	public static List<Integer> getResultadosY() {
+		return resultadosY;
+	}
+
+	public static void setResultadosY(List<Integer> resultadosY) {
+		DetectorSusan.resultadosY = resultadosY;
+	}
 }

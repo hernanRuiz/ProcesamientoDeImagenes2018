@@ -139,10 +139,10 @@ public class SusanDialog extends JDialog {
 					
 					if (ventanaRuido != null){
 						
-						ventana.aplicarDetectorSusan("Esquinas");
+						ventanaRuido.aplicarDetectorSusan("Esquinas");
 					}
 				}else{
-					DialogsHelper.mostarMensaje(jpanel, "Por favor seleccione algún criterio de detección", NivelMensaje.ERROR);
+					DialogsHelper.mostarMensaje(jpanel, "Por favor seleccione alg\u00fan criterio de detecci\u00f3n", NivelMensaje.ERROR);
 				}
 				SusanDialog.this.dispose();
 			}
