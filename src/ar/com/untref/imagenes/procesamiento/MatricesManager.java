@@ -16,103 +16,6 @@ public class MatricesManager {
 	static float[][] matrizVerdes;
 	static float[][] matrizAzules;
 	
-	public static int[][] multiplicarMatrices(int[][] matriz1, int[][] matriz2) {
-
-		int filasMatrizResultante = matriz1.length;
-		int columnasMatrizResultante = matriz2[0].length;
-		int[][] matrizResultante = new int[filasMatrizResultante][columnasMatrizResultante];
-
-			for (int i = 0; i < filasMatrizResultante; i++) {
-				for (int j = 0; j < columnasMatrizResultante; j++) {
-					for (int k = 0; k < filasMatrizResultante; k++) {
-						matrizResultante[i][j] += matriz1[i][k] * matriz2[k][j];
-					}
-				}
-			}
-		return matrizResultante;
-	}
-
-	
-	public static int[][] multiplicarMatrizPorEscalar(int[][] matriz,
-			int escalar) {
-
-		int filasMatrizResultante = matriz.length;
-		int columnasMatrizResultante = matriz[0].length;
-		int[][] matrizResultante = new int[filasMatrizResultante][columnasMatrizResultante];
-
-		for (int i = 0; i < filasMatrizResultante; i++) {
-			for (int j = 0; j < columnasMatrizResultante; j++) {
-				matrizResultante[i][j] += matriz[i][j] * escalar;
-			}
-		}
-		return matrizResultante;
-	}
-	
-	
-	public static int[][] sumarMatrizYEscalar(int[][] matriz,
-			int escalar) {
-
-		int filasMatrizResultante = matriz.length;
-		int columnasMatrizResultante = matriz[0].length;
-		int[][] matrizResultante = new int[filasMatrizResultante][columnasMatrizResultante];
-
-		for (int i = 0; i < filasMatrizResultante; i++) {
-			for (int j = 0; j < columnasMatrizResultante; j++) {
-				matrizResultante[i][j] += matriz[i][j] + escalar;
-			}
-		}
-		return matrizResultante;
-	}
-	
-	
-	public static int[][] restarMatrizYEscalar(int[][] matriz,
-			int escalar) {
-
-		int filasMatrizResultante = matriz.length;
-		int columnasMatrizResultante = matriz[0].length;
-		int[][] matrizResultante = new int[filasMatrizResultante][columnasMatrizResultante];
-
-		for (int i = 0; i < filasMatrizResultante; i++) {
-			for (int j = 0; j < columnasMatrizResultante; j++) {
-				matrizResultante[i][j] += matriz[i][j] * escalar;
-			}
-		}
-		return matrizResultante;
-	}
-
-	
-	public static int[][] sumarMatrices(int[][] matriz1, int[][] matriz2) {
-		int filasMatrizResultante = matriz1.length;
-		int columnasMatrizResultante = matriz1[0].length;
-		int[][] matrizResultante = new int[filasMatrizResultante][columnasMatrizResultante];
-
-			for (int i = 0; i < filasMatrizResultante; i++) {
-				for (int j = 0; j < columnasMatrizResultante; j++) {
-					matrizResultante[i][j] += matriz1[i][j] + matriz2[i][j];
-				}
-			}
-		
-		return matrizResultante;
-	}
-
-	
-	public static int[][] restarMatrices(int[][] matriz1, int[][] matriz2) {
-		
-		int filasMatrizResultante = matriz1.length;
-		int columnasMatrizResultante = matriz1[0].length;
-		int[][] matrizResultante = new int[filasMatrizResultante][columnasMatrizResultante];
-
-		
-			for (int i = 0; i < filasMatrizResultante; i++) {
-				for (int j = 0; j < columnasMatrizResultante; j++) {
-					
-					matrizResultante[i][j] += matriz1[i][j] - matriz2[i][j];
-				}
-			}
-		
-		return matrizResultante;
-	}
-
 	
 	public static void toString(int[][] m) {
 		String barra = "|";
@@ -261,37 +164,7 @@ public class MatricesManager {
 		return matriz;
 	}
 	
-	public static BufferedImage generarImagenRGBconContraste(int[][] matrizRojos, int[][] matrizVerdes, int[][] matrizAzules) {
 
-		int ancho = matrizRojos[0].length;
-		int alto = matrizRojos.length;
-		
-		BufferedImage imagenResultante = new BufferedImage(alto, ancho, BufferedImage.TYPE_3BYTE_BGR);
-		
-		if (ancho == alto){
-			for (int i = 0; i < ancho; i++) {
-				for (int j = 0; j < alto; j++) {
-
-					Color color = new Color(matrizRojos[i][j], matrizVerdes[i][j], matrizAzules[i][j]);
-					imagenResultante.setRGB(i, j, color.getRGB());
-				}
-			}
-		//fix para el caso que la imagen se espeja y da vuelta si no es cuadrada
-		} else {
-			
-			for (int i = 0; i < alto; i++) {
-				for (int j = 0; j < ancho; j++) {
-
-					Color color = new Color(matrizRojos[i][j], matrizVerdes[i][j], matrizAzules[i][j]);
-					imagenResultante.setRGB(i, j, color.getRGB());
-				}
-			}
-		}
-			
-		return imagenResultante;
-	}
-	
-	
 	public static BufferedImage generarImagenRGB(int[][] matrizRojos, int[][] matrizVerdes, int[][] matrizAzules) {
 
 		int ancho = matrizRojos[0].length;
@@ -432,7 +305,7 @@ public class MatricesManager {
 		return matriz;
 	}
 
-
+	
 	public static int[][] multiplicarValores(int[][] matrizRojoEnX,
 			int[][] matrizRojoEnY) {
 

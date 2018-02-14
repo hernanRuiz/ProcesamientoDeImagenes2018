@@ -90,7 +90,7 @@ public class DetectorDeHarris {
         Imagen imagenConFiltroGaussEnX = FiltroGaussiano.aplicarFiltroGaussiano(imagenX, 2);
         Imagen imagenConFiltroGaussEnY = FiltroGaussiano.aplicarFiltroGaussiano(imagenY, 2);
         
-        //Paso3: Calcular Ixy multiplicando elemento a elemento tambi�n suavizar con el mismo filtro gaussiano.
+        //Paso3: Calcular Ixy multiplicando elemento a elemento también suavizar con el mismo filtro gaussiano.
         int[][] matrizRojoXY = MatricesManager.aplicarTransformacionLineal(MatricesManager.multiplicarValores(matrizRojoEnX, matrizRojoEnY));
         int[][] matrizVerdeXY = MatricesManager.aplicarTransformacionLineal(MatricesManager.multiplicarValores(matrizVerdeEnX, matrizVerdeEnY));
         int[][] matrizAzulXY = MatricesManager.aplicarTransformacionLineal(MatricesManager.multiplicarValores(matrizAzulEnX, matrizAzulEnY));

@@ -8,8 +8,6 @@ import java.awt.image.BufferedImage;
  */
 public class CustomBufferedImage extends BufferedImage {
 
-    private static final int GRAY_LEVELS = 256;
-
     private int redMax = -1;
     private int redMin = 10000;
     private int[] red;
@@ -26,8 +24,8 @@ public class CustomBufferedImage extends BufferedImage {
     private final int GREEN_MASK = 0x0000FF00;
     private final int BLUE_MASK = 0x000000FF;
 
-    private final int imgSize;
-    private int[] frequenciesHisogram;
+    @SuppressWarnings("unused")
+	private final int imgSize;
 
     public CustomBufferedImage(int width, int height, int imageType) {
         super(width, height, imageType);
@@ -43,7 +41,6 @@ public class CustomBufferedImage extends BufferedImage {
         red = new int[customImg.getWidth() * customImg.getHeight()];
         green = new int[customImg.getWidth() * customImg.getHeight()];
         blue = new int[customImg.getWidth() * customImg.getHeight()];
-        int i, r, g, b;
         for (int x = 0; x < getWidth(); x++) {
             for (int y = 0; y < getHeight(); y++) {
                 setRGBCustom(x, y, customImg.getRed(x, y),

@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.math.BigDecimal;
 
+//Cálculos de histogramas para umbralizar por Otsu
 public class Histograma {
 
 	public static float[] calcularHistogramaRojo(BufferedImage imagen) {

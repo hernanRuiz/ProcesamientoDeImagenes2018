@@ -20,15 +20,12 @@ import ar.com.untref.imagenes.ruido.GeneradorDeRuido;
 
 public class AlgoritmoComparativoDeDetectores {
 	
-	// private static String format = "%-30s%s%n";
-	// private static DecimalFormat decFormat = new DecimalFormat(" #,###;-#");
 	private static DecimalFormat numberFormat = new DecimalFormat("0.00");
 	private static List<Point> coordenadas;
 	private static List<Imagen> imagenesAProcesar = new LinkedList<Imagen>();
 	private static List<Imagen> imagenesAProcesarConRuido = new LinkedList<Imagen>();
 	
 	/* ==================== AUXILIARES =====================*/
-	private static int contadorFinal = 0;
 	private static int contadorPositivos = 0;
 	private static int contadorFalsosPositivos = 0;
 	private static String[] mejorCaso = new String[8];
@@ -92,12 +89,21 @@ public class AlgoritmoComparativoDeDetectores {
 	private static File fileActual = null;
 	
 	/**TODO:
-	 * SUSAN: evaluar uso de dialog en ejecución individual (bordes y sierras están comentados)
+	 * SUSAN: evaluar uso de dialog en ejecución individual (bordes y sierras están 
+	 * comentados)
 	 * Limpieza general de código
-	 * @throws IOException 
+	 * Ventana Ruido: eliminar mu y pasarlo siempre como 0. Eliminar ruido blanco.
 	 **/
+	/**
+	 * 
+	 * @param imagenOriginal
+	 * @param coleccion (porcentaje = diferencia entre figura y fondo)
+	 * @param sigma para ruido gaussiano
+	 * @throws IOException
+	 */
 	public static void aplicarAlgoritmo(Imagen imagenOriginal, String coleccion, int sigma) throws IOException{
 		
+		double tiempoTotalInicio = System.nanoTime();
 		String path = "resources/" + coleccion.substring(0, coleccion.indexOf('%'));
 		
 		/* ======== Esquinas Rectas ==================*/
@@ -136,6 +142,11 @@ public class AlgoritmoComparativoDeDetectores {
 		fileStreamAlgoritmoComparativo.flush();
 		System.setOut(fileStreamAlgoritmoComparativo);
 		
+		System.out.println("+-------------------------------------------------+");
+		System.out.println("| ALGORITMO COMPARATIVO DE DETECTORES DE ESQUINAS |");
+		System.out.println("+-------------------------------------------------+");
+		System.out.println();
+		
 		
 		//------------------------------ HARRIS sin Ruido ------------------------------
 		double tiempoInicioHarrisSinRuido = System.nanoTime();
@@ -149,7 +160,7 @@ public class AlgoritmoComparativoDeDetectores {
 		List<Integer> resultadosHarrisSinRuido = new LinkedList<Integer>();
 		
 		for (int i = 0; i < imagenesAProcesar.size(); i++){
-			resultadosHarrisSinRuido = aplicarDetector(imagenesAProcesar.get(i), i, "Harris");
+			resultadosHarrisSinRuido = aplicarDetectorHarrisSusan(imagenesAProcesar.get(i), i, "Harris");
 			
 			contadoresCorrectosHarrisSinRuido[i] = resultadosHarrisSinRuido.get(0);
 			contadoresFalsosHarrisSinRuido[i] = resultadosHarrisSinRuido.get(1);
@@ -160,6 +171,8 @@ public class AlgoritmoComparativoDeDetectores {
 		}
 		
 		mostrarResultados(contadoresCorrectosHarrisSinRuido, contadoresFalsosHarrisSinRuido, contadoresTotalHarrisSinRuido);
+		
+		//Calculamos tiempo de procesamiento
 		double tiempoFinHarrisSinRuido = System.nanoTime();
 		double tiempoProcesamientoHarrisSinRuido = (tiempoFinHarrisSinRuido - tiempoInicioHarrisSinRuido) / 1000000000;
 		System.out.println();
@@ -184,7 +197,7 @@ public class AlgoritmoComparativoDeDetectores {
 		List<Integer> resultadosSusanSinRuido = new LinkedList<Integer>();
 		
 		for (int i = 0; i < imagenesAProcesar.size(); i++){
-			resultadosSusanSinRuido = aplicarDetector(imagenesAProcesar.get(i), i, "Susan");
+			resultadosSusanSinRuido = aplicarDetectorHarrisSusan(imagenesAProcesar.get(i), i, "Susan");
 		
 			contadoresCorrectosSusanSinRuido[i] = resultadosSusanSinRuido.get(0);
 			contadoresFalsosSusanSinRuido[i] = resultadosSusanSinRuido.get(1);
@@ -195,6 +208,8 @@ public class AlgoritmoComparativoDeDetectores {
 		}
 		
 		mostrarResultados(contadoresCorrectosSusanSinRuido, contadoresFalsosSusanSinRuido, contadoresTotalSusanSinRuido);
+		
+		//Calculamos tiempo de procesamiento
 		double tiempoFinSusanSinRuido = System.nanoTime();
 		double tiempoProcesamientoSusanSinRuido = (tiempoFinSusanSinRuido - tiempoInicioSusanSinRuido) / 1000000000;
 		System.out.println();
@@ -268,6 +283,7 @@ public class AlgoritmoComparativoDeDetectores {
 			
 			mostrarResultados(contadoresCorrectos, contadoresFalsos, contadoresTotal);
 		
+			//Calculamos tiempo de procesamiento
 			switch (h) {
 			case 0:
 				double tiempoFinMoravecASinRuido = System.nanoTime();
@@ -372,6 +388,7 @@ public class AlgoritmoComparativoDeDetectores {
 			
 			mostrarResultados(contadoresCorrectos, contadoresFalsos, contadoresTotal);
 		
+			//Calculamos tiempo de procesamiento
 			switch (i) {
 			case 0:
 				double tiempoFinDoGASinRuido = System.nanoTime();
@@ -405,6 +422,7 @@ public class AlgoritmoComparativoDeDetectores {
 		}
 		//--------------------------------------------------------------------------------
 		
+		//Entre los tiempo de procesamiento de los detectores, tomamos el menor 
 		System.out.println();
 		System.out.print(linea);
 		System.out.println();
@@ -459,7 +477,7 @@ public class AlgoritmoComparativoDeDetectores {
 			List<Integer> resultadosHarrisConRuido = new LinkedList<Integer>();
 			
 			for (int i = 0; i < imagenesAProcesarConRuido.size(); i++){	
-				resultadosHarrisConRuido = aplicarDetector(imagenesAProcesarConRuido.get(i), i, "Harris");
+				resultadosHarrisConRuido = aplicarDetectorHarrisSusan(imagenesAProcesarConRuido.get(i), i, "Harris");
 				
 				contadoresCorrectosHarrisConRuido[i] = resultadosHarrisConRuido.get(0);
 				contadoresFalsosHarrisConRuido[i] = resultadosHarrisConRuido.get(1);
@@ -471,6 +489,8 @@ public class AlgoritmoComparativoDeDetectores {
 			}
 			
 			mostrarResultados(contadoresCorrectosHarrisConRuido, contadoresFalsosHarrisConRuido, contadoresTotalHarrisConRuido);
+			
+			//Calculamos tiempo de procesamiento
 			System.out.println();
 			double tiempoFinHarrisConRuido = System.nanoTime();
 			double tiempoProcesamientoHarrisConRuido = (tiempoFinHarrisConRuido - tiempoInicioHarrisConRuido) / 1000000000;
@@ -498,7 +518,7 @@ public class AlgoritmoComparativoDeDetectores {
 			List<Integer> resultadosSusanConRuido = new LinkedList<Integer>();
 
 			for (int i = 0; i < imagenesAProcesarConRuido.size(); i++){
-				resultadosSusanConRuido = aplicarDetector(imagenesAProcesarConRuido.get(i), i, "Susan");
+				resultadosSusanConRuido = aplicarDetectorHarrisSusan(imagenesAProcesarConRuido.get(i), i, "Susan");
 			
 				contadoresCorrectosSusanConRuido[i] = resultadosSusanConRuido.get(0);
 				contadoresFalsosSusanConRuido[i] = resultadosSusanConRuido.get(1);
@@ -509,6 +529,8 @@ public class AlgoritmoComparativoDeDetectores {
 			}
 			
 			mostrarResultados(contadoresCorrectosSusanConRuido, contadoresFalsosSusanConRuido, contadoresTotalSusanConRuido);
+			
+			//Calculamos tiempo de procesamiento
 			double tiempoFinSusanConRuido = System.nanoTime();
 			double tiempoProcesamientoSusanConRuido = (tiempoFinSusanConRuido - tiempoInicioSusanConRuido) / 1000000000;
 			System.out.println();
@@ -583,6 +605,7 @@ public class AlgoritmoComparativoDeDetectores {
 					
 					mostrarResultados(contadoresCorrectos, contadoresFalsos, contadoresTotal);
 					
+					//Calculamos tiempo de procesamiento
 					switch (h) {
 					case 0:
 						double tiempoFinMoravecAConRuido = System.nanoTime();
@@ -682,6 +705,7 @@ public class AlgoritmoComparativoDeDetectores {
 								
 				mostrarResultados(contadoresCorrectos, contadoresFalsos, contadoresTotal);
 			
+				//Calculamos tiempo de procesamiento
 				switch (i) {
 				case 0:
 					double tiempoFinDoGAConRuido = System.nanoTime();
@@ -715,6 +739,8 @@ public class AlgoritmoComparativoDeDetectores {
 			}
 			//------------------------------------------------------------------------------
 		
+			
+			//Entre los tiempo de procesamiento de los detectores, tomamos el menor
 			System.out.println();
 			System.out.print(linea);
 			System.out.println();
@@ -743,18 +769,34 @@ public class AlgoritmoComparativoDeDetectores {
 		}
 		
 		resetearVariables();
+		
+		//Mostramos el tiempo de procesamiento total (del algoritmo comparativo entero)
+		double tiempoTotalFin = System.nanoTime();
+		System.out.println("Tiempo de procesamiento total: " 
+				+ numberFormat.format((tiempoTotalFin - tiempoTotalInicio) / 1000000000) + " segundos");
+		
 		fileStreamAlgoritmoComparativo.flush();
 		fileStreamAlgoritmoComparativo.close();
+		
 	}
 	
 	
-	
-	
-	private static List<Integer> aplicarDetector(Imagen imagenOriginal, int indice, String detector){
+	/**
+	 * Método de procesamiento similar para Harris o Susan, diferenciando cual aplicar
+	   según parámetro de entrada
+	 * @param Imagen original
+	 * @param Índice de figura
+	 * @param Detector a aplicar
+	 * @return Cantidad de resultados divdidos en positivos y falsos positivos
+	 */
+	private static List<Integer> aplicarDetectorHarrisSusan(Imagen imagenOriginal, int indice, String detector){
 		
 		List <Integer> resultadosEnX = new LinkedList<Integer>();
 		List <Integer> resultadosEnY = new LinkedList<Integer>();
+		
 		if (coordenadas != null && !coordenadas.isEmpty()){coordenadas.clear();};
+		/*Definimos las coordenadas de las esquinas según la figura a analizar
+		identificada cada una con un índice*/
 		coordenadas = setearCoordenadas(indice);
 		
 		switch (detector) {
@@ -790,27 +832,24 @@ public class AlgoritmoComparativoDeDetectores {
 				int x = resultadosEnX.get(i);
 				int y = resultadosEnY.get(i);
 				
+				/*Evaluamos los puntos detectados para saber si son correctos o 
+				falsos positivos*/
 				int contadores[] = evaluarPuntos(x, y);
 				contadorPositivos += contadores[0];
 				contadorFalsosPositivos += contadores[1];
-				contadorFinal += contadores[2];
 			}
 			
 			int positivos;
 			int falsosPositivos;
-			int finales;
 			
 			positivos = contadorPositivos;
 			falsosPositivos = contadorFalsosPositivos;
-			finales = contadorFinal;
 			
 			resultados.add(positivos);
 			resultados.add(falsosPositivos);
-			resultados.add(finales);
 			
 			contadorPositivos = 0;
 			contadorFalsosPositivos = 0;
-			contadorFinal = 0;
 			
 			resultadosEnX = new LinkedList<Integer>();
 			resultadosEnY = new LinkedList<Integer>();
@@ -819,10 +858,19 @@ public class AlgoritmoComparativoDeDetectores {
 		return resultados;
 	}
 	
-	
+	/**
+	 * Aplica el detector de Moravec según los parámetros y sobre la imagen que recibe
+	 * @param Imagen Original 
+	 * @param Índice de figura
+	 * @param Tamaño de la Mascara
+	 * @param Umbral
+	 * @return Cantidad de resultados divdidos en positivos y falsos positivos
+	 */
 	private static List<Integer> aplicarMoravec(Imagen imagenOriginal, int indice, int tamanioMascara, int umbral){
 		
 		if (coordenadas != null && !coordenadas.isEmpty()){coordenadas.clear();};
+		/*Definimos las coordenadas de las esquinas según la figura a analizar
+		identificada cada una con un índice*/
 		coordenadas = setearCoordenadas(indice);
 		
 		DetectorDeBordesMoravec.aplicarMoravec(imagenOriginal, tamanioMascara, umbral, false);
@@ -840,41 +888,44 @@ public class AlgoritmoComparativoDeDetectores {
 			int x = resultadosMoravecEnX.get(i);
 			int y = resultadosMoravecEnY.get(i);
 			
+			/*Evaluamos los puntos detectados para saber si son correctos o 
+			falsos positivos*/
 			int contadores[] = evaluarPuntos(x, y);
 			contadorPositivos += contadores[0];
 			contadorFalsosPositivos += contadores[1];
-			contadorFinal += contadores[2];
 						
 		}
 		
 		int positivos;
 		int falsosPositivos;
-		int finales;
 		
 		positivos = contadorPositivos;
 		falsosPositivos = contadorFalsosPositivos;
-		finales = contadorFinal;
 		
 		List<Integer> resultados = new LinkedList<Integer>();		
 		resultados.add(positivos);
 		resultados.add(falsosPositivos);
-		resultados.add(finales);
 		
 		contadorPositivos = 0;
 		contadorFalsosPositivos = 0;
-		contadorFinal = 0;
 		
-		return resultados;
-		
-		
-		
+		return resultados;			
 	}
 	
 	
+	/**
+	 * Aplica el detector de Moravec según los parámetros y sobre la imagen que recibe
+	 * @param Imagen Original
+	 * @param Indice de figura
+	 * @param Sigmas, cada uno corresponde a un filtro gaussiano a aplicar
+	 * @return Cantidad de resultados divdidos en positivos y falsos positivos
+	 */
 	private static List<Integer> aplicarDoG(Imagen imagenOriginal, int indice, int sigma1,
 			int sigma2, int sigma3, int sigma4){
 		
 		if (coordenadas != null && !coordenadas.isEmpty()){coordenadas.clear();};
+		/*Definimos las coordenadas de las esquinas según la figura a analizar
+		identificada cada una con un índice*/
 		coordenadas = setearCoordenadas(indice);
 		
 		DoG.aplicar(imagenOriginal, sigma1, sigma2, sigma3, sigma4, false);
@@ -892,61 +943,60 @@ public class AlgoritmoComparativoDeDetectores {
 			int x = resultadosDoGEnX.get(i);
 			int y = resultadosDoGEnY.get(i);
 			
+			/*Evaluamos los puntos detectados para saber si son correctos o 
+			falsos positivos*/
 			int contadores[] = evaluarPuntos(x, y);
 			contadorPositivos += contadores[0];
 			contadorFalsosPositivos += contadores[1];
-			contadorFinal += contadores[2];
 						
 		}
 		
 		int positivos;
 		int falsosPositivos;
-		int finales;
 		
 		positivos = contadorPositivos;
 		falsosPositivos = contadorFalsosPositivos;
-		finales = contadorFinal;
 		
 		List<Integer> resultados = new LinkedList<Integer>();		
 		resultados.add(positivos);
 		resultados.add(falsosPositivos);
-		resultados.add(finales);
 		
 		contadorPositivos = 0;
 		contadorFalsosPositivos = 0;
-		contadorFinal = 0;
 		
 		return resultados;
 		
 	}
 	
 	
-	//Evalúa el punto detectado contra las esquinas y sus ocho vecinos
+	
+	/**
+	 * Evalúa el punto detectado contra las esquinas y sus ocho vecinos
+	 * @param x
+	 * @param y
+	 * @return cantidad de resultados dividios en positivos y falsos positivos
+	 */
 	private static int[] evaluarPuntos(int x, int y){
 		
 		int contadorPositivos = 0;
 		int contadorFalsosPositivos = 0;
-		int contadorFinal = 0;
-		int[] contadores = new int[3];
+		int[] contadores = new int[2];
 		
 		for (Point puntoActual : coordenadas) {	
 			
-			if(Integer.valueOf(puntoActual.x).equals(x) && Integer.valueOf(puntoActual.y).equals(y)){
-				
+			/*El punto detectado es correcto si coincide exactamente con las coordenadas
+			de las esquinas reales en la figura*/
+			if(Integer.valueOf(puntoActual.x).equals(x) && Integer.valueOf(puntoActual.y).equals(y)){				
 				contadorPositivos++;
-				contadorFinal++;
 			}
 		}
 			
-		if(contadorPositivos == 0){
-			
-			contadorFalsosPositivos++;
-			contadorFinal--;
-		}
+		/*Si el punto analizado no coincide con ninguna esquina, entonces es un falso
+		positivo*/
+		if(contadorPositivos == 0){		contadorFalsosPositivos++;}
 			
 		contadores[0] = contadorPositivos;
 		contadores[1] = contadorFalsosPositivos;
-		contadores[2] = contadorFinal;
 		
 		return contadores;
 	}
@@ -955,7 +1005,8 @@ public class AlgoritmoComparativoDeDetectores {
 	 * @param indiceImagen
 	 * @return void
 	 * Setea las coordenadas de las esquinas para contrastar los
-	 * los resultados de los detectores
+	 * los resultados de los detectores. Cada indice se corresponde con una de las
+	 * imágenes cuyas esquinas conocemos de antemano
 	 **/
 	private static List<Point> setearCoordenadas (int indiceImagen){
 		List<Point> coordenadas = new LinkedList<Point>();
@@ -1100,7 +1151,7 @@ public class AlgoritmoComparativoDeDetectores {
 			mejorCaso[indiceMejorCaso] = "X";
 			mensaje = "El detector que muestra mejor desempeño para el caso analizado es: " + nombres[indiceMejorCaso];		
 		} else {
-			//Si entre los ganadores hay más de un caso con la misma cantidad de falsos positivos, se los marca
+			//Si entre los ganadores hay más de un caso con la misma cantidad de falsos positivos
 			mensaje = "Ninguno de los algoritmos sobresale de forma única en su resultado sobre los demás.";
 		}
 		
@@ -1158,11 +1209,15 @@ public class AlgoritmoComparativoDeDetectores {
 		List<Integer> casoMayoresResultadosCorrectos = calcularMayor(valoresAComparar);
 		int ret = 0;
 		
+		//Si hay un único detector cuya cantidad de puntos correctos detectados es la
+		//mayor entre todos los detectores, entonces ese es el de mejor desempeño
 		if(casoMayoresResultadosCorrectos.size() < 2){
 			
 			ret = casoMayoresResultadosCorrectos.get(0);			
 		} else {
 			
+			//Si hay un empate de puntos correctos entre dos o más detectores, los
+			//comparamos en cantidad de falsos positivos detectados
 			for(Integer val : casoMayoresResultadosCorrectos){
 				
 				switch (val) {
@@ -1193,6 +1248,8 @@ public class AlgoritmoComparativoDeDetectores {
 				}
 			}
 			
+			//el detector que haya detectado menos cantidad de falsos positivos es el
+			//de mejor desempeño ante un empate en resultaods correctos
 			ret = calcularMenor(valoresACompararFP);
 			indiceAMarcar = valoresFP.indexOf(ret);
 		}
@@ -1200,6 +1257,7 @@ public class AlgoritmoComparativoDeDetectores {
 		return indiceAMarcar;
 	}
 	
+	//Calcula el mayor valor de puntos correctos detectados
 	public static List<Integer> calcularMayor(List<Integer> valores) {
 	    LinkedList<Integer> resultados = new LinkedList<Integer>();
 	    int ret = -1;
@@ -1221,6 +1279,8 @@ public class AlgoritmoComparativoDeDetectores {
 	    return resultados;
 	}
 	
+	
+	//Calcula el menor valor de falsos positivos detectados
 	public static Integer calcularMenor(List<Integer> valores){
 		
 	    Integer ret = Integer.MAX_VALUE;
@@ -1239,10 +1299,9 @@ public class AlgoritmoComparativoDeDetectores {
 	}
 	
 	
-	/*
-	 * Genera un objeto del tipo Imagen a partir del archivo en el path
-	 * ingresado
-	 */	
+	
+	 /* Genera un objeto del tipo Imagen a partir del archivo en el path
+	 ingresado*/	
 	private static Imagen obtenerImagen(String path) throws IOException {
 		fileActual = new File(path);
 		Archivo archivoActual = new Archivo(fileActual);
@@ -1258,6 +1317,8 @@ public class AlgoritmoComparativoDeDetectores {
 	}
 	
 	
+	/*Genera imagen con ruido a partir de la imagen y según el sigma que recibe como
+	parámetro*/
 	public static Imagen generarImagenConRuido(Imagen imagenOriginal, int sigma){
 		BufferedImage bufferedImageConRuido = GeneradorDeRuido.generarRuidoGauss(imagenOriginal.getBufferedImage(), sigma, 0);
 		Imagen imagenConRuido = new Imagen(bufferedImageConRuido, imagenOriginal.getFormato(), imagenOriginal.getNombre() + "conRuido");
@@ -1535,6 +1596,8 @@ public class AlgoritmoComparativoDeDetectores {
 	//----------------------------------------------------------------------------------//
 	
 	
+	/*LLevamos a 0 todas las variables para que no se acumulen resultados 
+	en la siguiente ejecución del algoritmo comparativo*/
 	public static void resetearVariables(){
 		
 		contadorHarrisCorrectosSinRuidoTotal = 0;

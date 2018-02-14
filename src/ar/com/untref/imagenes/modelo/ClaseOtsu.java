@@ -9,7 +9,6 @@ public class ClaseOtsu {
 	private int rojoPromedio;
 	private int verdePromedio;
 	private int azulPromedio;
-	// Within-variance
 	private double varianza;
 	private List<Pixel> pixeles;
 

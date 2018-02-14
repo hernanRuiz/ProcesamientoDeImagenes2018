@@ -1,6 +1,5 @@
 package ar.com.untref.imagenes.bordes;
 
-
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.FileNotFoundException;
@@ -13,7 +12,7 @@ import ar.com.untref.imagenes.modelo.Imagen;
 
 public class DetectorSusan {
 	 
- 	private static final int TAMANIO_MASCARA = 7;
+ 	//private static final int TAMANIO_MASCARA = 7;
  	
  	// Se cuentan sólo los píxeles de la imagen circular
  	private static final int CANTIDAD_PIXELES_MASCARA = 37;
@@ -21,20 +20,20 @@ public class DetectorSusan {
  	private static double umbralT = 27.0;
 	//private static int pixelNegro = new Color(0, 0, 0).getRGB();
 	private static java.awt.Color pixelRojo = new java.awt.Color(255,0,0);
-	private static java.awt.Color pixelVerde = new java.awt.Color(0,255,0);
-	private static java.awt.Color pixelAzul = new java.awt.Color(0,0,255);
+	//private static java.awt.Color pixelVerde = new java.awt.Color(0,255,0);
+	//private static java.awt.Color pixelAzul = new java.awt.Color(0,0,255);
 	
 	
  	/**
- 	 * Si el resultado es aprox 0, no corresponde a borde ni esquina.
+ 	 * Si el resultado es aprox 0.75 no corresponde a borde ni esquina.
  	 * Si el resultado es aprox 0.5, es un borde.
- 	 * Si el resultado es aprox 0.75 es una esquina.
+ 	 * Si el resultado es aprox 0.25 es una esquina.
  	 * 
  	 * Por lo tanto, se tom� como criterio que cualquier resultado mayor a 0.4, ser� considerado borde/esquina.
  	 */
-	private static double criterioDeSierra = 0.25;
+	private static double criterioDeSierra = 0.75;
  	private static double criterioDeBorde = 0.5;
- 	private static double criterioDeEsquina = 0.75;
+ 	private static double criterioDeEsquina = 0.25;
  	
  	static Color result = new Color(0);
  	
@@ -145,6 +144,8 @@ public class DetectorSusan {
 				int currentColor = oldImage.getGray(x, y);
 				double pixelsWithinColorRange = 0;
 				
+				/*Se compara la intensidad de cada pixel de la máscara con la intensidad
+				del pixel central de la misma*/
 				for (int i = 0; i < 7; i++) {
 					for (int j = 0; j < 7; j++) {
 						int currentMaskColor = oldImage.getGray(x + i - 3, y + j - 3);
@@ -160,10 +161,7 @@ public class DetectorSusan {
 
  				case "Esquinas":
  					
- 					double lowLimit = 0.75 - (0.75 - 0.5) / 2;
- 					double highLimit = 0.75 + (0.75 - 0.5) / 2;
- 					
- 					if((Math.abs( Sr0 - 0.25) <= 0.01)){
+ 					if((Math.abs( Sr0 - criterioDeEsquina) <= 0.01)){
  	 					
  						oldImage.setRGB(x, y, pixelRojo.getRGB());
  						if (flagResultados){
@@ -173,94 +171,95 @@ public class DetectorSusan {
  						resultadosX.add(x);
  						resultadosY.add(y);
  	 				}
- 					
- 					/*if(Math.abs( Sr0 - criterioDeBorde) < 0.15){
- 	 					
- 						oldImage.setRGB(x, y, pixelVerde.getRGB());
- 	 				}
- 					
- 					if(Math.abs( Sr0 - criterioDeSierra) < 0.15){
- 	 					
- 						oldImage.setRGB(x, y, pixelAzul.getRGB());
- 	 				}
- 					break;*/
 
- 				/*case "Bordes":
+ 				case "Bordes":
  					if(Math.abs( Sr0 - criterioDeBorde) < 0.1){
  	 					
- 	 					imagenResultante.getBufferedImage().setRGB(i, j, pixelRojo);
- 	 				} else {
- 	 					
- 	 					//imagenResultante.getBufferedImage().setRGB(i, j, pixelNegro);
+ 						oldImage.setRGB(x, y, pixelRojo.getRGB());
+ 						if (flagResultados){
+ 							System.out.println(x + "," + y);
+ 						}
+ 						
+ 						resultadosX.add(x);
+ 						resultadosY.add(y);
  	 				}
  					break;
 
  				case "Sierras":
- 					if(Math.abs( Sr0 - criterioDeSierra) < 0.1){
- 	 					
- 	 					imagenResultante.getBufferedImage().setRGB(i, j, pixelRojo);
- 	 				} else {
- 	 					
- 	 					//imagenResultante.getBufferedImage().setRGB(i, j, pixelNegro);
- 	 				}
+ 					if(Math.abs( Sr0 - criterioDeSierra) < 0.3){
+ 						
+ 						oldImage.setRGB(x, y, pixelRojo.getRGB());
+ 						if (flagResultados){
+ 							System.out.println(x + "," + y);
+ 						}
+ 						
+ 						resultadosX.add(x);
+ 						resultadosY.add(y); 						
+ 					}
  					break;
  					
  				case "EsquinasYBordes":
- 					if(Math.abs( Sr0 - criterioDeEsquina) < 0.1 || Math.abs( Sr0 - criterioDeBorde) < 0.1){
+ 					if((Math.abs( Sr0 - criterioDeBorde) < 0.1) 
+ 							|| (Math.abs( Sr0 - criterioDeEsquina) <= 0.01)){
  	 					
- 	 					imagenResultante.getBufferedImage().setRGB(i, j, pixelRojo);
- 	 				} else {
- 	 					
- 	 					//imagenResultante.getBufferedImage().setRGB(i, j, pixelNegro);
+ 						oldImage.setRGB(x, y, pixelRojo.getRGB());
+ 						if (flagResultados){
+ 							System.out.println(x + "," + y);
+ 						}
+ 						
+ 						resultadosX.add(x);
+ 						resultadosY.add(y);
  	 				}
  					break;
  					
  				case "EsquinasYSierras":
- 					if(Math.abs( Sr0 - criterioDeEsquina) < 0.1 || Math.abs( Sr0 - criterioDeSierra) < 0.1){
+ 					if((Math.abs( Sr0 - criterioDeSierra) < 0.3) 
+ 							|| (Math.abs( Sr0 - criterioDeEsquina) <= 0.01)){
  	 					
- 	 					imagenResultante.getBufferedImage().setRGB(i, j, pixelRojo);
- 	 				} else {
- 	 					
- 	 					//imagenResultante.getBufferedImage().setRGB(i, j, pixelNegro);
+ 						oldImage.setRGB(x, y, pixelRojo.getRGB());
+ 						if (flagResultados){
+ 							System.out.println(x + "," + y);
+ 						}
+ 						
+ 						resultadosX.add(x);
+ 						resultadosY.add(y);
  	 				}
  					break;
  				
  				case "BordesYSierras":
- 					if(Math.abs( Sr0 - criterioDeBorde) < 0.1 || Math.abs( Sr0 - criterioDeSierra) < 0.1){
+ 					if((Math.abs( Sr0 - criterioDeBorde) < 0.1) 
+ 							|| (Math.abs( Sr0 - criterioDeSierra) < 0.3)){
  	 					
- 	 					imagenResultante.getBufferedImage().setRGB(i, j, pixelRojo);
- 	 				} else {
- 	 					
- 	 					//imagenResultante.getBufferedImage().setRGB(i, j, pixelNegro);
+ 						oldImage.setRGB(x, y, pixelRojo.getRGB());
+ 						if (flagResultados){
+ 							System.out.println(x + "," + y);
+ 						}
+ 						
+ 						resultadosX.add(x);
+ 						resultadosY.add(y);
  	 				}
  					break;
  				
  				case "BordesSierrasYEsquinas":
-					if(Math.abs( Sr0 - criterioDeEsquina) < 0.1 || Math.abs( Sr0 - criterioDeBorde) < 0.1 || Math.abs( Sr0 - criterioDeSierra) < 0.1){
-	 					
-	 					imagenResultante.getBufferedImage().setRGB(i, j, pixelRojo);
-	 				} else {
-	 					
-	 					//imagenResultante.getBufferedImage().setRGB(i, j, pixelNegro);
-	 				}
-					break;*/
+ 					if((Math.abs( Sr0 - criterioDeBorde) < 0.1) 
+ 							|| (Math.abs( Sr0 - criterioDeEsquina) <= 0.01)
+ 							|| (Math.abs( Sr0 - criterioDeSierra) < 0.3)){
+ 	 					
+ 						oldImage.setRGB(x, y, pixelRojo.getRGB());
+ 						if (flagResultados){
+ 							System.out.println(x + "," + y);
+ 						}
+ 						
+ 						resultadosX.add(x);
+ 						resultadosY.add(y);
+ 	 				}
+					break;
 				}
 				
-				/*if (Math.abs(s - 0d) < 0.15d) {
-					newImage.setGray(x, y, 0);
-				} else if (Math.abs(s - 0.5d) <= 0.15d) {
-					// newImage.setGray(x, y, 255);
-					newImage.setRGB(x, y, 65280);
-					oldImage.setRGB(x, y, 65280);
-				} else if (Math.abs(s - 0.75d) <= 0.15d) {
-					// newImage.setGray(x, y, 255);
-					newImage.setRGB(x, y, 16711680);
-					oldImage.setRGB(x, y, 16711680);
-				}*/
 			}
 		}
 		
-		Imagen imagenFinal = superponerAImagenOriginal(newImage, oldImage);
+		superponerAImagenOriginal(newImage, oldImage);
 		
 		if(flagResultados){			
 			fileStreamSusan.flush();

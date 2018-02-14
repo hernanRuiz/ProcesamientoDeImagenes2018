@@ -1,11 +1,9 @@
 package ar.com.untref.imagenes.dialogs;
 
-import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
 //import java.util.Random;
-import java.awt.Rectangle;
 
 import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;

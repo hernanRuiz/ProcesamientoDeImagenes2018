@@ -16,11 +16,12 @@ import ar.com.untref.imagenes.modelo.Imagen;
 import ar.com.untref.imagenes.modelo.Pixel;
 import ar.com.untref.imagenes.modelo.VarianzaInterclase;
 
+//Umbralizamos en los detectores de esquinas para obtener la imagen resultante
 public class Umbralizador {
 
 	/**
 	 * @param imagen - imagen a umbralizar
-	 * @param umbral - valor que har· de separador entre valores 0 y 255
+	 * @param umbral - valor que har√° de separador entre valores 0 y 255
 	 */
 	public static Imagen umbralizarImagen(Imagen imagenOriginal, int umbral){
 		

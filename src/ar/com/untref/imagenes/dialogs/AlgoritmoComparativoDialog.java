@@ -92,11 +92,7 @@ import ar.com.untref.imagenes.ventanas.VentanaPrincipal;
 									Runnable r = new Runnable() {
 								         public void run() {
 								        	 try {
-								        		 double tiempoInicio = System.nanoTime();
-								        		 ventana.ejecutarAlgoritmoComparativo(coleccion, sigma);
-								        		 double tiempoFin = System.nanoTime();
-								        		 System.out.println("Tiempo de procesamiento total: " 
-								        			+ numberFormat.format((tiempoFin - tiempoInicio) / 1000000000) + " segundos");
+								        		 ventana.ejecutarAlgoritmoComparativo(coleccion, sigma);	 
 												dialogoEspera.ocultar();
 											} catch (IOException e) {
 												e.printStackTrace();

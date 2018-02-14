@@ -20,7 +20,8 @@ public class FiltroGaussiano {
         int tam = width * height;
         float filtroK[] = new float[tam];
 
-        //Creamos el filtro - Se pasa de una matriz cuadrada (vector de 2 dimensiones) a un vector lineal
+        //Creamos el filtro - Se pasa de una matriz cuadrada (vector de 2 dimensiones) 
+        //a un vector lineal
         for(int i=0; i < width; i++){
             for(int j=0; j < height; j++){
                 filtroK[i*width + j] = mascara[i][j];

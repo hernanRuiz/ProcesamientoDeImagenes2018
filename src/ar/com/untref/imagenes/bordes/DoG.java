@@ -378,26 +378,6 @@ public class DoG {
 	}
 	
 	
-	/*private static Imagen superponerAImagenOriginal(Imagen umbralizada, Imagen original) {
-
-		Imagen imagenFinal = new Imagen(new BufferedImage(umbralizada.getBufferedImage().getWidth(), umbralizada.getBufferedImage().getHeight(), umbralizada.getBufferedImage().getType()), FormatoDeImagen.JPEG, "final");
-		
-		for (int i=0; i< umbralizada.getBufferedImage().getWidth(); i++){
-			for (int j=0; j< umbralizada.getBufferedImage().getHeight(); j++){
-				
-				Color colorEnUmbralizada = new Color(umbralizada.getBufferedImage().getRGB(i, j));
-				if (colorEnUmbralizada.getRed()==255){
-					
-					imagenFinal.getBufferedImage().setRGB(i, j, Color.GREEN.getRGB());
-				} else {
-					
-					imagenFinal.getBufferedImage().setRGB(i, j, original.getBufferedImage().getRGB(i, j));
-				}
-			}
-		}
-		return imagenFinal;
-	}*/
-	
 	 	public static List<Integer> getResultadosX() {
 			return resultadosX;
 		}
