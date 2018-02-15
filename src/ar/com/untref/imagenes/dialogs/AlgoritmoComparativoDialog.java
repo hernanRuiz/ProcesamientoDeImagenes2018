@@ -66,7 +66,7 @@ import ar.com.untref.imagenes.ventanas.VentanaPrincipal;
 
 		private void createLayout() {
 
-			dialogoEspera = new EspereDialog();
+			dialogoEspera = new EspereDialog(ventana);
 			botonConfirmar = new JButton("Listo");
 			
 			botonConfirmar.addActionListener(new ActionListener() {

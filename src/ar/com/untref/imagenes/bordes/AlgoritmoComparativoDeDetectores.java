@@ -89,10 +89,8 @@ public class AlgoritmoComparativoDeDetectores {
 	private static File fileActual = null;
 	
 	/**TODO:
-	 * SUSAN: evaluar uso de dialog en ejecución individual (bordes y sierras están 
-	 * comentados)
-	 * Limpieza general de código
 	 * Ventana Ruido: eliminar mu y pasarlo siempre como 0. Eliminar ruido blanco.
+	 * Detectores en ejecución individual: agregar dialogo espera
 	 **/
 	/**
 	 * 

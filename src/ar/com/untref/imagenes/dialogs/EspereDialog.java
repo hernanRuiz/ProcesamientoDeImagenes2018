@@ -1,49 +1,45 @@
 package ar.com.untref.imagenes.dialogs;
 
-import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
-//import java.util.Random;
+import java.awt.FlowLayout;
+import java.awt.GridBagLayout;
 
-import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
 import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.border.Border;
 
-//import ar.com.untref.imagenes.helpers.AnimatedIcon;
-//import ar.com.untref.imagenes.helpers.TextIcon;
+import ar.com.untref.imagenes.ventanas.VentanaPrincipal;
+import ar.com.untref.imagenes.ventanas.VentanaRuido;
 
 @SuppressWarnings("serial")
 public class EspereDialog extends JDialog {
 	
-	//private JLabel labelEspera;
 	private JLabel labelImagen;
 	private JPanel panel;
-	//private AnimatedIcon puntosSuspensivos;
+	private VentanaPrincipal ventanaP;
+	private VentanaRuido ventanaR;
 	
-	public EspereDialog(){
+	public EspereDialog(VentanaPrincipal ventanaP){
 		
+		this.ventanaP = ventanaP;
+		setUndecorated(true);
+		initUI();
+	}
+	
+public EspereDialog(VentanaRuido ventanaR){
+		
+		this.ventanaR = ventanaR;
 		setUndecorated(true);
 		initUI();
 	}
 	
 	public void mostrar(){
 
-		labelImagen.setSize(new Dimension (200, 100));
-		labelImagen.setIcon( new ImageIcon(EspereDialog.class.getResource("/resources/procesando4.gif")));
-		
-		/*Random random = new Random();
-		if(random.nextBoolean()){
-
-			labelImagen.setIcon( new ImageIcon(EspereDialog.class.getResource("/resources/emc.gif")) );
-		} else {
-			
-			labelImagen.setIcon( new ImageIcon(EspereDialog.class.getResource("/resources/pensador.gif")) );
-		}*/
+		labelImagen.setSize(new Dimension (150, 150));
+		labelImagen.setIcon( new ImageIcon(EspereDialog.class.getResource("/resources/procesando.gif")));
 		
 		setVisible(true);
 	}
@@ -55,55 +51,20 @@ public class EspereDialog extends JDialog {
 
 	private void initUI() {
 
-		panel = new JPanel();
-		panel.setPreferredSize(new Dimension(175, 100));
-		Border border = BorderFactory.createLineBorder(Color.black);
-		panel.setBorder(border);
-		//labelEspera = new JLabel("Procesando ");
-		//labelEspera.setHorizontalTextPosition( JLabel.LEADING );
-		/*puntosSuspensivos = new AnimatedIcon( labelEspera );
-		puntosSuspensivos.setAlignmentX( AnimatedIcon.LEFT );
-		puntosSuspensivos.addIcon( new TextIcon(labelEspera, ".") );
-		puntosSuspensivos.addIcon( new TextIcon(labelEspera, "..") );
-		puntosSuspensivos.addIcon( new TextIcon(labelEspera, "...") );
-		puntosSuspensivos.addIcon( new TextIcon(labelEspera, "....") );
-		puntosSuspensivos.addIcon( new TextIcon(labelEspera, ".....") );*/
-		//labelEspera.setIcon( puntosSuspensivos );
-		
-		//puntosSuspensivos.start();
-		
-		//labelImagen = new JLabel();
-		//labelImagen.setHorizontalTextPosition( JLabel.LEADING );
-		
-		//panel.add(labelEspera);
-		//createLayout();
+		panel = new JPanel(new GridBagLayout());
+		panel.setPreferredSize(new Dimension(150, 150));
+				
+		this.setLayout(new FlowLayout());
 		
 		setModalityType(ModalityType.APPLICATION_MODAL);
-
-		/*setTitle("Un momento");
-		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-		setLocationRelativeTo(getParent());
-		
-		setModalityType(ModalityType.APPLICATION_MODAL);
-
-		setTitle("Un momento");
-		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-		setLocationRelativeTo(getParent());*/
 		
 		labelImagen = new JLabel();
-		//labelImagen.setHorizontalTextPosition( JLabel.LEADING );
-
-		//labelImagen.setIcon( new ImageIcon(EspereDialog.class.getResource("/resources/pensador.gif")) );
-
-		//panel.add(labelEspera);
 		createLayout();
 		
-		//setModalityType(ModalityType.APPLICATION_MODAL);
-
-		//setTitle("Un momento");
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-		setLocationRelativeTo(getParent());
 		
+		if(ventanaP != null){setLocationRelativeTo(ventanaP);}
+		if(ventanaR != null){setLocationRelativeTo(ventanaR);}
 	}
 
 	private void createLayout() {
@@ -112,17 +73,14 @@ public class EspereDialog extends JDialog {
 		GroupLayout gl = new GroupLayout(pane);
 		pane.setLayout(gl);
 
-		gl.setAutoCreateContainerGaps(true);
-		//gl.setAutoCreateGaps(true);
-		
+		gl.setAutoCreateContainerGaps(true);		
 
-		gl.setHorizontalGroup(gl.createParallelGroup(Alignment.CENTER)
+		gl.setHorizontalGroup(gl.createParallelGroup()
 				.addComponent(panel).addComponent(labelImagen));
 
 		gl.setVerticalGroup(gl.createSequentialGroup()
 				.addComponent(panel).addComponent(labelImagen));
-		
+				
 		pack();
 	}
-
 }

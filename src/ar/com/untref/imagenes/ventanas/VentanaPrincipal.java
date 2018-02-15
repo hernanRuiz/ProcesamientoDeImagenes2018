@@ -58,7 +58,7 @@ public class VentanaPrincipal extends JFrame {
 
 	public VentanaPrincipal() {
 
-		dialogoEspera = new EspereDialog();
+		dialogoEspera = new EspereDialog(this);
 
 		this.setTitle("Procesamiento de Im\u00e1genes");
 				

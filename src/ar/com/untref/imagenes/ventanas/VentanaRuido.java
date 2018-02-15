@@ -60,7 +60,7 @@ public class VentanaRuido extends JFrame {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public VentanaRuido(Imagen imagenSCambios) {
 		
-		dialogoEspera = new EspereDialog();
+		dialogoEspera = new EspereDialog(this);
 		imagenSinCambios = imagenSCambios;
 		this.setTitle("Generador de Ruido y Filtros");
 		VentanaRuido.this.setExtendedState(VentanaRuido.this.getExtendedState() | JFrame.MAXIMIZED_BOTH);
