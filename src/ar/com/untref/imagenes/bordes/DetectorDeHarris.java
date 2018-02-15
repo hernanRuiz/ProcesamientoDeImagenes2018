@@ -150,7 +150,9 @@ public class DetectorDeHarris {
 			}
 		}
 		
-		if(flagResultados){			
+		if(flagResultados){
+			resultadosX = new LinkedList<Integer>();
+			resultadosY = new LinkedList<Integer>();
 			fileStreamHarris.flush();
 			fileStreamHarris.close();
 		}

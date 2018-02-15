@@ -257,7 +257,9 @@ public class DetectorSusan {
 		
 		superponerAImagenOriginal(newImage, oldImage);
 		
-		if(flagResultados){			
+		if(flagResultados){
+			resultadosX = new LinkedList<Integer>();
+			resultadosY = new LinkedList<Integer>();
 			fileStreamSusan.flush();
 			fileStreamSusan.close();
 		}

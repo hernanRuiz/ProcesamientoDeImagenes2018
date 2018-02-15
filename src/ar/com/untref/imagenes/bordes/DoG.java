@@ -136,7 +136,9 @@ public class DoG {
 			}
 		}
 		
-		if(flagResultados){			
+		if(flagResultados){
+			resultadosX = new LinkedList<Integer>();
+			resultadosY = new LinkedList<Integer>();
 			fileStreamDoG.flush();
 			fileStreamDoG.close();
 		}

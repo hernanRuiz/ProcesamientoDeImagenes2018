@@ -173,7 +173,9 @@ public class DetectorDeBordesMoravec {
 			}
 		}
 		
-		if(flagResultados){			
+		if(flagResultados){
+			resultadosX = new LinkedList<Integer>();
+			resultadosY = new LinkedList<Integer>();
 			fileStreamMoravec.flush();
 			fileStreamMoravec.close();
 		}
