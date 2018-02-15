@@ -9,7 +9,6 @@ import java.util.LinkedList;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -45,27 +44,21 @@ public class VentanaRuido extends JFrame {
 	private JMenu menuItemEditar;
 	private JLabel labelPrincipal;
 	private JLabel labelSigma;
-	private JLabel labelMu;
 	private JMenu menu;
-	private JTextField textFieldMu;
 	private JTextField textFieldSigma;
 	private JTextField textFieldAnchoRAW;
 	private JTextField textFieldAltoRAW;
 	private JMenuItem menuItemGuardarComo;
-	private JComboBox<String> comboGauss;
 	private static Imagen imagenSinCambios;
 	private EspereDialog dialogoEspera;
 	private JPanel volverAImagenOriginal;
 	
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public VentanaRuido(Imagen imagenSCambios) {
 		
 		dialogoEspera = new EspereDialog(this);
 		imagenSinCambios = imagenSCambios;
 		this.setTitle("Generador de Ruido y Filtros");
-		VentanaRuido.this.setExtendedState(VentanaRuido.this.getExtendedState() | JFrame.MAXIMIZED_BOTH);
 		
-		//setDefaultCloseOperation(JFrame.);
 		setBounds(100, 100, 800, 600);
 		
 		JMenuBar menuBar = new JMenuBar();
@@ -130,30 +123,9 @@ public class VentanaRuido extends JFrame {
 		textFieldAnchoRAW.setText("256");
 		textFieldAnchoRAW.setColumns(3);
 		
-		String[] opcionesGauss = {"Ruido de Gauss", "Ruido Blanco de Gauss"};
-		comboGauss = new JComboBox(opcionesGauss);
-		comboGauss.setSelectedIndex(0);
-		panelRuido.add(comboGauss);
-		comboGauss.addActionListener(new ActionListener(){
-            @Override
-            public void actionPerformed(ActionEvent e) {
-
-               if (comboGauss.getSelectedIndex()==1){
-            	   
-					Integer sigma = 1;
-					Integer mu = 0;
-					
-					BufferedImage bufferedImage = GeneradorDeRuido.generarRuidoGauss(ProcesadorDeImagenes.obtenerInstancia().getImagenActual().getBufferedImage(), sigma, mu);
-					Imagen imagenAnterior = ProcesadorDeImagenes.obtenerInstancia().getImagenActual();
-					Imagen nuevaImagenActual = new Imagen(bufferedImage, imagenAnterior.getFormato(), imagenAnterior.getNombre());
-					ProcesadorDeImagenes.obtenerInstancia().setImagenActual(nuevaImagenActual);
-					
-					VentanaRuido.this.refrescarImagen();
-                }
-            }
-            
-		});
-	 
+		JLabel ruidoGauss = new JLabel("Ruido Gaussiano -");
+		panelRuido.add(ruidoGauss);
+		
 		labelSigma = new JLabel("σ:");
 		panelRuido.add(labelSigma);
 		
@@ -163,28 +135,19 @@ public class VentanaRuido extends JFrame {
 		textFieldSigma.setPreferredSize(new Dimension(1, 20));
 		textFieldSigma.setColumns(3);
 		
-		labelMu = new JLabel("μ:");
-		panelRuido.add(labelMu);
-		
-		textFieldMu = new JTextField();
-		panelRuido.add(textFieldMu);
-		textFieldMu.setColumns(3);
-		
-		
 		JButton aplicarRuidoGauss = new JButton("Aplicar");
 		panelRuido.add(aplicarRuidoGauss);
 		aplicarRuidoGauss.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
 				String campoSigma = textFieldSigma.getText().trim();
-				String campoMu = textFieldMu.getText().trim();
 
-				if (!campoSigma.isEmpty() && !campoMu.isEmpty()){
+				if (!campoSigma.isEmpty()){
 					
 					try {
 						
 					final Integer sigma = Integer.valueOf(campoSigma);
-					final Integer mu = Integer.valueOf(campoMu);
+					final Integer mu = 0;
 					
 					SwingWorker<Void, Void> mySwingWorker = new SwingWorker<Void, Void>(){
 				         @Override
@@ -206,11 +169,11 @@ public class VentanaRuido extends JFrame {
 					
 					} catch (Exception e) {
 						
-						DialogsHelper.mostarMensaje(contentPane, "Por favor ingrese parámetros numéricos", NivelMensaje.ERROR);
+						DialogsHelper.mostarMensaje(contentPane, "Por favor ingrese parámetro numérico", NivelMensaje.ERROR);
 					}
 				} else {
 					
-					DialogsHelper.mostarMensaje(contentPane, "Por favor completa los campos Mu y Sigma", NivelMensaje.ERROR);
+					DialogsHelper.mostarMensaje(contentPane, "Por favor completa el campo Sigma", NivelMensaje.ERROR);
 				}
 			}
 		
@@ -298,18 +261,27 @@ public class VentanaRuido extends JFrame {
 			         @Override
 			         protected Void doInBackground() throws Exception {
 
-			        	Imagen imagenConHarris = DetectorDeHarris.detectarEsquinas(ProcesadorDeImagenes.obtenerInstancia().getImagenActual(), true);
-						ProcesadorDeImagenes.obtenerInstancia().setImagenActual(imagenConHarris);
-						DetectorDeHarris.setResultadosX(new LinkedList<Integer>());
-						DetectorDeHarris.setResultadosY(new LinkedList<Integer>());
-						refrescarImagen();
-						
+			        	 dialogoEspera = new EspereDialog(VentanaRuido.this);
+			        	 Runnable r = new Runnable() {
+					         public void run() {
+				        		 Imagen imagenConHarris = DetectorDeHarris.detectarEsquinas(ProcesadorDeImagenes.obtenerInstancia().getImagenActual(), true);
+				        		 ProcesadorDeImagenes.obtenerInstancia().setImagenActual(imagenConHarris);
+				        		 DetectorDeHarris.setResultadosX(new LinkedList<Integer>());
+				        		 DetectorDeHarris.setResultadosY(new LinkedList<Integer>());
+				        		 refrescarImagen();
+				        		 dialogoEspera.ocultar();
+					         }
+					     };
+
+					    Thread ejecutar = new Thread(r);
+					    ejecutar.start();
+					     
+					    dialogoEspera.mostrar();
 						return null;
 			         }
 			      };
 
 			      mySwingWorker.execute();
-			      mostrarDialogoDeEspera();
 			}
 		});
 		menuDeteccionDeBordes.add(menuItemHarris);

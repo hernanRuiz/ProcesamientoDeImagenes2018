@@ -11,19 +11,21 @@ import ar.com.untref.imagenes.enums.FormatoDeImagen;
 import ar.com.untref.imagenes.modelo.Imagen;
 
 public class DetectorSusan {
-	 
- 	private static final int TAMANIO_MASCARA = 7;
- 	
- 	//Se cuentan sólo los píxeles de la imagen circular
+	
+	//Máscara 7x7
+	private static final int TAMANIO_MASCARA  = 7;
+	
+ 	// Se cuentan sólo los píxeles de la imagen circular
  	private static final int CANTIDAD_PIXELES_MASCARA = 37;
  	
  	private static double umbralT = 27.0;
-	private static java.awt.Color pixelRojo = new java.awt.Color(255,0,0);	
+	private static java.awt.Color pixelRojo = new java.awt.Color(255,0,0);
+	
 	
  	/**
- 	 * Si el resultado es aprox 0.75 no corresponde a borde ni esquina.
+ 	 * Si el resultado es aprox 0, no corresponde a borde ni esquina.
  	 * Si el resultado es aprox 0.5, es un borde.
- 	 * Si el resultado es aprox 0.25 es una esquina.
+ 	 * Si el resultado es aprox 0.75 es una esquina.
  	 * 
  	 * Por lo tanto, se tom� como criterio que cualquier resultado mayor a 0.4, ser� considerado borde/esquina.
  	 */
@@ -115,7 +117,6 @@ public class DetectorSusan {
  	
  	public static BufferedImage aplicar(Imagen image, final String flagDetector, boolean flagResultados) {
 		
- 		//En ejecución indivdual seteamos archivo de salida
  		if(flagResultados){			
  			try {
  				fileStreamSusan = new PrintStream("Salida_algoritmo_Susan.txt");
@@ -141,8 +142,6 @@ public class DetectorSusan {
 				int currentColor = oldImage.getGray(x, y);
 				double pixelsWithinColorRange = 0;
 				
-				/*Se compara la intensidad de cada pixel de la máscara con la intensidad
-				del pixel central de la misma*/
 				for (int i = 0; i < TAMANIO_MASCARA; i++) {
 					for (int j = 0; j < TAMANIO_MASCARA; j++) {
 						int currentMaskColor = oldImage.getGray(x + i - 3, y + j - 3);
@@ -168,7 +167,8 @@ public class DetectorSusan {
  						resultadosX.add(x);
  						resultadosY.add(y);
  	 				}
-
+ 					break;
+ 	
  				case "Bordes":
  					if(Math.abs( Sr0 - criterioDeBorde) < 0.1){
  	 					
@@ -252,7 +252,6 @@ public class DetectorSusan {
  	 				}
 					break;
 				}
-				
 			}
 		}
 		
@@ -305,3 +304,4 @@ public class DetectorSusan {
 		DetectorSusan.resultadosY = resultadosY;
 	}
 }
+

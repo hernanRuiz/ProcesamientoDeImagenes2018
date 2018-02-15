@@ -88,12 +88,8 @@ public class AlgoritmoComparativoDeDetectores {
 	private static HashMap<Double, String> tiemposConRuido = new HashMap<Double, String>();
 	private static File fileActual = null;
 	
-	/**TODO:
-	 * Ventana Ruido: eliminar mu y pasarlo siempre como 0. Eliminar ruido blanco.
-	 * Detectores en ejecución individual: agregar dialogo espera
-	 **/
+	
 	/**
-	 * 
 	 * @param imagenOriginal
 	 * @param coleccion (porcentaje = diferencia entre figura y fondo)
 	 * @param sigma para ruido gaussiano
@@ -621,7 +617,9 @@ public class AlgoritmoComparativoDeDetectores {
 					}
 				}
 			} else {
+				System.out.println();
 				System.out.println("Resultado no viable para el estudio comparativo \n\n");
+				System.out.println();
 			}
 			//------------------------------------------------------------------------------
 			
@@ -806,8 +804,10 @@ public class AlgoritmoComparativoDeDetectores {
 		
 		if(resultadosEnX.size() == 0 || resultadosEnX.size() > 50000){
 			
+			System.out.println();
 			System.out.println("\t SIN RESULTADOS PARA LA IMAGEN ACTUAL EN LAS CONDICIONES DADAS \n\n"); 
-		
+			System.out.println();
+			
 		} else { 
 		
 			for (int i = 0; i < resultadosEnX.size(); i++){

@@ -30,11 +30,15 @@ public class SusanDialog extends JDialog {
 	private JCheckBox boxSierra;
 	private VentanaRuido ventanaRuido;
 	private JPanel jpanel;
-
+	private EspereDialog dialogoEspera;
+	private EspereDialog dialogoEsperaR;
+	private Runnable r;
+	
 	public SusanDialog(VentanaPrincipal ventana, JPanel jpanel) {
 		super(ventana);
 		this.ventana = ventana;
 		this.jpanel = jpanel;
+		dialogoEspera = new EspereDialog(ventana);
 		initUI();
 	}
 
@@ -42,6 +46,7 @@ public class SusanDialog extends JDialog {
 		super(ventanaRuido);
 		this.ventanaRuido = ventanaRuido;
 		this.jpanel = jpanel;
+		dialogoEsperaR = new EspereDialog (ventanaRuido);
 		initUI();
 	}
 
@@ -65,86 +70,155 @@ public class SusanDialog extends JDialog {
 	}
 
 	private void createLayout() {
-
+		
 		botonConfirmar = new JButton("Listo");
-
 		botonConfirmar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-
+			     
 				if (boxEsquinas.isSelected() && boxBordes.isSelected() && boxSierra.isSelected()){
 					
 					if (ventana != null){
-						ventana.aplicarDetectorSusan("BordesSierrasYEsquinas");
+						r = new Runnable() {
+					         public void run() {
+				        		ventana.aplicarDetectorSusan("BordesSierrasYEsquinas");	 
+								dialogoEspera.ocultar();
+					         }
+					     };
 					}
 					
 					if (ventanaRuido != null){
-						
-						ventana.aplicarDetectorSusan("BordesSierrasYEsquinas");
+						r = new Runnable() {
+					         public void run() {
+					        	ventanaRuido.aplicarDetectorSusan("BordesSierrasYEsquinas");	 
+								dialogoEsperaR.ocultar();
+					         }
+					     };
 					}
 				}else if (!boxEsquinas.isSelected() && boxBordes.isSelected() && boxSierra.isSelected()){
 					
 					if (ventana != null){
-						ventana.aplicarDetectorSusan("BordesYSierras");
+						r = new Runnable() {
+					         public void run() {
+				        		ventana.aplicarDetectorSusan("BordesYSierras");	 
+								dialogoEspera.ocultar();
+					         }
+					     };
 					}
 					
 					if (ventanaRuido != null){
-						
-						ventana.aplicarDetectorSusan("BordesYSierras");
+						r = new Runnable() {
+					         public void run() {
+					        	ventanaRuido.aplicarDetectorSusan("BordesYSierras");	 
+								dialogoEsperaR.ocultar();
+					         }
+					     };
 					}
 				}else if (boxEsquinas.isSelected() && !boxBordes.isSelected() && boxSierra.isSelected()){
 					
 					if (ventana != null){
-						ventana.aplicarDetectorSusan("EsquinasYSierras");
+						r = new Runnable() {
+					         public void run() {
+				        		ventana.aplicarDetectorSusan("EsquinasYSierras");	 
+								dialogoEspera.ocultar();
+					         }
+					     };
 					}
 					
 					if (ventanaRuido != null){
-						
-						ventana.aplicarDetectorSusan("EsquinasYSierras");
+						r = new Runnable() {
+					         public void run() {
+					        	ventanaRuido.aplicarDetectorSusan("EsquinasYSierras");	 
+								dialogoEsperaR.ocultar();
+					         }
+					     };
 					}
 				}else if (boxEsquinas.isSelected() && boxBordes.isSelected() && !boxSierra.isSelected()){
 					
 					if (ventana != null){
-						ventana.aplicarDetectorSusan("EsquinasYBordes");
+						r = new Runnable() {
+					         public void run() {
+				        		ventana.aplicarDetectorSusan("EsquinasYBordes");	 
+								dialogoEspera.ocultar();
+					         }
+					     };
 					}
 					
 					if (ventanaRuido != null){
-						
-						ventana.aplicarDetectorSusan("EsquinasYBordes");
+						r = new Runnable() {
+					         public void run() {
+					        	ventanaRuido.aplicarDetectorSusan("EsquinasYBordes");	 
+								dialogoEsperaR.ocultar();
+					         }
+					     };
 					}
 				}else if (!boxEsquinas.isSelected() && !boxBordes.isSelected() && boxSierra.isSelected()){
 					
 					if (ventana != null){
-						ventana.aplicarDetectorSusan("Sierras");
+						r = new Runnable() {
+					         public void run() {
+				        		ventana.aplicarDetectorSusan("Sierras");	 
+								dialogoEspera.ocultar();
+					         }
+					     };
 					}
 					
 					if (ventanaRuido != null){
-						
-						ventana.aplicarDetectorSusan("Sierras");
+						r = new Runnable() {
+					         public void run() {
+					        	ventanaRuido.aplicarDetectorSusan("Sierras");	 
+								dialogoEsperaR.ocultar();
+					         }
+					     };
 					}
 				}else if (!boxEsquinas.isSelected() && boxBordes.isSelected() && !boxSierra.isSelected()){
 									
 					if (ventana != null){
-						ventana.aplicarDetectorSusan("Bordes");
+						r = new Runnable() {
+					         public void run() {
+				        		ventana.aplicarDetectorSusan("Bordes");	 
+								dialogoEspera.ocultar();
+					         }
+					     };
 					}
 					
 					if (ventanaRuido != null){
-						
-						ventana.aplicarDetectorSusan("Bordes");
+						r = new Runnable() {
+					         public void run() {
+					        	ventanaRuido.aplicarDetectorSusan("Bordes");	 
+								dialogoEsperaR.ocultar();
+					         }
+					     };
 					}
 				}else if (boxEsquinas.isSelected() && !boxBordes.isSelected() && !boxSierra.isSelected()){
 					
 					if (ventana != null){
-						ventana.aplicarDetectorSusan("Esquinas");
+						r = new Runnable() {
+					         public void run() {
+				        		ventana.aplicarDetectorSusan("Esquinas");	 
+								dialogoEspera.ocultar();
+					         }
+					     };
 					}
 					
 					if (ventanaRuido != null){
-						
-						ventanaRuido.aplicarDetectorSusan("Esquinas");
+						r = new Runnable() {
+					         public void run() {
+					        	ventanaRuido.aplicarDetectorSusan("Esquinas");	 
+								dialogoEsperaR.ocultar();
+					         }
+					     };
 					}
 				}else{
 					DialogsHelper.mostarMensaje(jpanel, "Por favor seleccione alg\u00fan criterio de detecci\u00f3n", NivelMensaje.ERROR);
 				}
-				SusanDialog.this.dispose();
+				
+				Thread ejecutar = new Thread(r);
+				ejecutar.start();
+			     
+			    SusanDialog.this.dispose();
+			    
+			    if(ventana != null){dialogoEspera.mostrar();}
+			    if(ventanaRuido != null){dialogoEsperaR.mostrar();}
 			}
 		});
 		

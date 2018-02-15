@@ -198,8 +198,12 @@ public class DoG {
 	
 	private static List<Boolean> calcularMaximosYMinimos(Imagen imagenRestaSigma1y2, Imagen imagenRestaSigma2y3, Imagen imagenRestaSigma3y4, int x, int y, int caso){
 		
-		boolean esMaximo;
-		boolean esMinimo;
+		boolean esMaximoCaso0 = false;
+		boolean esMinimoCaso0 = false;
+		boolean esMaximoCaso1 = false;
+		boolean esMinimoCaso1 = false;
+		boolean esMaximoCaso2 = false;
+		boolean esMinimoCaso2 = false;
 		
 		List<Boolean> maximosYMinimos = new ArrayList<Boolean>();
 		
@@ -215,11 +219,15 @@ public class DoG {
 			Color puntoAEvaluarCaso0 = new Color(imagenRestaSigma1y2.getBufferedImage().getRGB(x, y));
 			nodosVecinosImagenRestaSigma1y2.addAll(nodosVecinosImagenRestaSigma2y3);
 			
-			esMaximo = calcularMaximo(puntoAEvaluarCaso0, nodosVecinosImagenRestaSigma1y2);
-			esMinimo = calcularMinimo(puntoAEvaluarCaso0, nodosVecinosImagenRestaSigma1y2);
+			esMaximoCaso0 = calcularMaximo(puntoAEvaluarCaso0, nodosVecinosImagenRestaSigma1y2);
+			if(esMaximoCaso0 == false){				
+				esMinimoCaso0 = calcularMinimo(puntoAEvaluarCaso0, nodosVecinosImagenRestaSigma1y2);
+			}
 			
-			maximosYMinimos.add(esMaximo);
-			maximosYMinimos.add(esMinimo);
+			maximosYMinimos.add(esMaximoCaso0);
+			maximosYMinimos.add(esMinimoCaso0);
+			esMaximoCaso0 = false;
+			esMinimoCaso0 = false;
 			break;
 
 		case 1:
@@ -228,11 +236,15 @@ public class DoG {
 			nodosVecinosImagenRestaSigma2y3.addAll(nodosVecinosImagenRestaSigma1y2);
 			nodosVecinosImagenRestaSigma2y3.addAll(nodosVecinosImagenRestaSigma3y4);
 			
-			esMaximo = calcularMaximo(puntoAEvaluarCaso1, nodosVecinosImagenRestaSigma2y3);
-			esMinimo = calcularMinimo(puntoAEvaluarCaso1, nodosVecinosImagenRestaSigma2y3);
+			esMaximoCaso1 = calcularMaximo(puntoAEvaluarCaso1, nodosVecinosImagenRestaSigma2y3);
+			if(esMaximoCaso1 == false){					
+				esMinimoCaso1 = calcularMinimo(puntoAEvaluarCaso1, nodosVecinosImagenRestaSigma2y3);
+			}
 			
-			maximosYMinimos.add(esMaximo);
-			maximosYMinimos.add(esMinimo);
+			maximosYMinimos.add(esMaximoCaso1);
+			maximosYMinimos.add(esMinimoCaso1);
+			esMaximoCaso1 = false;
+			esMinimoCaso1 = false;
 			break;
 			
 		default:
@@ -240,11 +252,15 @@ public class DoG {
 			Color puntoAEvaluarCaso2 = new Color(imagenRestaSigma1y2.getBufferedImage().getRGB(x, y));
 			nodosVecinosImagenRestaSigma3y4.addAll(nodosVecinosImagenRestaSigma2y3);
 			
-			esMaximo = calcularMaximo(puntoAEvaluarCaso2, nodosVecinosImagenRestaSigma3y4);
-			esMinimo = calcularMinimo(puntoAEvaluarCaso2, nodosVecinosImagenRestaSigma3y4);
+			esMaximoCaso2 = calcularMaximo(puntoAEvaluarCaso2, nodosVecinosImagenRestaSigma3y4);
+			if(esMaximoCaso2 == false){					
+				esMinimoCaso2 = calcularMinimo(puntoAEvaluarCaso2, nodosVecinosImagenRestaSigma3y4);
+			}
 			
-			maximosYMinimos.add(esMaximo);
-			maximosYMinimos.add(esMinimo);
+			maximosYMinimos.add(esMaximoCaso2);
+			maximosYMinimos.add(esMinimoCaso2);
+			esMaximoCaso2 = false;
+			esMinimoCaso2 = false;
 			break;
 		}
 		

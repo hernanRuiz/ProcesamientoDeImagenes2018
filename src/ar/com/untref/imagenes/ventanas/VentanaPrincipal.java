@@ -58,8 +58,6 @@ public class VentanaPrincipal extends JFrame {
 
 	public VentanaPrincipal() {
 
-		dialogoEspera = new EspereDialog(this);
-
 		this.setTitle("Procesamiento de Im\u00e1genes");
 				
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -202,7 +200,7 @@ public class VentanaPrincipal extends JFrame {
 		menu.add(menuItemGuardarComo);
 		menu.add(menuItem);
 		
-		menuItemEditar = new JMenu("Editar");
+		menuItemEditar = new JMenu(" Editar ");
 		inhabilitarItem(menuItemEditar);
 		
 		menuBar.add(menuItemEditar);
@@ -238,7 +236,7 @@ public class VentanaPrincipal extends JFrame {
 		menuItemEditar.add(menuDeteccionDeBordes);
 		
 		
-		JMenuItem menuItemAlgoritmoComparativo = new JMenuItem("Algoritmo comparativo de detectores");
+		JMenuItem menuItemAlgoritmoComparativo = new JMenuItem(" Algoritmo comparativo de detectores");
 		menuItemAlgoritmoComparativo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
@@ -249,6 +247,12 @@ public class VentanaPrincipal extends JFrame {
 		
 		menuBar.add(menuItemAlgoritmoComparativo);
 		
+		JMenuItem blanco = new JMenuItem();
+		blanco.setEnabled(false);
+		JMenuItem blanco2 = new JMenuItem();
+		blanco2.setEnabled(false);
+		menuBar.add(blanco);
+		menuBar.add(blanco2);
 		
 		JMenuItem menuItemDetectorDeSusan = new JMenuItem("Detector de Susan");
 		menuItemDetectorDeSusan.addActionListener(new ActionListener() {
@@ -266,19 +270,27 @@ public class VentanaPrincipal extends JFrame {
 				SwingWorker<Void, Void> mySwingWorker = new SwingWorker<Void, Void>(){
 			         @Override
 			         protected Void doInBackground() throws Exception {
+			        	 dialogoEspera = new EspereDialog(VentanaPrincipal.this);
+			        	 Runnable r = new Runnable() {
+					         public void run() {
+				        		 Imagen imagenConHarris = DetectorDeHarris.detectarEsquinas(ProcesadorDeImagenes.obtenerInstancia().getImagenActual(), true);
+				        		 ProcesadorDeImagenes.obtenerInstancia().setImagenActual(imagenConHarris);
+				        		 DetectorDeHarris.setResultadosX(new LinkedList<Integer>());
+				        		 DetectorDeHarris.setResultadosY(new LinkedList<Integer>());
+				        		 refrescarImagen();
+				        		 dialogoEspera.ocultar();
+					         }
+					     };
 
-			        	Imagen imagenConHarris = DetectorDeHarris.detectarEsquinas(ProcesadorDeImagenes.obtenerInstancia().getImagenActual(), true);
-						ProcesadorDeImagenes.obtenerInstancia().setImagenActual(imagenConHarris);
-						DetectorDeHarris.setResultadosX(new LinkedList<Integer>());
-						DetectorDeHarris.setResultadosY(new LinkedList<Integer>());
-						refrescarImagen();
-						
+					     Thread ejecutar = new Thread(r);
+					     ejecutar.start();
+					     
+					     dialogoEspera.mostrar();
 						return null;
 			         }
 			      };
 
 			      mySwingWorker.execute();
-			      mostrarDialogoDeEspera();
 			}
 		});
 		
@@ -436,12 +448,12 @@ public class VentanaPrincipal extends JFrame {
 	
 	public void mostrarDialogoDeEspera(){
 		
-		this.dialogoEspera.mostrar();
+		if(this.dialogoEspera != null){this.dialogoEspera.mostrar();}
 	}
 	
 	public void ocultarDialogoDeEspera(){
 		
-		this.dialogoEspera.ocultar();
+		if(this.dialogoEspera != null){this.dialogoEspera.ocultar();}
 	}
 
 }

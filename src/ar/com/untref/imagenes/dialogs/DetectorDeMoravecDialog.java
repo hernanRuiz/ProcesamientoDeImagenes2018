@@ -28,11 +28,15 @@ public class DetectorDeMoravecDialog extends JDialog {
 	private JTextField radioElegido;
 	private VentanaRuido ventanaRuido;
 	private JPanel jpanel;
+	private EspereDialog dialogoEspera;
+	private EspereDialog dialogoEsperaR;
+	private Runnable r;
 
 	public DetectorDeMoravecDialog(VentanaPrincipal ventana, JPanel jpanel) {
 		super(ventana);
 		this.ventana = ventana;
 		this.jpanel = jpanel;
+		dialogoEspera = new EspereDialog(ventana);
 		initUI();
 	}
 
@@ -40,6 +44,7 @@ public class DetectorDeMoravecDialog extends JDialog {
 		super(ventanaRuido);
 		this.ventanaRuido = ventanaRuido;
 		this.jpanel = jpanel;
+		dialogoEsperaR = new EspereDialog (ventanaRuido);
 		initUI();
 	}
 
@@ -70,20 +75,35 @@ public class DetectorDeMoravecDialog extends JDialog {
 				if (!umbralElegido.getText().toString().isEmpty() && !radioElegido.getText().toString().isEmpty()) {
 					
 					try{
-						int umbral = Integer.valueOf(umbralElegido.getText().toString());
-						int radio = Integer.valueOf(radioElegido.getText().toString());
+						final int umbral = Integer.valueOf(umbralElegido.getText().toString());
+						final int radio = Integer.valueOf(radioElegido.getText().toString());
 						
 							if (ventana != null){
-								
-								ventana.aplicarDetectorDeBordesDeMoravec(umbral, radio);
+								r = new Runnable() {
+							         public void run() {
+							        	 ventana.aplicarDetectorDeBordesDeMoravec(umbral, radio);	 
+										dialogoEspera.ocultar();
+							         }
+							    };
 							}
 							
 							if (ventanaRuido != null){
-								
-								ventanaRuido.aplicarDetectorDeBordesDeMoravec(umbral, radio);
+								r = new Runnable() {
+							         public void run() {
+							        	 ventanaRuido.aplicarDetectorDeBordesDeMoravec(umbral, radio);	 
+										dialogoEsperaR.ocultar();
+							         }
+							    };
 							}
-							
+						
+						
+							Thread ejecutar = new Thread(r);
+							ejecutar.start();
+						     
 							DetectorDeMoravecDialog.this.dispose();
+						    
+						    if(ventana != null){dialogoEspera.mostrar();}
+						    if(ventanaRuido != null){dialogoEsperaR.mostrar();}
 						
 					} catch (Exception ex){
 						

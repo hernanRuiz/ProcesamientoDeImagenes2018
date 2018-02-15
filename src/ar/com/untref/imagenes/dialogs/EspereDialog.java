@@ -29,7 +29,7 @@ public class EspereDialog extends JDialog {
 		initUI();
 	}
 	
-public EspereDialog(VentanaRuido ventanaR){
+	public EspereDialog(VentanaRuido ventanaR){
 		
 		this.ventanaR = ventanaR;
 		setUndecorated(true);

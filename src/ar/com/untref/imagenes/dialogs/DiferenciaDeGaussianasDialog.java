@@ -32,11 +32,15 @@ public class DiferenciaDeGaussianasDialog extends JDialog {
 	private JTextField sigma4Elegido;
 	private VentanaRuido ventanaRuido;
 	private JPanel jpanel;
+	private EspereDialog dialogoEspera;
+	private EspereDialog dialogoEsperaR;
+	private Runnable r;
 
 	public DiferenciaDeGaussianasDialog(VentanaPrincipal ventana, JPanel jpanel) {
 		super(ventana);
 		this.ventana = ventana;
 		this.jpanel = jpanel;
+		dialogoEspera = new EspereDialog(ventana);
 		initUI();
 	}
 
@@ -44,6 +48,7 @@ public class DiferenciaDeGaussianasDialog extends JDialog {
 		super(ventanaRuido);
 		this.ventanaRuido = ventanaRuido;
 		this.jpanel = jpanel;
+		dialogoEsperaR = new EspereDialog (ventanaRuido);
 		initUI();
 	}
 
@@ -81,22 +86,36 @@ public class DiferenciaDeGaussianasDialog extends JDialog {
 						&& !sigma3Elegido.getText().toString().isEmpty() && !sigma4Elegido.getText().toString().isEmpty()) {
 					
 					try{
-						int sigma1 = Integer.valueOf(sigma1Elegido.getText().toString());
-						int sigma2 = Integer.valueOf(sigma2Elegido.getText().toString());
-						int sigma3 = Integer.valueOf(sigma3Elegido.getText().toString());
-						int sigma4 = Integer.valueOf(sigma4Elegido.getText().toString());
+						final int sigma1 = Integer.valueOf(sigma1Elegido.getText().toString());
+						final int sigma2 = Integer.valueOf(sigma2Elegido.getText().toString());
+						final int sigma3 = Integer.valueOf(sigma3Elegido.getText().toString());
+						final int sigma4 = Integer.valueOf(sigma4Elegido.getText().toString());
 						
 							if (ventana != null){
-								
-								ventana.aplicarDoG(sigma1, sigma2, sigma3, sigma4);
+								r = new Runnable() {
+							         public void run() {
+							        	ventana.aplicarDoG(sigma1, sigma2, sigma3, sigma4);	 
+										dialogoEspera.ocultar();
+							         }
+							    };	
 							}
 							
 							if (ventanaRuido != null){
-								
-								ventanaRuido.aplicarDoG(sigma1, sigma2, sigma3, sigma4);
+								r = new Runnable() {
+							         public void run() {
+							        	ventanaRuido.aplicarDoG(sigma1, sigma2, sigma3, sigma4);	 
+										dialogoEsperaR.ocultar();
+							         }
+							    };
 							}
 							
+							Thread ejecutar = new Thread(r);
+							ejecutar.start();
+						     
 							DiferenciaDeGaussianasDialog.this.dispose();
+						    
+						    if(ventana != null){dialogoEspera.mostrar();}
+						    if(ventanaRuido != null){dialogoEsperaR.mostrar();}
 						
 					} catch (Exception ex){
 						
