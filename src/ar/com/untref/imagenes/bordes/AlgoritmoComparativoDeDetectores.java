@@ -155,7 +155,6 @@ public class AlgoritmoComparativoDeDetectores {
 		
 		int[] contadoresCorrectosHarrisSinRuido = new int[5];
 		int[] contadoresFalsosHarrisSinRuido = new int[5];
-		int[] contadoresTotalHarrisSinRuido = new int[5];
 		
 		List<Integer> resultadosHarrisSinRuido = new LinkedList<Integer>();
 		
@@ -164,13 +163,12 @@ public class AlgoritmoComparativoDeDetectores {
 			
 			contadoresCorrectosHarrisSinRuido[i] = resultadosHarrisSinRuido.get(0);
 			contadoresFalsosHarrisSinRuido[i] = resultadosHarrisSinRuido.get(1);
-			contadoresTotalHarrisSinRuido[i] = resultadosHarrisSinRuido.get(2);
 			
 			setContadorHarrisCorrectosSinRuidoTotal(resultadosHarrisSinRuido.get(0));
 			setContadorHarrisFalsosPositivosSinRuidoTotal(resultadosHarrisSinRuido.get(1));
 		}
 		
-		mostrarResultados(contadoresCorrectosHarrisSinRuido, contadoresFalsosHarrisSinRuido, contadoresTotalHarrisSinRuido);
+		mostrarResultados(contadoresCorrectosHarrisSinRuido, contadoresFalsosHarrisSinRuido);
 		
 		//Calculamos tiempo de procesamiento
 		double tiempoFinHarrisSinRuido = System.nanoTime();
@@ -192,7 +190,6 @@ public class AlgoritmoComparativoDeDetectores {
 		System.out.println();
 		int[] contadoresCorrectosSusanSinRuido = new int[5];
 		int[] contadoresFalsosSusanSinRuido = new int[5];
-		int[] contadoresTotalSusanSinRuido = new int[5];
 		
 		List<Integer> resultadosSusanSinRuido = new LinkedList<Integer>();
 		
@@ -201,13 +198,12 @@ public class AlgoritmoComparativoDeDetectores {
 		
 			contadoresCorrectosSusanSinRuido[i] = resultadosSusanSinRuido.get(0);
 			contadoresFalsosSusanSinRuido[i] = resultadosSusanSinRuido.get(1);
-			contadoresTotalSusanSinRuido[i] = resultadosSusanSinRuido.get(2);
 			
 			setContadorSusanCorrectosSinRuidoTotal(resultadosSusanSinRuido.get(0));
 			setContadorSusanFalsosPositivosSinRuidoTotal(resultadosSusanSinRuido.get(1));
 		}
 		
-		mostrarResultados(contadoresCorrectosSusanSinRuido, contadoresFalsosSusanSinRuido, contadoresTotalSusanSinRuido);
+		mostrarResultados(contadoresCorrectosSusanSinRuido, contadoresFalsosSusanSinRuido);
 		
 		//Calculamos tiempo de procesamiento
 		double tiempoFinSusanSinRuido = System.nanoTime();
@@ -247,7 +243,6 @@ public class AlgoritmoComparativoDeDetectores {
 			
 			int[] contadoresCorrectos = new int[5];
 			int[] contadoresFalsos = new int[5];
-			int[] contadoresTotal = new int[5];
 			
 			System.out.println();
 			System.out.println("Resultado Detector de Moravec (tamaño máscara: " + tamanios[h] + ", umbral: "
@@ -263,7 +258,6 @@ public class AlgoritmoComparativoDeDetectores {
 				
 				contadoresCorrectos[f] = resultadosMoravecSinRuido.get(0);
 				contadoresFalsos[f] = resultadosMoravecSinRuido.get(1);
-				contadoresTotal[f] = resultadosMoravecSinRuido.get(2);
 				
 				switch (h) {
 				case 0:
@@ -281,7 +275,7 @@ public class AlgoritmoComparativoDeDetectores {
 				}
 			}
 			
-			mostrarResultados(contadoresCorrectos, contadoresFalsos, contadoresTotal);
+			mostrarResultados(contadoresCorrectos, contadoresFalsos);
 		
 			//Calculamos tiempo de procesamiento
 			switch (h) {
@@ -351,7 +345,6 @@ public class AlgoritmoComparativoDeDetectores {
 			Integer[] sigmasAUtilizar = sigmas.get(i);
 			int[] contadoresCorrectos = new int[5];
 			int[] contadoresFalsos = new int[5];
-			int[] contadoresTotal = new int[5];
 			
 			System.out.println();
 			System.out.println("Resultado DoG con sigmas: " + sigmasAUtilizar[0] + ", " +
@@ -367,7 +360,6 @@ public class AlgoritmoComparativoDeDetectores {
 				
 				contadoresCorrectos[f] = resultadosDoGSinRuido.get(0);
 				contadoresFalsos[f] = resultadosDoGSinRuido.get(1);
-				contadoresTotal[f] = resultadosDoGSinRuido.get(2);							
 			
 				switch (i) {
 				case 0:
@@ -386,7 +378,7 @@ public class AlgoritmoComparativoDeDetectores {
 				
 			}
 			
-			mostrarResultados(contadoresCorrectos, contadoresFalsos, contadoresTotal);
+			mostrarResultados(contadoresCorrectos, contadoresFalsos);
 		
 			//Calculamos tiempo de procesamiento
 			switch (i) {
@@ -472,7 +464,6 @@ public class AlgoritmoComparativoDeDetectores {
 			
 			int[] contadoresCorrectosHarrisConRuido = new int[5];
 			int[] contadoresFalsosHarrisConRuido = new int[5];
-			int[] contadoresTotalHarrisConRuido = new int[5];
 			
 			List<Integer> resultadosHarrisConRuido = new LinkedList<Integer>();
 			
@@ -481,14 +472,13 @@ public class AlgoritmoComparativoDeDetectores {
 				
 				contadoresCorrectosHarrisConRuido[i] = resultadosHarrisConRuido.get(0);
 				contadoresFalsosHarrisConRuido[i] = resultadosHarrisConRuido.get(1);
-				contadoresTotalHarrisConRuido[i] = resultadosHarrisConRuido.get(2);
 			
 				setContadorHarrisCorrectosConRuidoTotal(resultadosHarrisConRuido.get(0));
 				setContadorHarrisFalsosPositivosConRuidoTotal(resultadosHarrisConRuido.get(1));
 			
 			}
 			
-			mostrarResultados(contadoresCorrectosHarrisConRuido, contadoresFalsosHarrisConRuido, contadoresTotalHarrisConRuido);
+			mostrarResultados(contadoresCorrectosHarrisConRuido, contadoresFalsosHarrisConRuido);
 			
 			//Calculamos tiempo de procesamiento
 			System.out.println();
@@ -513,7 +503,6 @@ public class AlgoritmoComparativoDeDetectores {
 			
 			int[] contadoresCorrectosSusanConRuido = new int[5];
 			int[] contadoresFalsosSusanConRuido = new int[5];
-			int[] contadoresTotalSusanConRuido = new int[5];
 			
 			List<Integer> resultadosSusanConRuido = new LinkedList<Integer>();
 
@@ -522,13 +511,12 @@ public class AlgoritmoComparativoDeDetectores {
 			
 				contadoresCorrectosSusanConRuido[i] = resultadosSusanConRuido.get(0);
 				contadoresFalsosSusanConRuido[i] = resultadosSusanConRuido.get(1);
-				contadoresTotalSusanConRuido[i] = resultadosSusanConRuido.get(2);
 			
 				setContadorSusanCorrectosConRuidoTotal(resultadosSusanConRuido.get(0));
 				setContadorSusanFalsosPositivosConRuidoTotal(resultadosSusanConRuido.get(1));
 			}
 			
-			mostrarResultados(contadoresCorrectosSusanConRuido, contadoresFalsosSusanConRuido, contadoresTotalSusanConRuido);
+			mostrarResultados(contadoresCorrectosSusanConRuido, contadoresFalsosSusanConRuido);
 			
 			//Calculamos tiempo de procesamiento
 			double tiempoFinSusanConRuido = System.nanoTime();
@@ -553,7 +541,6 @@ public class AlgoritmoComparativoDeDetectores {
 				
 					int[] contadoresCorrectos = new int[5];
 					int[] contadoresFalsos = new int[5];
-					int[] contadoresTotal = new int[5];
 					
 					System.out.println();
 					
@@ -585,7 +572,6 @@ public class AlgoritmoComparativoDeDetectores {
 						
 						contadoresCorrectos[f] = resultadosMoravecConRuido.get(0);
 						contadoresFalsos[f] = resultadosMoravecConRuido.get(1);
-						contadoresTotal[f] = resultadosMoravecConRuido.get(2);							
 					
 						switch (h) {
 						case 0:
@@ -603,7 +589,7 @@ public class AlgoritmoComparativoDeDetectores {
 						}
 					}
 					
-					mostrarResultados(contadoresCorrectos, contadoresFalsos, contadoresTotal);
+					mostrarResultados(contadoresCorrectos, contadoresFalsos);
 					
 					//Calculamos tiempo de procesamiento
 					switch (h) {
@@ -652,7 +638,6 @@ public class AlgoritmoComparativoDeDetectores {
 				
 				int[] contadoresCorrectos = new int[5];
 				int[] contadoresFalsos = new int[5];
-				int[] contadoresTotal = new int[5];
 				
 				List<Integer> resultadosDoGConRuido = new LinkedList<Integer>();
 				
@@ -685,7 +670,6 @@ public class AlgoritmoComparativoDeDetectores {
 
 					contadoresCorrectos[j] = resultadosDoGConRuido.get(0);
 					contadoresFalsos[j] = resultadosDoGConRuido.get(1);
-					contadoresTotal[j] = resultadosDoGConRuido.get(2);
 				
 					switch (i) {
 					case 0:
@@ -703,7 +687,7 @@ public class AlgoritmoComparativoDeDetectores {
 					}
 				}
 								
-				mostrarResultados(contadoresCorrectos, contadoresFalsos, contadoresTotal);
+				mostrarResultados(contadoresCorrectos, contadoresFalsos);
 			
 				//Calculamos tiempo de procesamiento
 				switch (i) {
@@ -1060,7 +1044,7 @@ public class AlgoritmoComparativoDeDetectores {
 	}
 
 	
-	private static void mostrarResultados(int[] correctos, int[] falsosPositivos, int[] resultadoFinal) {
+	private static void mostrarResultados(int[] correctos, int[] falsosPositivos) {
 		String leftAlignFormat = "| %-15s | %7s | %7s | %7s | %7s | %7s |%n";
 		
 		System.out.format("                       +---------+---------+---------+---------+---------+%n");

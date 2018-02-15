@@ -40,6 +40,7 @@ public class DetectorDeHarris {
 
 	public static Imagen detectarEsquinas(Imagen imagenOriginal, boolean flagResultados){
 		
+		//Enejecución individual seteamos archivo de salida
 		if (flagResultados){			
 			try {
 				fileStreamHarris  = new PrintStream("Salida_algoritmo_Harris.txt");
@@ -52,9 +53,7 @@ public class DetectorDeHarris {
 			}
 		}
 		
-		oldImage = new CustomBufferedImage(imagenOriginal.getBufferedImage());
-		//Imagen imagenADevolver = imagenOriginal;
-		
+		oldImage = new CustomBufferedImage(imagenOriginal.getBufferedImage());		
 		
 		//Paso 1: Calcular lx e Iy usando las m�caras de prewit o sobel para toda la imagen.
 		float[][] mascaraDeSobelEnX = DetectorDeBordes.calcularMascaraDeSobelEnX();
@@ -125,6 +124,7 @@ public class DetectorDeHarris {
 		return superponerAImagenOriginal(imagenUmbralizada, imagenOriginal, flagResultados);
 	}
 
+	//Marcamos los puntos encontrados en la imagen original
 	private static Imagen superponerAImagenOriginal(Imagen umbralizada, Imagen original, boolean flagResultados) {
 
 		Imagen imagenFinal = new Imagen(new BufferedImage(umbralizada.getBufferedImage().getWidth(), umbralizada.getBufferedImage().getHeight(), umbralizada.getBufferedImage().getType()), FormatoDeImagen.JPEG, "final");
@@ -175,6 +175,7 @@ public class DetectorDeHarris {
 		for (int f = 0; f < filas; f++) {
 			for (int g = 0; g < columnas; g++) {
 
+				//Esta es la fórmula central del detector de Harris
 				matrizCim[f][g] = (int) (((Ix2[f][g]*Iy2[f][g]) - Ixy2[f][g]) - (0.04 * Math.pow((Ix2[f][g] + Iy2[f][g]),2)));
 			}
 		}

@@ -21,6 +21,7 @@ public class DetectorDeBordesMoravec {
 
     public static BufferedImage aplicarMoravec(Imagen imagenOriginal, int tamanio, int umbral, boolean flagResultados) { 
     
+    	//En ejecución individual seteamos archivo de salida
     	if(flagResultados){			
     		try {
     			fileStreamMoravec = new PrintStream("Salida_algoritmo_Moravec.txt");
@@ -113,7 +114,7 @@ public class DetectorDeBordesMoravec {
         return imagenFinal.getBufferedImage();
     }
     
-
+    //Generamos las dos máscaras que utiliza el detector
     private static ArrayList<int[][]> generateWindow(int tamanio) { 
         
       if ( tamanio % 2 == 0 ){
@@ -146,7 +147,7 @@ public class DetectorDeBordesMoravec {
 		return matrices;
     } 
     
-	
+	//Marcamos los puntos encontrados en la imagen original
     private static Imagen superponerAImagenOriginal(Imagen umbralizada, Imagen original, boolean flagResultados) {
 
 		Imagen imagenFinal = new Imagen(new BufferedImage(umbralizada.getBufferedImage().getWidth(), umbralizada.getBufferedImage().getHeight(), umbralizada.getBufferedImage().getType()), FormatoDeImagen.JPEG, "final");

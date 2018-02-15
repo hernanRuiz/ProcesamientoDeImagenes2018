@@ -21,6 +21,7 @@ public class DoG {
 	
 	public static BufferedImage aplicar(Imagen imagenOriginal, int sigma1, int sigma2, int sigma3, int sigma4, boolean flagResultados) {
 		
+		//En ejecución individual seteamos un archivo de salida
 		if(flagResultados){			
 			try {
 				fileStreamDoG = new PrintStream("Salida_algoritmo_DiferenciaDeGaussianas.txt");
@@ -35,14 +36,15 @@ public class DoG {
 		}
 		
 		Imagen imagenResultante = new Imagen(new BufferedImage(imagenOriginal.getBufferedImage().getWidth(), imagenOriginal.getBufferedImage().getHeight(), imagenOriginal.getBufferedImage().getType()), imagenOriginal.getFormato(), imagenOriginal.getNombre()+"_DoG");
-		//Imagen imagenSuavizzada = FiltroGaussiano.aplicarFiltroGaussiano(imagenOriginal, (int) 0.5);
 		Imagen imagenAGrises = pasarImagenAGGrises(imagenOriginal);
-		
+
+		//Aplicamos filtros gaussianos a la imagen según los parámetros sigma 
 		Imagen imagenFiltradaSigma1 = FiltroGaussiano.aplicarFiltroGaussiano(imagenAGrises, sigma1);
 		Imagen imagenFiltradaSigma2 = FiltroGaussiano.aplicarFiltroGaussiano(imagenAGrises, sigma2);
 		Imagen imagenFiltradaSigma3 = FiltroGaussiano.aplicarFiltroGaussiano(imagenAGrises, sigma3);
 		Imagen imagenFiltradaSigma4 = FiltroGaussiano.aplicarFiltroGaussiano(imagenAGrises, sigma4);
 		
+		//Restamos pixel a pixel las imágenes filtradas
 		Imagen imagenRestaSigma1y2 = restarImagenesFiltradas(imagenFiltradaSigma1, imagenFiltradaSigma2);
 		Imagen imagenRestaSigma2y3 = restarImagenesFiltradas(imagenFiltradaSigma2, imagenFiltradaSigma3);
 		Imagen imagenRestaSigma3y4 = restarImagenesFiltradas(imagenFiltradaSigma3, imagenFiltradaSigma4);
@@ -209,31 +211,37 @@ public class DoG {
 		
 		switch (caso) {
 		case 0:
+			
+			Color puntoAEvaluarCaso0 = new Color(imagenRestaSigma1y2.getBufferedImage().getRGB(x, y));
 			nodosVecinosImagenRestaSigma1y2.addAll(nodosVecinosImagenRestaSigma2y3);
 			
-			esMaximo = calcularMaximo(nodosVecinosImagenRestaSigma1y2);
-			esMinimo = calcularMinimo(nodosVecinosImagenRestaSigma1y2);
+			esMaximo = calcularMaximo(puntoAEvaluarCaso0, nodosVecinosImagenRestaSigma1y2);
+			esMinimo = calcularMinimo(puntoAEvaluarCaso0, nodosVecinosImagenRestaSigma1y2);
 			
 			maximosYMinimos.add(esMaximo);
 			maximosYMinimos.add(esMinimo);
 			break;
 
 		case 1:
+			
+			Color puntoAEvaluarCaso1 = new Color(imagenRestaSigma1y2.getBufferedImage().getRGB(x, y));
 			nodosVecinosImagenRestaSigma2y3.addAll(nodosVecinosImagenRestaSigma1y2);
 			nodosVecinosImagenRestaSigma2y3.addAll(nodosVecinosImagenRestaSigma3y4);
 			
-			esMaximo = calcularMaximo(nodosVecinosImagenRestaSigma2y3);
-			esMinimo = calcularMinimo(nodosVecinosImagenRestaSigma2y3);
+			esMaximo = calcularMaximo(puntoAEvaluarCaso1, nodosVecinosImagenRestaSigma2y3);
+			esMinimo = calcularMinimo(puntoAEvaluarCaso1, nodosVecinosImagenRestaSigma2y3);
 			
 			maximosYMinimos.add(esMaximo);
 			maximosYMinimos.add(esMinimo);
 			break;
 			
 		default:
+			
+			Color puntoAEvaluarCaso2 = new Color(imagenRestaSigma1y2.getBufferedImage().getRGB(x, y));
 			nodosVecinosImagenRestaSigma3y4.addAll(nodosVecinosImagenRestaSigma2y3);
 			
-			esMaximo = calcularMaximo(nodosVecinosImagenRestaSigma3y4);
-			esMinimo = calcularMinimo(nodosVecinosImagenRestaSigma3y4);
+			esMaximo = calcularMaximo(puntoAEvaluarCaso2, nodosVecinosImagenRestaSigma3y4);
+			esMinimo = calcularMinimo(puntoAEvaluarCaso2, nodosVecinosImagenRestaSigma3y4);
 			
 			maximosYMinimos.add(esMaximo);
 			maximosYMinimos.add(esMinimo);
@@ -244,32 +252,33 @@ public class DoG {
 	}
 
 
-	private static boolean calcularMaximo(List<Color> nodosVecinos) {
+	private static boolean calcularMaximo(Color maximoAEvaluar, List<Color> nodosVecinosMultinivel) {
 		
 		int i;
-		Color nodoCentral = nodosVecinos.get(0);
-		int maximo = 0;
+		int maximoEncontrado = 0;
 		boolean esMaximo = false;
-		int indice = 0;
 		int contador = 0;
-		List<Integer> valores = new ArrayList<Integer>();
 		
-		for (i = 0; i < nodosVecinos.size(); i++){
-			
-			valores.add(nodosVecinos.get(i).getRed());
+		List<Integer> valoresAComparar = new ArrayList<Integer>();
+		
+		for (i = 0; i < nodosVecinosMultinivel.size(); i++){			
+			valoresAComparar.add(nodosVecinosMultinivel.get(i).getRed());
 		}
 		
-		maximo = Collections.max(valores);
-		indice = valores.indexOf(maximo);
-				
-		for (i = 0; i < valores.size(); i++){
-			
-			if(valores.get(i) == maximo){
-				contador += 1;
+		maximoEncontrado = Collections.max(valoresAComparar);
+		
+		/*Comparamos con los nodos vecinos en todos los niveles que participan de la comparación
+		Verificamos si el máximoEncontrado es o no único*/
+		for (int h = 0; h < valoresAComparar.size(); h++){
+			int valorActual = valoresAComparar.get(h);
+			if (maximoEncontrado == valorActual) {
+				contador++;
 			}
 		}
 		
-		if ((maximo == nodoCentral.getRed()) && indice == 0 && contador == 1){
+		/*Si el maximo a evaluar es diferente al encontrado entonces no es máximo. Si coincide pero no es único, 
+		no es un máximo a marcar.*/
+		if ((maximoEncontrado == maximoAEvaluar.getRed()) && contador == 1){
 			esMaximo = true;
 		}
 		
@@ -277,32 +286,33 @@ public class DoG {
 	}
 	
 	
-	private static boolean calcularMinimo(List<Color> nodosVecinos) {
+	private static boolean calcularMinimo(Color minimoAEvaluar, List<Color> nodosVecinos) {
 		
 		int i;
-		Color nodoCentral = nodosVecinos.get(0);
-		int minimo = 0;
+		int minimoEncontrado = 0;
 		boolean esMinimo = false;
-		int indice = 0;
 		int contador = 0;
-		List<Integer> valores = new ArrayList<Integer>();
 		
-		for (i = 0; i < nodosVecinos.size(); i++){
-			
-			valores.add(nodosVecinos.get(i).getRed());
+		List<Integer> valoresAComparar = new ArrayList<Integer>();
+		
+		for (i = 0; i < nodosVecinos.size(); i++){	
+			valoresAComparar.add(nodosVecinos.get(i).getRed());
 		}
 		
-		minimo = Collections.min(valores);
-		indice = valores.indexOf(minimo);
+		minimoEncontrado = Collections.min(valoresAComparar);
 				
-		for (i = 0; i < valores.size(); i++){
-			
-			if(valores.get(i) == minimo){
-				contador += 1;
+		/*Comparamos con los nodos vecinos en todos los niveles que participan de la comparación
+		Verificamos si el minimo encontrado es o no único*/
+		for (int h = 0; h < valoresAComparar.size(); h++){
+			int valorActual = valoresAComparar.get(h);
+			if (minimoEncontrado == valorActual) {
+				contador++;
 			}
 		}
 		
-		if ((minimo == nodoCentral.getRed()) && indice == 0 && contador == 1){
+		/*Si el mínimo a evaluar es diferente al encontrado entonces no es mínimo. Si coincide pero no es único, 
+		no es un mínimo a marcar.*/
+		if ((minimoEncontrado == minimoAEvaluar.getRed()) && contador == 1){
 			esMinimo = true;
 		}
 				
