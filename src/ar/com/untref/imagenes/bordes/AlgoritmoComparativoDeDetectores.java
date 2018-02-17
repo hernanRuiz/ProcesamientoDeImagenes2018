@@ -171,7 +171,7 @@ public class AlgoritmoComparativoDeDetectores {
 		if(tiempoProcesamientoHarrisSinRuido < 0){tiempoProcesamientoHarrisSinRuido = Double.valueOf("0" + tiempoProcesamientoHarrisSinRuido);}; 
 		System.out.println("Tiempo de procesamiento: " 
     			+ numberFormat.format(tiempoProcesamientoHarrisSinRuido) + " segundos");
-		tiemposSinRuido.put(tiempoProcesamientoHarrisSinRuido, "Harris sin ruido");
+		tiemposSinRuido.put(tiempoProcesamientoHarrisSinRuido, "Harris");
 		System.out.println();
 		System.out.print(linea);
 		System.out.println();
@@ -206,7 +206,7 @@ public class AlgoritmoComparativoDeDetectores {
 		if(tiempoProcesamientoSusanSinRuido < 0){tiempoProcesamientoSusanSinRuido = Double.valueOf("0" + tiempoProcesamientoSusanSinRuido);};
 		System.out.println("Tiempo de procesamiento: " 
     			+ numberFormat.format(tiempoProcesamientoSusanSinRuido) + " segundos");
-		tiemposSinRuido.put(tiempoProcesamientoSusanSinRuido, "Susan sin ruido");
+		tiemposSinRuido.put(tiempoProcesamientoSusanSinRuido, "Susan");
 		//------------------------------------------------------------------------------
 		
 		
@@ -280,7 +280,7 @@ public class AlgoritmoComparativoDeDetectores {
 				if(tiempoProcesamientoMoravecASinRuido < 0){tiempoProcesamientoMoravecASinRuido = Double.valueOf("0" + tiempoProcesamientoMoravecASinRuido);};
 				System.out.println("Tiempo de procesamiento: " 
 		    			+ numberFormat.format(tiempoProcesamientoMoravecASinRuido) + " segundos");
-				tiemposSinRuido.put(tiempoProcesamientoMoravecASinRuido, "Moravec sin ruido caso A");
+				tiemposSinRuido.put(tiempoProcesamientoMoravecASinRuido, "Moravec caso A");
 				break;
 			case 1:
 				double tiempoFinMoravecBSinRuido = System.nanoTime();
@@ -289,7 +289,7 @@ public class AlgoritmoComparativoDeDetectores {
 				if(tiempoProcesamientoMoravecBSinRuido < 0){tiempoProcesamientoMoravecBSinRuido = Double.valueOf("0" + tiempoProcesamientoMoravecBSinRuido);};
 				System.out.println("Tiempo de procesamiento: " 
 		    			+ numberFormat.format(tiempoProcesamientoMoravecBSinRuido) + " segundos");
-				tiemposSinRuido.put(tiempoProcesamientoMoravecBSinRuido, "Moravec sin ruido caso B");
+				tiemposSinRuido.put(tiempoProcesamientoMoravecBSinRuido, "Moravec caso B");
 				break;
 			default:
 				double tiempoFinMoravecCSinRuido = System.nanoTime();
@@ -298,7 +298,7 @@ public class AlgoritmoComparativoDeDetectores {
 				if(tiempoProcesamientoMoravecCSinRuido < 0){tiempoProcesamientoMoravecCSinRuido = Double.valueOf("0" + tiempoProcesamientoMoravecCSinRuido);};
 				System.out.println("Tiempo de procesamiento: " 
 		    			+ numberFormat.format(tiempoProcesamientoMoravecCSinRuido) + " segundos");
-				tiemposSinRuido.put(tiempoProcesamientoMoravecCSinRuido, "Moravec sin ruido caso C");
+				tiemposSinRuido.put(tiempoProcesamientoMoravecCSinRuido, "Moravec caso C");
 				break;
 			}
 			
@@ -383,7 +383,7 @@ public class AlgoritmoComparativoDeDetectores {
 				if(tiempoProcesamientoDoGASinRuido < 0){tiempoProcesamientoDoGASinRuido = Double.valueOf("0" + tiempoProcesamientoDoGASinRuido);};
 				System.out.println("Tiempo de procesamiento: " 
 		    			+ numberFormat.format(tiempoProcesamientoDoGASinRuido) + " segundos");
-				tiemposSinRuido.put(tiempoProcesamientoDoGASinRuido, "Moravec sin ruido caso A");
+				tiemposSinRuido.put(tiempoProcesamientoDoGASinRuido, "Moravec caso A");
 				break;
 			case 1:
 				double tiempoFinDoGBSinRuido = System.nanoTime();
@@ -392,7 +392,7 @@ public class AlgoritmoComparativoDeDetectores {
 				if(tiempoProcesamientoDoGBSinRuido < 0){tiempoProcesamientoDoGBSinRuido = Double.valueOf("0" + tiempoProcesamientoDoGBSinRuido);};
 				System.out.println("Tiempo de procesamiento: " 
 		    			+ numberFormat.format(tiempoProcesamientoDoGBSinRuido) + " segundos");
-				tiemposSinRuido.put(tiempoProcesamientoDoGBSinRuido, "Moravec sin ruido caso B");
+				tiemposSinRuido.put(tiempoProcesamientoDoGBSinRuido, "Moravec caso B");
 				break;
 			default:
 				double tiempoFinDoGCSinRuido = System.nanoTime();
@@ -401,7 +401,7 @@ public class AlgoritmoComparativoDeDetectores {
 				if(tiempoProcesamientoDoGCSinRuido < 0){tiempoProcesamientoDoGCSinRuido = Double.valueOf("0" + tiempoProcesamientoDoGCSinRuido);};
 				System.out.println("Tiempo de procesamiento: " 
 		    			+ numberFormat.format(tiempoProcesamientoDoGCSinRuido) + " segundos");
-				tiemposSinRuido.put(tiempoProcesamientoDoGCSinRuido, "Moravec sin ruido caso C");
+				tiemposSinRuido.put(tiempoProcesamientoDoGCSinRuido, "Moravec caso C");
 				break;
 			}
 		
@@ -482,7 +482,7 @@ public class AlgoritmoComparativoDeDetectores {
 			if(tiempoProcesamientoHarrisConRuido < 0){tiempoProcesamientoHarrisConRuido = Double.valueOf("0" + tiempoProcesamientoHarrisConRuido);};
 			System.out.println("Tiempo de procesamiento: " 
 	    			+ numberFormat.format(tiempoProcesamientoHarrisConRuido) + " segundos");
-			tiemposConRuido.put(tiempoProcesamientoHarrisConRuido, "Harris con ruido");
+			tiemposConRuido.put(tiempoProcesamientoHarrisConRuido, "Harris");
 			System.out.println();
 			System.out.print(linea);
 			System.out.println();
@@ -519,7 +519,7 @@ public class AlgoritmoComparativoDeDetectores {
 			if(tiempoProcesamientoSusanConRuido < 0){tiempoProcesamientoSusanConRuido = Double.valueOf("0" + tiempoProcesamientoSusanConRuido);};
 			System.out.println("Tiempo de procesamiento: " 
 	    			+ numberFormat.format(tiempoProcesamientoSusanConRuido) + " segundos");
-			tiemposConRuido.put(tiempoProcesamientoSusanConRuido, "Susan con ruido");
+			tiemposConRuido.put(tiempoProcesamientoSusanConRuido, "Susan");
 			//------------------------------------------------------------------------------
 			
 			//---------------------------------MORAVEC CON RUIDO----------------------------
@@ -594,7 +594,7 @@ public class AlgoritmoComparativoDeDetectores {
 						if(tiempoProcesamientoMoravecAConRuido < 0){tiempoProcesamientoMoravecAConRuido = Double.valueOf("0" + tiempoProcesamientoMoravecAConRuido);};
 						System.out.println("Tiempo de procesamiento: " 
 				    			+ numberFormat.format(tiempoProcesamientoMoravecAConRuido) + " segundos");
-						tiemposConRuido.put(tiempoProcesamientoMoravecAConRuido, "Moravec con ruido caso A");
+						tiemposConRuido.put(tiempoProcesamientoMoravecAConRuido, "Moravec caso A");
 						break;
 					case 1:
 						double tiempoFinMoravecBConRuido = System.nanoTime();
@@ -603,7 +603,7 @@ public class AlgoritmoComparativoDeDetectores {
 						if(tiempoProcesamientoMoravecBConRuido < 0){tiempoProcesamientoMoravecBConRuido = Double.valueOf("0" + tiempoProcesamientoMoravecBConRuido);};
 						System.out.println("Tiempo de procesamiento: " 
 				    			+ numberFormat.format(tiempoProcesamientoMoravecBConRuido) + " segundos");
-						tiemposConRuido.put(tiempoProcesamientoMoravecBConRuido, "Moravec con ruido caso B");
+						tiemposConRuido.put(tiempoProcesamientoMoravecBConRuido, "Moravec caso B");
 						break;
 					default:
 						double tiempoFinMoravecCConRuido = System.nanoTime();
@@ -612,7 +612,7 @@ public class AlgoritmoComparativoDeDetectores {
 						if(tiempoProcesamientoMoravecCConRuido < 0){tiempoProcesamientoMoravecCConRuido = Double.valueOf("0" + tiempoProcesamientoMoravecCConRuido);};
 						System.out.println("Tiempo de procesamiento: " 
 				    			+ numberFormat.format(tiempoProcesamientoMoravecCConRuido) + " segundos");
-						tiemposConRuido.put(tiempoProcesamientoMoravecCConRuido, "Moravec con ruido caso C");
+						tiemposConRuido.put(tiempoProcesamientoMoravecCConRuido, "Moravec caso C");
 						break;
 					}
 				}
@@ -694,7 +694,7 @@ public class AlgoritmoComparativoDeDetectores {
 					if(tiempoProcesamientoDoGAConRuido < 0){tiempoProcesamientoDoGAConRuido = Double.valueOf("0" + tiempoProcesamientoDoGAConRuido);};
 					System.out.println("Tiempo de procesamiento: " 
 			    			+ numberFormat.format(tiempoProcesamientoDoGAConRuido) + " segundos");
-					tiemposConRuido.put(tiempoProcesamientoDoGAConRuido, "DoG con ruido caso A");
+					tiemposConRuido.put(tiempoProcesamientoDoGAConRuido, "DoG caso A");
 					break;
 				case 1:
 					double tiempoFinDoGBConRuido = System.nanoTime();
@@ -703,7 +703,7 @@ public class AlgoritmoComparativoDeDetectores {
 					if(tiempoProcesamientoDoGBConRuido < 0){tiempoProcesamientoDoGBConRuido = Double.valueOf("0" + tiempoProcesamientoDoGBConRuido);};
 					System.out.println("Tiempo de procesamiento: " 
 			    			+ numberFormat.format(tiempoProcesamientoDoGBConRuido) + " segundos");
-					tiemposConRuido.put(tiempoProcesamientoDoGBConRuido, "DoG con ruido caso B");
+					tiemposConRuido.put(tiempoProcesamientoDoGBConRuido, "DoG caso B");
 					break;
 				default:
 					double tiempoFinDoGCConRuido = System.nanoTime();
@@ -712,7 +712,7 @@ public class AlgoritmoComparativoDeDetectores {
 					if(tiempoProcesamientoDoGCConRuido < 0){tiempoProcesamientoDoGCConRuido = Double.valueOf("0" + tiempoProcesamientoDoGCConRuido);};
 					System.out.println("Tiempo de procesamiento: " 
 			    			+ numberFormat.format(tiempoProcesamientoDoGCConRuido) + " segundos");
-					tiemposConRuido.put(tiempoProcesamientoDoGCConRuido, "DoG con ruido caso C");
+					tiemposConRuido.put(tiempoProcesamientoDoGCConRuido, "DoG caso C");
 					break;
 				}
 				

@@ -49,7 +49,7 @@ public class DetectorDeBordesMoravec {
     	
     	Imagen imagenEsquinas = new Imagen(new BufferedImage(imagenOriginal.getBufferedImage().getWidth(), imagenOriginal.getBufferedImage().getHeight(), imagenOriginal.getBufferedImage().getType()), imagenOriginal.getFormato(), imagenOriginal.getNombre()+"_moravec");
     	ArrayList<int[][]> matrices = generateWindow(tamanio);
-    	if (umbral < 100){umbral *= 350;} else {umbral *= 1.5;};
+    	if (umbral < 100){umbral *= 350;} else {umbral *= 1.2;};
         int[][] xRedDelta = matrices.get(1);
         int[][] yRedDelta = matrices.get(0);
         int width = imagenOriginal.getBufferedImage().getWidth(); 
