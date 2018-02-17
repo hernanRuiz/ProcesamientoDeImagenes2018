@@ -155,8 +155,6 @@ public class DoG {
 			
 			for (int x = 0; x < imagenOriginal.getBufferedImage().getWidth(); x ++) {
 			
-				//Color colorImagen = new Color(imagenOriginal.getBufferedImage().getRGB(x, y));
-				
 				int rgb = imagenOriginal.getBufferedImage().getRGB(x, y);
 		        int r = (rgb >> 16) & 0xFF;
 		        int g = (rgb >> 8) & 0xFF;
@@ -165,7 +163,6 @@ public class DoG {
 		        int grayLevel = (r + g + b) / 3;
 		        int gray = (grayLevel << 16) + (grayLevel << 8) + grayLevel; 
 				
-				// int valorPromedio = (colorImagen.getRed() + colorImagen.getBlue() + colorImagen.getGreen()) / 3;
 				imagenResultante.getBufferedImage().setRGB(x, y, gray);
 			}
 		}
