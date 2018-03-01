@@ -74,19 +74,19 @@ package ar.com.untref.imagenes.dialogs;
 								
 								if (ventanaRuido != null){
 									
-									//ventanaRuido.aplicarDetectorDeBordesDeMoravec(umbral, radio);
+									ventanaRuido.aplicarFiltroGaussiano(sigma);
 								}
 								
 								FiltroGaussianoDialog.this.dispose();
 							
 						} catch (Exception ex){
 							
-							DialogsHelper.mostarMensaje(jpanel, "Por favor ingresa umbrales válidos", NivelMensaje.ERROR);
+							DialogsHelper.mostarMensaje(jpanel, "Por favor ingresa umbrales vï¿½lidos", NivelMensaje.ERROR);
 							ex.printStackTrace();
 						}
 					} else {
 						
-						DialogsHelper.mostarMensaje(jpanel, "Por favor ingresa umbrales válidos", NivelMensaje.ERROR);
+						DialogsHelper.mostarMensaje(jpanel, "Por favor ingresa umbrales vï¿½lidos", NivelMensaje.ERROR);
 					}
 				}
 			});

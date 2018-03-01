@@ -46,7 +46,7 @@ import ar.com.untref.imagenes.ventanas.VentanaPrincipal;
 			
 			comboLabel = new JLabel("Contraste");
 			
-			String[] porcentajes = { "0%", "5%", "10%", "15%", "20%", "25%", "30%", "35%", "40%" };
+			String[] porcentajes = { "5%", "10%", "15%", "20%", "25%", "30%", "35%", "40%", "100%" };
 			
 			combo = new JComboBox<String>(porcentajes);
 			combo.setSelectedIndex(0);

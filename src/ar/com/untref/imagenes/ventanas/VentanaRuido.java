@@ -374,22 +374,30 @@ public class VentanaRuido extends JFrame {
 	}
 
 	public void aplicarFiltroGaussiano(final Integer sigmaElegido) {
-		
 		SwingWorker<Void, Void> mySwingWorker = new SwingWorker<Void, Void>(){
-	         @Override
+			@Override
 	         protected Void doInBackground() throws Exception {
+	        	 dialogoEspera = new EspereDialog(VentanaRuido.this);
+	        	 Runnable r = new Runnable() {
+			         public void run() {
+			        	ProcesadorDeImagenes proc = ProcesadorDeImagenes.obtenerInstancia();
+			      		Imagen imagenAnterior = proc.getImagenActual();
+			      		Imagen imagenResultante = FiltroGaussiano.aplicarFiltroGaussiano(imagenAnterior, sigmaElegido);
+			      		proc.setImagenOriginal(new Imagen(imagenAnterior.getBufferedImage(), proc.getImagenActual().getFormato(), proc.getImagenActual().getNombre()));
+			      		proc.setImagenActual(imagenResultante);
+			      		VentanaRuido.this.refrescarImagen();
+			      		dialogoEspera.ocultar();
+			         }
+			     };
 
-	            Imagen imagenFiltrada = FiltroGaussiano.aplicarFiltroGaussiano(ProcesadorDeImagenes.obtenerInstancia().getImagenActual(), sigmaElegido);
-	    		ProcesadorDeImagenes.obtenerInstancia().setImagenActual(imagenFiltrada);
-
-	    		VentanaRuido.this.refrescarImagen();
-
-	            return null;
-	         }
-	      };
-
-	      mySwingWorker.execute();
-	      mostrarDialogoDeEspera();
+			     Thread ejecutar = new Thread(r);
+			     ejecutar.start();
+			     
+			     dialogoEspera.mostrar();
+			     return null;
+			}
+		};
+		mySwingWorker.execute();
 	}
 
 

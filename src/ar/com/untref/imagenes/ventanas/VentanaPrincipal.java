@@ -430,13 +430,31 @@ public class VentanaPrincipal extends JFrame {
 		
 	}
 	
-	public void aplicarFiltroGaussiano(int sigmaElegido) {
-		ProcesadorDeImagenes proc = ProcesadorDeImagenes.obtenerInstancia();
-		Imagen imagenAnterior = proc.getImagenActual();
-		Imagen imagenResultante = FiltroGaussiano.aplicarFiltroGaussiano(imagenAnterior, sigmaElegido);
-		proc.setImagenOriginal(new Imagen(imagenAnterior.getBufferedImage(), proc.getImagenActual().getFormato(), proc.getImagenActual().getNombre()));
-		proc.setImagenActual(imagenResultante);
-		VentanaPrincipal.this.refrescarImagen();
+	public void aplicarFiltroGaussiano(final int sigmaElegido) {
+		SwingWorker<Void, Void> mySwingWorker = new SwingWorker<Void, Void>(){
+			@Override
+	         protected Void doInBackground() throws Exception {
+	        	 dialogoEspera = new EspereDialog(VentanaPrincipal.this);
+	        	 Runnable r = new Runnable() {
+			         public void run() {
+			        	ProcesadorDeImagenes proc = ProcesadorDeImagenes.obtenerInstancia();
+			      		Imagen imagenAnterior = proc.getImagenActual();
+			      		Imagen imagenResultante = FiltroGaussiano.aplicarFiltroGaussiano(imagenAnterior, sigmaElegido);
+			      		proc.setImagenOriginal(new Imagen(imagenAnterior.getBufferedImage(), proc.getImagenActual().getFormato(), proc.getImagenActual().getNombre()));
+			      		proc.setImagenActual(imagenResultante);
+			      		VentanaPrincipal.this.refrescarImagen();
+			      		dialogoEspera.ocultar();
+			         }
+			     };
+
+			     Thread ejecutar = new Thread(r);
+			     ejecutar.start();
+			     
+			     dialogoEspera.mostrar();
+			     return null;
+			}
+		};
+		mySwingWorker.execute();
 	}
 	
 	
