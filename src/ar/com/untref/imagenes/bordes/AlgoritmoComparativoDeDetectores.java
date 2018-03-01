@@ -802,40 +802,31 @@ public class AlgoritmoComparativoDeDetectores {
 		
 		List<Integer> resultados = new LinkedList<Integer>();		
 		
-		if(resultadosEnX.size() == 0 || resultadosEnX.size() > 50000){
+		for (int i = 0; i < resultadosEnX.size(); i++){
+			int x = resultadosEnX.get(i);
+			int y = resultadosEnY.get(i);
 			
-			System.out.println();
-			System.out.println("\t SIN RESULTADOS PARA LA IMAGEN ACTUAL EN LAS CONDICIONES DADAS \n\n"); 
-			System.out.println();
-			
-		} else { 
-		
-			for (int i = 0; i < resultadosEnX.size(); i++){
-				int x = resultadosEnX.get(i);
-				int y = resultadosEnY.get(i);
-				
-				/*Evaluamos los puntos detectados para saber si son correctos o 
-				falsos positivos*/
-				int contadores[] = evaluarPuntos(x, y);
-				contadorPositivos += contadores[0];
-				contadorFalsosPositivos += contadores[1];
-			}
-			
-			int positivos;
-			int falsosPositivos;
-			
-			positivos = contadorPositivos;
-			falsosPositivos = contadorFalsosPositivos;
-			
-			resultados.add(positivos);
-			resultados.add(falsosPositivos);
-			
-			contadorPositivos = 0;
-			contadorFalsosPositivos = 0;
-			
-			resultadosEnX = new LinkedList<Integer>();
-			resultadosEnY = new LinkedList<Integer>();
+			/*Evaluamos los puntos detectados para saber si son correctos o 
+			falsos positivos*/
+			int contadores[] = evaluarPuntos(x, y);
+			contadorPositivos += contadores[0];
+			contadorFalsosPositivos += contadores[1];
 		}
+		
+		int positivos;
+		int falsosPositivos;
+		
+		positivos = contadorPositivos;
+		falsosPositivos = contadorFalsosPositivos;
+		
+		resultados.add(positivos);
+		resultados.add(falsosPositivos);
+		
+		contadorPositivos = 0;
+		contadorFalsosPositivos = 0;
+		
+		resultadosEnX = new LinkedList<Integer>();
+		resultadosEnY = new LinkedList<Integer>();
 		
 		return resultados;
 	}
@@ -1195,7 +1186,7 @@ public class AlgoritmoComparativoDeDetectores {
 		//mayor entre todos los detectores, entonces ese es el de mejor desempeño
 		if(casoMayoresResultadosCorrectos.size() < 2){
 			
-			ret = casoMayoresResultadosCorrectos.get(0);			
+			indiceAMarcar = casoMayoresResultadosCorrectos.get(0);			
 		} else {
 			
 			//Si hay un empate de puntos correctos entre dos o más detectores, los
@@ -1267,15 +1258,19 @@ public class AlgoritmoComparativoDeDetectores {
 		
 	    Integer ret = Integer.MAX_VALUE;
 	    int contador = 0;
+	    int valorRepetido = 0;
 	    
 	    for (int j = 0; j < valores.size(); j++) {
-	        if (valores.get(j) < ret) {
-	            ret = valores.get(j);
-	            contador++;
+	    	int valorActual = valores.get(j);
+	        if (valorActual < ret) {
+	            ret = valorActual;
+	        } else if(ret == valorActual) {
+	        	valorRepetido = valorActual;
+	        	contador++;
 	        }
 	    }
 	    
-	    if (contador > 1){ret = -1;}
+	    if ((contador >= 1) && (ret == valorRepetido)){ret = -1;}
 	    
 	    return ret;
 	}
